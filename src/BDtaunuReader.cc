@@ -11,18 +11,27 @@
 #include "bdtaunu_definitions.h"
 #include "BDtaunuReader.h"
 
+// The maximum number of candidates allowed in an event. This should
+// be consistent with the number set in BtaTupleMaker. 
 const int BDtaunuReader::maximum_candidates_allowed = 100;
+
+// map<string, int> that associates particle name to its lundId. For
+// example, "B0" : 511.
 std::map<std::string, int> BDtaunuReader::lundIdMap = BDtaunuReader::build_lund_map();
 
+// Reads in __PDT_FILE_PATHNAME which contains one particle type on
+// each line in the format: "particle name" lundId, and puts the
+// information in lundIdMap.
 std::map<std::string, int> BDtaunuReader::build_lund_map() {
   std::map<std::string, int> m;
 
   std::ifstream pdt_file;
   pdt_file.open(__PDT_FILE_PATHNAME);
 
+  // Scan each line from the first character until the first space for
+  // the particle name. The remainder of the line is the lundId. 
   std::string line, lundId_string, particle_name;
   while (std::getline(pdt_file, line)) {
-
     for (std::string::size_type i = 0; i != line.size(); ++i) {
       if (std::isspace(line[i])) {
         lundId_string = line.substr(i + 1);
@@ -32,7 +41,11 @@ std::map<std::string, int> BDtaunuReader::build_lund_map() {
       }
     }
   }
+
   pdt_file.close();
+
+  assert(!m.empty());
+  assert(m["B0"] == 511);
 
   return m;
 }
@@ -51,8 +64,11 @@ BDtaunuReader::BDtaunuReader(
   Initialize();
 }
 
+
+// All constructors call this function to initialize the class members.
 void BDtaunuReader::Initialize() {
 
+  // Allocate space to read in arrays from ntuples. 
   YBPairMmissPrime2 = new float[maximum_candidates_allowed];
   YBPairEextra50 = new float[maximum_candidates_allowed];
   YTagBlP3MagCM = new float[maximum_candidates_allowed];
@@ -79,9 +95,16 @@ void BDtaunuReader::Initialize() {
   Bd1Idx = new int[maximum_candidates_allowed];
   Bd2Idx = new int[maximum_candidates_allowed];
   Dd1Idx = new int[maximum_candidates_allowed];
+  Dd2Idx = new int[maximum_candidates_allowed];
+  Dd3Idx = new int[maximum_candidates_allowed];
+  Dd4Idx = new int[maximum_candidates_allowed];
+  Dd5Idx = new int[maximum_candidates_allowed];
+  taud1Idx = new int[maximum_candidates_allowed];
 
+  Yd1Lund = new int[maximum_candidates_allowed];
   Yd2Lund = new int[maximum_candidates_allowed];
   Bd1Lund = new int[maximum_candidates_allowed];
+  Bd2Lund = new int[maximum_candidates_allowed];
   Dd1Lund = new int[maximum_candidates_allowed];
   Dd2Lund = new int[maximum_candidates_allowed];
   Dd3Lund = new int[maximum_candidates_allowed];
@@ -89,7 +112,10 @@ void BDtaunuReader::Initialize() {
   Dd5Lund = new int[maximum_candidates_allowed];
   taud1Lund = new int[maximum_candidates_allowed];
 
+  // Specify the variables where each ntuple branch should be read into. 
   SetBranchAddress();
+  
+  // Zero out variables where ntuple data are read into. 
   ClearColumnValues();
 }
 
@@ -126,8 +152,15 @@ void BDtaunuReader::SetBranchAddress() {
   tr->SetBranchAddress("Bd1Idx", Bd1Idx);
   tr->SetBranchAddress("Bd2Idx", Bd2Idx);
   tr->SetBranchAddress("Dd1Idx", Dd1Idx);
+  tr->SetBranchAddress("Dd2Idx", Dd2Idx);
+  tr->SetBranchAddress("Dd3Idx", Dd3Idx);
+  tr->SetBranchAddress("Dd4Idx", Dd4Idx);
+  tr->SetBranchAddress("Dd5Idx", Dd5Idx);
+  tr->SetBranchAddress("taud1Idx", taud1Idx);
+  tr->SetBranchAddress("Yd1Lund", Yd1Lund);
   tr->SetBranchAddress("Yd2Lund", Yd2Lund);
   tr->SetBranchAddress("Bd1Lund", Bd1Lund);
+  tr->SetBranchAddress("Bd2Lund", Bd2Lund);
   tr->SetBranchAddress("Dd1Lund", Dd1Lund);
   tr->SetBranchAddress("Dd2Lund", Dd2Lund);
   tr->SetBranchAddress("Dd3Lund", Dd3Lund);
@@ -138,21 +171,27 @@ void BDtaunuReader::SetBranchAddress() {
 }
 
 void BDtaunuReader::ClearColumnValues() {
-  platform = 0;
-  partition = 0;
-  upperID = 0;
-  upperID = 0;
-  nTrk = 0;
-  nY = 0;
-  R2All = 0.0;
+  platform = -999;
+  partition = -999;
+  upperID = -999;
+  upperID = -999;
+  nTrk = -999;
+  nY = -999;
+  R2All = -999;
   eventId = std::string();
   upsilon_candidates = UpsilonList();
 }
 
+// This function takes the decay tree information read from the ntuple
+// (which are read into the arrays new'd in Initialize()), and creates
+// the UpsilonList of the event. It constructs an UpsilonCandidate
+// object for each candidate and fills it with correctly computed
+// higher level features.
 void BDtaunuReader::FillUpsilonList() {
 
   for (int cand_idx = 0; cand_idx < nY; cand_idx++) {
 
+    // Compute reconstructed decay tree information. 
     int bflavor;
     int tag_dstar_mode, tag_d_mode;
     int sig_dstar_mode, sig_d_mode, sig_tau_mode;
@@ -160,7 +199,7 @@ void BDtaunuReader::FillUpsilonList() {
         bflavor, tag_dstar_mode, tag_d_mode,
         sig_dstar_mode, sig_d_mode, sig_tau_mode);
 
-    // build upsilon candidate
+    // Construct an UpsilonCandidate object and fill in its features.
     UpsilonCandidate cand(eventId, cand_idx, 
         YBPairEextra50[cand_idx], YBPairMmissPrime2[cand_idx], 
         YTagBlP3MagCM[cand_idx], YSigBhP3MagCM[cand_idx], 
@@ -177,6 +216,8 @@ void BDtaunuReader::FillUpsilonList() {
         tag_dstar_mode, tag_d_mode, 
         sig_dstar_mode, sig_d_mode, 
         sig_tau_mode);
+
+    // Add it to the UpsilonList. 
     upsilon_candidates.add_candidate(cand);
   }
 }
@@ -186,11 +227,22 @@ void BDtaunuReader::ComputeCandidateDecay(
     int &bflavor, int &tag_dstar_mode, int &tag_d_mode, 
     int &sig_dstar_mode, int &sig_d_mode, int &sig_tau_mode) {
 
+    // B flavor of the this Y(4S) candidate.
+    assert(
+      abs(Yd2Lund[cand_idx]) == abs(lundIdMap["B0"]) ||
+      abs(Yd2Lund[cand_idx]) == abs(lundIdMap["B+"])
+    );
     bflavor = DetermineBFlavor(Yd2Lund[cand_idx]);
   
-
-    // tagB
+    // Determine whether the tag B has a D* decay, and determine the
+    // modes in which the D* and D decay. 
     int tagBIdx = Yd1Idx[cand_idx];
+    assert(
+      abs(Bd1Lund[tagBIdx]) == abs(lundIdMap["D+"]) ||
+      abs(Bd1Lund[tagBIdx]) == abs(lundIdMap["D0"]) ||
+      abs(Bd1Lund[tagBIdx]) == abs(lundIdMap["D*0"]) ||
+      abs(Bd1Lund[tagBIdx]) == abs(lundIdMap["D*+"])
+    );
 
     if (abs(Bd1Lund[tagBIdx]) == abs(lundIdMap["D+"]) ||
         abs(Bd1Lund[tagBIdx]) == abs(lundIdMap["D0"])) {
@@ -209,8 +261,16 @@ void BDtaunuReader::ComputeCandidateDecay(
                                   Dd3Lund[DIdx], Dd4Lund[DIdx], Dd5Lund[DIdx]);
     }
 
-    // sigB
+    // Determine whether the sig B has a D* decay, and determine the
+    // modes in which the D* and D decay. Also determine which mode
+    // the tau decays in. 
     int sigBIdx = Yd2Idx[cand_idx];
+    assert(
+      abs(Bd1Lund[sigBIdx]) == abs(lundIdMap["D+"]) ||
+      abs(Bd1Lund[sigBIdx]) == abs(lundIdMap["D0"]) ||
+      abs(Bd1Lund[sigBIdx]) == abs(lundIdMap["D*0"]) ||
+      abs(Bd1Lund[sigBIdx]) == abs(lundIdMap["D*+"])
+    );
     
     if (abs(Bd1Lund[sigBIdx]) == abs(lundIdMap["D+"]) ||
         abs(Bd1Lund[sigBIdx]) == abs(lundIdMap["D0"])) {
@@ -230,6 +290,12 @@ void BDtaunuReader::ComputeCandidateDecay(
     }
     
     int tauIdx = Bd2Idx[sigBIdx];
+    assert(abs(Bd2Lund[sigBIdx]) == abs(lundIdMap["tau+"]));
+    assert(
+      abs(taud1Lund[tauIdx]) == abs(lundIdMap["pi+"]) ||
+      abs(taud1Lund[tauIdx]) == abs(lundIdMap["rho+"])
+    );
+
     sig_tau_mode = DetermineTauMode(taud1Lund[tauIdx]);
     
 }
@@ -261,8 +327,15 @@ BDtaunuReader::~BDtaunuReader() {
   delete[] Bd1Idx;
   delete[] Bd2Idx;
   delete[] Dd1Idx;
+  delete[] Dd2Idx;
+  delete[] Dd3Idx;
+  delete[] Dd4Idx;
+  delete[] Dd5Idx;
+  delete[] taud1Idx;
+  delete[] Yd1Lund;
   delete[] Yd2Lund;
   delete[] Bd1Lund;
+  delete[] Bd2Lund;
   delete[] Dd1Lund;
   delete[] Dd2Lund;
   delete[] Dd3Lund;
@@ -278,7 +351,7 @@ int BDtaunuReader::DetermineBFlavor(int lundId) {
   } else if (abs(lundId) == abs(lundIdMap["B+"])) {
     return kBc;
   } else {
-    return kUndefinedBFlav;
+    return kUndefinedBFlavor;
   }
 }
 
@@ -290,6 +363,7 @@ int BDtaunuReader::DetermineDstarMode(
                         abs(Dd3_lundId), abs(Dd4_lundId), 
                         abs(Dd5_lundId) };
 
+  // Count the daughter particle types
   int n_daughters, n_D0, n_Dc, n_pi, n_pi0, n_gamma;
   n_daughters = n_D0 = n_Dc = n_pi = n_pi0 = n_gamma = 0;
   for (int i = 0; i < 5; i++) {
@@ -313,6 +387,7 @@ int BDtaunuReader::DetermineDstarMode(
     }
   }
 
+  // Determine the decay mode based on the daughter counts. 
   if (n_daughters == 2 && n_D0 == 1 && n_pi0 == 1) {
     return kDstar0_D0pi0;
   } else if (n_daughters == 2 && n_D0 == 1 && n_gamma == 1) {
@@ -336,6 +411,7 @@ int BDtaunuReader::DetermineDMode(
                         abs(Dd3_lundId), abs(Dd4_lundId), 
                         abs(Dd5_lundId) };
 
+  // Count the daughter particle types
   int n_daughters, n_K, n_Ks, n_pi, n_pi0;
   n_daughters = n_K = n_Ks = n_pi = n_pi0 = 0;
   for (int i = 0; i < 5; i++) {
@@ -357,6 +433,7 @@ int BDtaunuReader::DetermineDMode(
     }
   }
 
+  // Determine the decay mode based on the daughter counts. 
   if (abs(D_lundId) == abs(lundIdMap["Dc"])) {
     if (n_daughters == 3 && n_K == 1 && n_pi == 2) {
       return kDc_Kpipi;
@@ -409,18 +486,29 @@ int BDtaunuReader::DetermineTauMode(int tau_d1lundId) {
 }
 
 
+// Read in the next event in the ntuple. It computes all relevant
+// information as a side effect. 
 int BDtaunuReader::next_record() {
 
+  // Zero out garbage information from the previous event. 
   ClearColumnValues();
 
+  // Read in the next event in the ntuple. The variables now contain
+  // information from the new event. 
   int next_record_idx = RootReader::next_record();
+
+  // Compute higher level information that is not directly avaible. 
   if (next_record_idx > -1) {
     eventId = to_string(platform) + ":" 
               + to_string(partition) + ":" 
               + to_string(upperID) + "/" 
               + to_string(lowerID);
-    //if (nY < 100) 
-    FillUpsilonList();
+
+    // Construct the Y(4S) candidate list for this event. 
+    // This fills the UpsilonList upsilon_candidates.
+    // TODO: ntuples only well behaved when nY < 100. 
+    if (nY < 100) 
+      FillUpsilonList();
   }
 
   return next_record_idx;

@@ -28,6 +28,7 @@ RootReader::~RootReader() {
   }
 }
 
+// Responsible for opening the TFile and getting the TTree.
 void RootReader::PrepareTreeFile(const char *root_fname, 
                                  const char *root_trname) {
 
@@ -49,6 +50,7 @@ void RootReader::PrepareTreeFile(const char *root_fname,
   total_records = tr->GetEntries();
 }
 
+// Read in the next event from the TTree. 
 int RootReader::next_record() {
   if (record_index < total_records) {
     tr->GetEntry(record_index++);

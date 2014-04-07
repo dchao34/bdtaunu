@@ -3,20 +3,21 @@
 #include <map>
 #include <fstream>
 
-// read a data file line by line and allows access to field
-// entries by name. it only keeps track of the current line.
-//
-// the file is expected to be in the format: 
-// line 1: title1<delimiter characters>title2<delimiter characters>...<delimiter characters>titleM
-// line 2: field1<delimiter characters>field2<delimiter characters>...<delimiter characters>fieldM
-// ...
-// line N: field1<delimiter characters>field2<delimiter characters>...<delimiter characters>fieldM
-// 
-// on any line, sequences formed from members of <delimiter
-// characters> delimit the fields. this covers two important cases
-// where <delimiter character> has only 1 character (as in a csv
-// file), or by white spaces (white space separated files).
-
+//! Read a data file line by line and allows access to field entries by name.
+/*! The file is expected to be in the format: 
+ *
+ * line 1: title1(delimiter characters)title2(delimiter characters)...(delimiter characters)titleM
+ *
+ * line 2: field1(delimiter characters)field2(delimiter characters)...(delimiter characters)fieldM
+ *
+ * ...
+ *
+ * line N: field1(delimiter characters)field2(delimiter characters)...(delimiter characters)fieldM
+ * 
+ * On any line, sequences formed from members of (delimiter
+ * characters) delimit the fields. this covers two important cases
+ * where (delimiter character) has only 1 character (as in a csv
+ * file), or by white spaces (white space separated files). */
 class DatReader {
 
   private:
@@ -37,20 +38,20 @@ class DatReader {
 
   public:
 
-    // default constructor has no behavior. 
+    //! Default constructor has no behavior. 
     DatReader();
     
-    // construct with file name, assume whitespace delimited
+    //! Construct with file name and assume whitespace delimited.
     DatReader(const char *fname);
 
-    // construct with file name and delimiter character set
+    //! Construct with file name with specified delimiter character.
     DatReader(const char *fname, const char *delimiter);
 
     ~DatReader();
 
-    // read in the next line in the file
+    //! Read in the next line in the file.
     int read_next_line();
 
-    // access a field in the current line by name
+    //! Access a field in the current line by name.
     std::string get_field(const char*);
 };

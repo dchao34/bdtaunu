@@ -17,7 +17,7 @@ UpsilonCandidate::UpsilonCandidate() :
   sig_Dmass(-999), sig_deltaM(-999), 
   sig_cosThetaDSoft(-999), sig_softP3MagCM(-999), 
   sig_hmass(-999), sig_vtxh(-999), 
-  bflavor(kUndefinedBFlav),
+  bflavor(kUndefinedBFlavor),
   tag_dstar_mode(kUndefinedDstarMode), tag_d_mode(kUndefinedDMode),
   sig_dstar_mode(kUndefinedDstarMode), sig_d_mode(kUndefinedDMode),
   sig_tau_mode(kUndefinedTauMode) {
@@ -100,6 +100,7 @@ UpsilonCandidate & UpsilonCandidate::operator=(const UpsilonCandidate &cand) {
   return *this;
 }
 
+// Examine the D, D*, and tau modes to determine the candidate type. 
 std::string UpsilonCandidate::get_cand_type() const {
 
   assert(sig_tau_mode != kUndefinedTauMode);
@@ -146,9 +147,12 @@ std::string UpsilonCandidate::get_cand_type() const {
   return cand_type_string;
 }
 
+
+// Examine the bflavor and D* decay mode on the signal to determine
+// sample type. 
 std::string UpsilonCandidate::get_sample_type() const {
 
-  assert(bflavor != kUndefinedBFlav);
+  assert(bflavor != kUndefinedBFlavor);
   assert(sig_dstar_mode != kUndefinedDstarMode);
 
   int sample_type = 0;

@@ -6,6 +6,22 @@
 #include "RootReader.h"
 #include "UpsilonList.h"
 
+//! Reads ntuples produced by BtaTupleMaker and computes data related to detector response. 
+/*! This class is responsible for assembling all data that can be
+ * derived from the detector's response to an event. More
+ * specifically, it contains the following types of information: 
+ * - Macro level event infromation. Examples:
+ *   - Fox-Wolfram moment. 
+ *   - nTrks. 
+ * - \f$\Upsilon(4S)\f$ candidate information. Examples:
+ *   - \f$E_{extra}\f$.
+ *   - \f$m_D\f$ of \f$B_{sig}\f$.
+ *   - Reconstructed type. See #CandType enum. 
+ *
+ * All other event information that does not belong in the above
+ * categories must be computed in a class that derives from this one.
+ * For example, Monte Carlo information should be computed in a
+ * subclass. */
 class BDtaunuReader : public RootReader {
 
   protected: 
@@ -33,9 +49,10 @@ class BDtaunuReader : public RootReader {
     float *YSigBhMass, *YSigBVtxProbh;
     int *Yd1Idx, *Yd2Idx;
     int *Bd1Idx, *Bd2Idx;
-    int *Dd1Idx;
-    int *Yd2Lund;
-    int *Bd1Lund;
+    int *Dd1Idx, *Dd2Idx, *Dd3Idx, *Dd4Idx, *Dd5Idx;
+    int *taud1Idx;
+    int *Yd1Lund, *Yd2Lund;
+    int *Bd1Lund, *Bd2Lund;
     int *Dd1Lund, *Dd2Lund, *Dd3Lund, *Dd4Lund, *Dd5Lund;
     int *taud1Lund;
 
@@ -61,21 +78,38 @@ class BDtaunuReader : public RootReader {
 
 
   public: 
+
+    //! Default construction undefined. 
     BDtaunuReader();
+
+    //! Construct with specified root file name. TTree name assumed to be "ntp1".
     BDtaunuReader(const char *root_fname);
+
+    //! Construct with specified root file name and TTree name.
     BDtaunuReader(const char *root_fname, const char *root_trname);
     virtual ~BDtaunuReader();
 
+    //! Read in the next event. 
+    /*! Returns an integer that indexes the event number. Returns -1
+     * when all events have been read. 
+     *
+     * Calling this automatically computes all features associated
+     * with the event that the analysis is interested in. */
     int next_record();
 
+    //! Babar event Id. 
     std::string get_eventId() const { return eventId; }
+
+    //! nTRK defined in BtaTupleMaker. 
     int get_nTrk() const { return nTrk; }
+
+    //! Number of \f$\Upsilon(4S)\f$ candidates associated with this event. 
     int get_nY() const { return nY; }
+
+    //! Second Fox-Wolfram moment. 
     float get_R2All() const { return R2All; }
+
+    //! Return list of \f$\Upsilon(4S)\f$ candidates in this event. 
     const UpsilonList & get_candidate_list() const { return upsilon_candidates; }
 
-    int next_candidate() { return upsilon_candidates.next_candidate(); }
-    int get_event_candidate_index() const { return upsilon_candidates.get_current_candidate().get_event_candidate_index(); }
-    float get_eextra50() const { return upsilon_candidates.get_current_candidate().get_eextra50(); }
-    float get_mmiss_prime2() const { return upsilon_candidates.get_current_candidate().get_mmiss_prime2(); }
 };

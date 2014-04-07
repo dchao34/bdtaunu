@@ -6,10 +6,10 @@
  */
 
 //! B meson flavors.
-enum BFlav {
-  kB0 = 1,               /*!< \f$ B^0 \f$ */
-  kBc = 2,               /*!< \f$ B^\pm \f$ */
-  kUndefinedBFlav = -1,  /*!< Undefined */
+enum BFlavor {
+  kB0 = 1,                 /*!< \f$ B^0 \f$ */
+  kBc = 2,                 /*!< \f$ B^\pm \f$ */
+  kUndefinedBFlavor = -1,  /*!< Undefined */
 };
 
 //! Reconstructed D decay modes.
@@ -58,8 +58,7 @@ enum TauMode {
  * 
  * A notable use of this distinction is in best candidate selection.
  * Each candidate type has a unique trained learner to assign a score 
- * for any candidates assigned to that category. 
- */
+ * for any candidates assigned to that category. */
 enum CandType {
   kDDpi = 0,                  /*!< \f$ B_{tag}\rightarrow D,\,B_{sig}\rightarrow D,\,\tau\rightarrow\pi \f$ */
   kDDstarpi = 1,              /*!< \f$ B_{tag}\rightarrow D,\,B_{sig}\rightarrow D^*,\,\tau\rightarrow\pi \f$ */
@@ -75,8 +74,7 @@ enum CandType {
 //! Sample types. 
 /*! This is an attribute attached to \f$\Upsilon(4S)\f$ candidates. It
  * is the sample type that the event would be assigned to if this
- * candidate were to be chosen as the best candidate to represent it.
- */
+ * candidate were to be chosen as the best candidate to represent it. */
 enum SampleType {
   kBcD = 0,                     /*!< \f$ B^u \rightarrow D \f$ */
   kBcDstar = 1,                 /*!< \f$ B^u \rightarrow D^* \f$ */

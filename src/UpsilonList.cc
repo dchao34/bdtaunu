@@ -15,6 +15,7 @@ UpsilonList::~UpsilonList() {
   clear();
 }
 
+// Delete the linked list.
 void UpsilonList::clear() {
   if (head != NULL) {
     node *curr = head;
@@ -28,6 +29,8 @@ void UpsilonList::clear() {
   iter = NULL;
 }
 
+// Starting from an empty list, create a new list that is a copy of
+// another list. 
 void UpsilonList::copy(const UpsilonList &upslist) {
   head = NULL;
   tail = NULL;
@@ -49,6 +52,7 @@ UpsilonList & UpsilonList::operator=(const UpsilonList &upslist) {
   return *this;
 }
 
+// Add a new candidate at the end of the list. 
 void UpsilonList::add_candidate(const UpsilonCandidate &cand) {
   node *new_node = new node(cand);
   if (head == NULL) {
@@ -60,6 +64,7 @@ void UpsilonList::add_candidate(const UpsilonCandidate &cand) {
   }
 }
 
+// Move the iterator to the next candidate. 
 int UpsilonList::next_candidate() {
   if (iter == NULL) {
     if (head == NULL) {
