@@ -1,3 +1,6 @@
+#ifndef __UTILITIES_H__
+#define __UTILITIES_H__
+
 /*! \file utilities.h
  *  \brief General utility functions. 
  */
@@ -12,3 +15,5 @@ double to_double(const std::string &s);
 
 //! Converts string to int
 int to_int(const std::string &s);
+
+#endif

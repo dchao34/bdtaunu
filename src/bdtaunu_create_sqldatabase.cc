@@ -2,16 +2,14 @@
 #include <iostream>
 
 #include "BDtaunuReader.h"
+#include "BDtaunuMcReader.h"
 #include "DatReader.h"
 #include "UpsilonList.h"
 
 #include "utilities.h"
 #include "bdtaunu_create_sqldatabase.h"
 
-int create_event_table(sqlite3 *db, 
-    const char *root_fname, 
-    const char *root_trname, 
-    int run) {
+int create_event_table(sqlite3 *db) {
 
   char *errmsg;
   sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, &errmsg);
@@ -30,7 +28,21 @@ int create_event_table(sqlite3 *db,
   db_status = sqlite3_step(stmt);
   db_status = sqlite3_finalize(stmt);
 
-  stmt = NULL;
+  sqlite3_exec(db, "END TRANSACTION", NULL, NULL, &errmsg);
+
+  return db_status;
+}
+
+int insert_event_table(sqlite3 *db, 
+    const char *root_fname, 
+    const char *root_trname, 
+    int run) {
+
+  char *errmsg;
+  sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, &errmsg);
+
+  int db_status;
+  sqlite3_stmt *stmt = NULL;
   db_status = sqlite3_prepare_v2(db, 
       "INSERT INTO events("
       "babar_event_id, "
@@ -42,7 +54,7 @@ int create_event_table(sqlite3 *db,
       "?1, ?2, ?3, ?4, ?5"
       ");", -1, &stmt, NULL);
 
-  BDtaunuReader rootreader(root_fname, root_trname);
+  BDtaunuMcReader rootreader(root_fname, root_trname);
   while (rootreader.next_record() != -1) {
     db_status = sqlite3_bind_text(stmt, 1, rootreader.get_eventId().c_str(), -1, SQLITE_STATIC);
     db_status = sqlite3_bind_int(stmt, 2, run);
@@ -59,7 +71,7 @@ int create_event_table(sqlite3 *db,
   return db_status;
 }
 
-int create_event_weight_table(
+int make_event_weight_table(
     sqlite3 *db, 
     const char *event_weights_fname) {
 
@@ -106,7 +118,7 @@ int create_event_weight_table(
   return db_status;
 }
 
-int create_machine_learning_sample_assignment_table(
+int make_machine_learning_sample_assignment_table(
     sqlite3 *db, 
     const char *ml_assignment_fname) {
 
@@ -145,10 +157,8 @@ int create_machine_learning_sample_assignment_table(
 
   return db_status;
 }
-
-int create_candidate_table(sqlite3 *db, 
-    const char *root_fname, 
-    const char *root_trname) {
+ 
+int create_candidate_table(sqlite3 *db) {
 
   char *errmsg;
   sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, &errmsg);
@@ -184,12 +194,27 @@ int create_candidate_table(sqlite3 *db,
       "sig_softP3MagCM REAL, "
       "sig_hmass REAL, "
       "sig_vtxh REAL, "
+      "cand_type INTEGER, "
+      "samp_type INTEGER, "
       "FOREIGN KEY(babar_event_id) REFERENCES events(babar_event_id)"
       ");", -1, &stmt, NULL);
   db_status = sqlite3_step(stmt);
   db_status = sqlite3_finalize(stmt);
 
-  stmt = NULL;
+  sqlite3_exec(db, "END TRANSACTION", NULL, NULL, &errmsg); 
+  return db_status;
+}
+
+int insert_candidate_table(sqlite3 *db, 
+    const char *root_fname, 
+    const char *root_trname) {
+
+  char *errmsg;
+  sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, &errmsg);
+
+  int db_status;
+  sqlite3_stmt *stmt = NULL;
+
   db_status = sqlite3_prepare_v2(db, 
       "INSERT INTO candidates("
       "babar_event_id, "
@@ -217,7 +242,9 @@ int create_candidate_table(sqlite3 *db,
       "sig_cosThetaDSoft, "
       "sig_softP3MagCM, "
       "sig_hmass, "
-      "sig_vtxh "
+      "sig_vtxh, "
+      "cand_type, "
+      "samp_type "
       ") VALUES("
       "@babar_event_id, "
       "@event_candidate_index, "
@@ -244,10 +271,12 @@ int create_candidate_table(sqlite3 *db,
       "@sig_cosThetaDSoft, "
       "@sig_softP3MagCM, "
       "@sig_hmass, "
-      "@sig_vtxh"
+      "@sig_vtxh, "
+      "@cand_type, "
+      "@samp_type"
       ");", -1, &stmt, NULL);
 
-  BDtaunuReader rootreader(root_fname, root_trname);
+  BDtaunuMcReader rootreader(root_fname, root_trname);
   while (rootreader.next_record() != -1) {
     UpsilonList candidates = rootreader.get_candidate_list();
     while (candidates.next_candidate() != -1) {
@@ -277,6 +306,8 @@ int create_candidate_table(sqlite3 *db,
       db_status = sqlite3_bind_double(stmt, sqlite3_bind_parameter_index(stmt, "@sig_softP3MagCM"), candidates.get_current_candidate().get_sig_softP3MagCM());
       db_status = sqlite3_bind_double(stmt, sqlite3_bind_parameter_index(stmt, "@sig_hmass"), candidates.get_current_candidate().get_sig_hmass());
       db_status = sqlite3_bind_double(stmt, sqlite3_bind_parameter_index(stmt, "@sig_vtxh"), candidates.get_current_candidate().get_sig_vtxh());
+      db_status = sqlite3_bind_double(stmt, sqlite3_bind_parameter_index(stmt, "@cand_type"), candidates.get_current_candidate().get_cand_type());
+      db_status = sqlite3_bind_double(stmt, sqlite3_bind_parameter_index(stmt, "@samp_type"), candidates.get_current_candidate().get_sample_type());
       db_status = sqlite3_step(stmt);
       db_status = sqlite3_reset(stmt);
     }

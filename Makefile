@@ -11,7 +11,7 @@ CXXFLAGS += -D__PDT_FILE_PATHNAME='"$(PDT_FILE_PATHNAME)"'
 target_list = main
 library_list =  RootReader.o BDtaunuReader.o DatReader.o \
                 utilities.o bdtaunu_create_sqldatabase.o \
-                UpsilonCandidate.o UpsilonList.o
+                UpsilonCandidate.o UpsilonList.o BDtaunuMcReader.o
 
 targets = $(target_list)
 library_objects = $(addprefix src/, $(library_list))

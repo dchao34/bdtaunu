@@ -1,3 +1,6 @@
+#ifndef __ROOTREADER_H__
+#define __ROOTREADER_H__
+
 #include <TFile.h>
 #include <TTree.h>
 
@@ -38,3 +41,5 @@ class RootReader {
     //! Read in the next event from the TTree. 
     virtual int next_record();
 };
+
+#endif

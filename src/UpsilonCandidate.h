@@ -178,14 +178,14 @@ class UpsilonCandidate {
     int get_sig_tau_mode() const { return sig_tau_mode; }
 
     //! Candidate type. 
-    /*! Returns a string that corresponds to the #CandType enum in
+    /*! Returns an int that corresponds to the #CandType enum in
      * bdtaunu_definitions.h */
-    std::string get_cand_type() const;
+    int get_cand_type() const;
 
     //! Sample type. 
-    /*! Returns a string that corresponds to the #SampleType enum in
+    /*! Returns an int that corresponds to the #SampleType enum in
      * bdtaunu_definitions.h */
-    std::string get_sample_type() const;
+    int get_sample_type() const;
 };
 
 #endif

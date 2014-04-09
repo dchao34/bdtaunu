@@ -9,6 +9,7 @@
 
 #include "utilities.h"
 #include "bdtaunu_definitions.h"
+#include "RootReader.h"
 #include "BDtaunuReader.h"
 
 // The maximum number of candidates allowed in an event. This should
@@ -367,7 +368,7 @@ int BDtaunuReader::DetermineDstarMode(
   int n_daughters, n_D0, n_Dc, n_pi, n_pi0, n_gamma;
   n_daughters = n_D0 = n_Dc = n_pi = n_pi0 = n_gamma = 0;
   for (int i = 0; i < 5; i++) {
-    if (dau_abslund[i] < 0) {
+    if (dau_abslund[i] == 0) {
       break;
     } else {
       n_daughters += 1;
@@ -415,7 +416,7 @@ int BDtaunuReader::DetermineDMode(
   int n_daughters, n_K, n_Ks, n_pi, n_pi0;
   n_daughters = n_K = n_Ks = n_pi = n_pi0 = 0;
   for (int i = 0; i < 5; i++) {
-    if (dau_abslund[i] < 0) {
+    if (dau_abslund[i] == 0) {
       break;
     } else {
       n_daughters += 1;
@@ -507,7 +508,7 @@ int BDtaunuReader::next_record() {
     // Construct the Y(4S) candidate list for this event. 
     // This fills the UpsilonList upsilon_candidates.
     // TODO: ntuples only well behaved when nY < 100. 
-    if (nY < 100) 
+    if (nY < 80) 
       FillUpsilonList();
   }
 

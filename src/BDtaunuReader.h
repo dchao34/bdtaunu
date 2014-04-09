@@ -1,3 +1,6 @@
+#ifndef __BDTAUNUREADER_H__
+#define __BDTAUNUREADER_H__
+
 #include <TTree.h>
 
 #include <string>
@@ -59,10 +62,6 @@ class BDtaunuReader : public RootReader {
     std::string eventId;
     UpsilonList upsilon_candidates;
 
-    virtual void Initialize();
-    virtual void SetBranchAddress();
-    virtual void ClearColumnValues();
-
     void FillUpsilonList();
 
     void ComputeCandidateDecay(
@@ -75,6 +74,12 @@ class BDtaunuReader : public RootReader {
     int DetermineDMode(int D_lundId, int Dd1_lundId, int Dd2_lundId, 
                        int Dd3_lundId, int Dd4_lundId, int Dd5_lundId); 
     int DetermineTauMode(int taud1_lundId);
+
+  protected: 
+
+    virtual void Initialize();
+    virtual void SetBranchAddress();
+    virtual void ClearColumnValues();
 
 
   public: 
@@ -95,7 +100,7 @@ class BDtaunuReader : public RootReader {
      *
      * Calling this automatically computes all features associated
      * with the event that the analysis is interested in. */
-    int next_record();
+    virtual int next_record();
 
     //! Babar event Id. 
     std::string get_eventId() const { return eventId; }
@@ -113,3 +118,5 @@ class BDtaunuReader : public RootReader {
     const UpsilonList & get_candidate_list() const { return upsilon_candidates; }
 
 };
+
+#endif

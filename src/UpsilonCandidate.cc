@@ -101,7 +101,7 @@ UpsilonCandidate & UpsilonCandidate::operator=(const UpsilonCandidate &cand) {
 }
 
 // Examine the D, D*, and tau modes to determine the candidate type. 
-std::string UpsilonCandidate::get_cand_type() const {
+int UpsilonCandidate::get_cand_type() const {
 
   assert(sig_tau_mode != kUndefinedTauMode);
   assert(tag_dstar_mode != kUndefinedDstarMode);
@@ -115,42 +115,13 @@ std::string UpsilonCandidate::get_cand_type() const {
   if (sig_dstar_mode != kNoDstar)
     cand_type += 1;
 
-  std::string cand_type_string;
-  switch (cand_type) {
-    case kDDpi:
-      cand_type_string = "DDpi";
-      break;
-    case kDDstarpi:
-      cand_type_string = "DDstarpi";
-      break;
-    case kDstarDpi:
-      cand_type_string = "DstarDpi";
-      break;
-    case kDstarDstarpi:
-      cand_type_string = "DstarDstarpi";
-      break;
-    case kDDrho:
-      cand_type_string = "DDrho";
-      break;
-    case kDDstarrho:
-      cand_type_string = "DDstarrho";
-      break;
-    case kDstarDrho:
-      cand_type_string = "DstarDrho";
-      break;
-    case kDstarDstarrho:
-      cand_type_string = "DstarDstarrho";
-      break;
-    default:
-      cand_type_string = "Undefined";
-  }
-  return cand_type_string;
+  return cand_type;
 }
 
 
 // Examine the bflavor and D* decay mode on the signal to determine
 // sample type. 
-std::string UpsilonCandidate::get_sample_type() const {
+int UpsilonCandidate::get_sample_type() const {
 
   assert(bflavor != kUndefinedBFlavor);
   assert(sig_dstar_mode != kUndefinedDstarMode);
@@ -161,23 +132,5 @@ std::string UpsilonCandidate::get_sample_type() const {
   if (sig_dstar_mode != kNoDstar) 
     sample_type += 1;
 
-  std::string sample_type_string;
-  switch (sample_type) {
-    case kBcD:
-      sample_type_string = "BcD";
-      break;
-    case kBcDstar:
-      sample_type_string = "BcDstar";
-      break;
-    case kB0D:
-      sample_type_string = "B0D";
-      break;
-    case kB0Dstar:
-      sample_type_string = "B0Dstar";
-      break;
-    default: 
-      sample_type_string = "Undefined";
-  }
-
-  return sample_type_string;
+  return sample_type;
 }

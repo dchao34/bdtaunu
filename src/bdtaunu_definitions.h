@@ -1,3 +1,6 @@
+#ifndef __BDTAUNUDEFINITIONS_H__
+#define __BDTAUNUDEFINITIONS_H__
+
 /*! \file bdtaunu_definitions.h
  *  \brief Constants defined for this analysis.
  *
@@ -82,3 +85,28 @@ enum SampleType {
   kB0Dstar = 3,                 /*!< \f$ B^d \rightarrow D^* \f$ */
   kUndefinedSampleType = -1,    /*!< Undefined */
 };
+
+enum BMcType {
+  kNoB = 0,
+  kDtau = 1,
+  kDl = 2,
+  kD_SL = 3,
+  kDstarstar_SL = 4,
+  k0Charm_SL = 5,
+  k0Charm_Had = 6,
+  k1Charm_Had = 7,
+  k2Charm_Had = 8,
+  kUndefinedBMcType = -1,
+};
+
+enum McEventType {
+  kSignal = 0,
+  kNormalization = 1,
+  kSLSL_Bkg = 2,
+  kSLHad_Bkg = 3,
+  kHadHad_Bkg = 4,
+  kContinuum_Bkg = 5,
+  kUndefinedMcEventType = -1,
+};
+
+#endif
