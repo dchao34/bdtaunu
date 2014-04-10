@@ -60,7 +60,7 @@ class BDtaunuMcReader : public BDtaunuReader {
 
     virtual int next_record();
 
-    int get_mc_evttype() { return mc_evttype; }
+    int get_mc_evttype() const { return mc_evttype; }
 };
 
 #endif

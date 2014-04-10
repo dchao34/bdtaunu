@@ -28,14 +28,18 @@ int main() {
   db_status = make_event_weight_table(db, "data/event_weights.txt");
   db_status = make_machine_learning_sample_assignment_table(db, "meta/ml_sample_assignment.txt");
 
+  char *errmsg;
+  sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, &errmsg);
+
   db_status = create_event_table(db);
-  db_status = insert_event_table(db, "data/sp1237r1.root", "ntp1", 1);
-  db_status = insert_event_table(db, "data/sp998r1.root", "ntp1", 1);
-
   db_status = create_candidate_table(db);
-  db_status = insert_candidate_table(db, "data/sp1237r1.root", "ntp1");
-  db_status = insert_candidate_table(db, "data/sp998r1.root", "ntp1");
+  db_status = create_monte_carlo_table(db);
+  db_status = insert_table(db, "data/sp1237r1.root", "ntp1", 1);
+  db_status = insert_table(db, "data/sp1235r1.root", "ntp1", 1);
+  db_status = insert_table(db, "data/sp1005r1.root", "ntp1", 1);
+  db_status = insert_table(db, "data/sp998r1.root", "ntp1", 1);
 
+  sqlite3_exec(db, "END TRANSACTION", NULL, NULL, &errmsg);
   sqlite3_close_v2(db);
 
   return 0;

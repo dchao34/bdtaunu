@@ -11,15 +11,10 @@ int make_machine_learning_sample_assignment_table(
     );
 
 int create_event_table(sqlite3 *db); 
+int create_monte_carlo_table(sqlite3 *db);
 int create_candidate_table(sqlite3 *db); 
 
-int insert_event_table(
-    sqlite3 *db, 
+int insert_table(sqlite3 *db, 
     const char *root_fname, 
-    const char *root_trname = "ntp1", 
-    int run = 0
-    );
-
-int insert_candidate_table(sqlite3 *db, 
-    const char *root_fname, 
-    const char *root_trname);
+    const char *root_trname, 
+    int run);
