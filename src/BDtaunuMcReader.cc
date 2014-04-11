@@ -9,6 +9,9 @@
 #include <cassert>
 #include <algorithm>
 
+// Static methods to initialize the particle lundId arrays that are
+// needed to determine MC B meson types. 
+// Charged leptons. 
 std::vector<int> BDtaunuMcReader::build_ell() {
   std::vector<int> ell_temp;
   ell_temp.push_back(abs(lundIdMap["e-"]));
@@ -19,6 +22,7 @@ std::vector<int> BDtaunuMcReader::build_ell() {
 }
 const std::vector<int> BDtaunuMcReader::ell = build_ell();
 
+// Neutrinos. 
 std::vector<int> BDtaunuMcReader::build_nu() {
   std::vector<int> nu_temp;
   nu_temp.push_back(abs(lundIdMap["nu_e"]));
@@ -29,6 +33,7 @@ std::vector<int> BDtaunuMcReader::build_nu() {
 }
 const std::vector<int> BDtaunuMcReader::nu = build_nu();
 
+// D and D* mesons. 
 std::vector<int> BDtaunuMcReader::build_dmeson() {
   std::vector<int> dmeson_temp;
   dmeson_temp.push_back(abs(lundIdMap["D+"]));
@@ -40,6 +45,7 @@ std::vector<int> BDtaunuMcReader::build_dmeson() {
 }
 const std::vector<int> BDtaunuMcReader::dmeson = build_dmeson();
 
+// D** mesons. 
 std::vector<int> BDtaunuMcReader::build_dstarstar() {
   std::vector<int> dstarstar_temp;
   dstarstar_temp.push_back(abs(lundIdMap["D_0*+"]));
@@ -59,6 +65,7 @@ std::vector<int> BDtaunuMcReader::build_dstarstar() {
 }
 const std::vector<int> BDtaunuMcReader::dstarstar = build_dstarstar();
 
+// Ds(*) mesons.
 std::vector<int> BDtaunuMcReader::build_dstrange() {
   std::vector<int> dstrange_temp;
   dstrange_temp.push_back(abs(lundIdMap["D_s+"]));
@@ -130,11 +137,16 @@ void BDtaunuMcReader::ClearColumnValues() {
   mc_evttype = kUndefinedMcEventType;
 }
 
+// Find the MC B meson's from the mcLund array of the event. Determine
+// its flavor along the way. 
 void BDtaunuMcReader::FindBMesons() {
 
+  // Scan through the mcLund array. Store B mesons that are found.
   for (int i = 0; i < mcLen; i++) {
     if (abs(mcLund[i]) == lundIdMap["B0"] ||
         abs(mcLund[i]) == lundIdMap["B+"] ) {
+
+      // Error if we find more than two B mesons. 
       assert(!(McB1.mc_idx > -1 && McB2.mc_idx > -1));
 
       if (McB1.mc_idx == -1) {
@@ -154,35 +166,48 @@ void BDtaunuMcReader::FindBMesons() {
       }
     }
   }
+
+  // Error if we find only one B meson. 
   assert(
       (McB1.mc_idx == -1 && McB2.mc_idx == -1) ||
       (McB1.mc_idx > -1 && McB2.mc_idx > -1)
   );
+
+  // Error if the two B meson's flavor don't agree. Note the condition
+  // is also true for continuum events. 
   assert(McB1.bflavor == McB2.bflavor);
 
 }
 
+// Determine the B MC types. 
 int BDtaunuMcReader::DetermineBMcType(int bmc_idx) {
 
+  // Return if no MC B mesons are in the event. 
   if (bmc_idx == -1) 
     return kNoB;
 
+  // Count the number of daughters of the first generation B daughters
+  // and record the lundId of relevant daughters.
   int n_daughters = 0;
   int ell_lund, nu_lund, d_lund;
   ell_lund = nu_lund = d_lund = 0;
   int n_ell, n_nu, n_d, n_dstarstar, n_dstrange, n_other;
   n_ell = n_nu = n_d = n_dstarstar = n_dstrange = n_other = 0;
 
+  // Scan through the entire first generation daughter. 
   int begin_dauIdx = dauIdx[bmc_idx];
   int end_dauIdx = begin_dauIdx + dauLen[bmc_idx];
   for (int i = begin_dauIdx; i < end_dauIdx; i++) {
 
+    // Ignore daughters that have less than min_photon_energy (20
+    // MeV). They are probably spurious particles generated in MC. 
     if (mcLund[i] == lundIdMap["gamma"] && 
         mcenergy[i] < min_photon_energy) {
       continue;
     }
     n_daughters += 1;
 
+    // Determine the identity of each daughter. 
     if (std::binary_search(ell.begin(), ell.end(), abs(mcLund[i]))) {
       n_ell += 1;
       ell_lund = abs(mcLund[i]);
@@ -201,6 +226,8 @@ int BDtaunuMcReader::DetermineBMcType(int bmc_idx) {
     }
   }
 
+  // Determine the B MC Type. See bdtaunu_definitions.h for the
+  // definitions. 
   if (n_ell == 1 && n_nu == 1) {
     if (n_d == 1) {
       if (n_daughters == 3) {
@@ -235,6 +262,8 @@ int BDtaunuMcReader::DetermineBMcType(int bmc_idx) {
   }
 }
 
+// Determine the MC event type based on the B MC types. See
+// bdtaunu_definitions.h for the definitions. 
 int BDtaunuMcReader::DetermineMcEventType() {
   if (McB1.bmctype == kNoB && McB2.bmctype == kNoB) {
     return kContinuum_Bkg;
@@ -286,10 +315,17 @@ int BDtaunuMcReader::DetermineMcEventType() {
   }
 }
 
+// Main method that fills MC information.
 void BDtaunuMcReader::FillMCInformation() {
+
+  // Find the MC B mesons. 
   FindBMesons();
+
+  // Determine B MC types. 
   McB1.bmctype = DetermineBMcType(McB1.mc_idx);
   McB2.bmctype = DetermineBMcType(McB2.mc_idx);
+  
+  // Determine MC event types. 
   mc_evttype = DetermineMcEventType();
 }
 
