@@ -435,7 +435,7 @@ int BDtaunuReader::DetermineDMode(
   }
 
   // Determine the decay mode based on the daughter counts. 
-  if (abs(D_lundId) == abs(lundIdMap["Dc"])) {
+  if (abs(D_lundId) == abs(lundIdMap["D+"])) {
     if (n_daughters == 3 && n_K == 1 && n_pi == 2) {
       return kDc_Kpipi;
     } else if (n_daughters == 4 && n_K == 1 && n_pi == 2 && n_pi0 == 1) {
@@ -508,7 +508,8 @@ int BDtaunuReader::next_record() {
     // Construct the Y(4S) candidate list for this event. 
     // This fills the UpsilonList upsilon_candidates.
     // TODO: ntuples only well behaved when nY < 100. 
-    if (nY < 80) 
+    //if (nY < 70) 
+    if (nY < 40) 
       FillUpsilonList();
   }
 

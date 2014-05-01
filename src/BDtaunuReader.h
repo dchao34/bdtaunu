@@ -34,9 +34,8 @@ class BDtaunuReader : public RootReader {
     static std::map<std::string, int> lundIdMap;
 
   private: 
-
     int platform, partition, upperID, lowerID;
-    int nTrk, nY;
+    int nTrk;
     float R2All;
 
     float *YBPairMmissPrime2, *YBPairEextra50;
@@ -50,6 +49,9 @@ class BDtaunuReader : public RootReader {
     float *YSigBDMass, *YSigBDstarDeltaM;
     float *YSigBCosThetaDSoftCM, *YSigBsoftP3MagCM;
     float *YSigBhMass, *YSigBVtxProbh;
+
+  protected: 
+    int nY;
     int *Yd1Idx, *Yd2Idx;
     int *Bd1Idx, *Bd2Idx;
     int *Dd1Idx, *Dd2Idx, *Dd3Idx, *Dd4Idx, *Dd5Idx;
@@ -59,6 +61,7 @@ class BDtaunuReader : public RootReader {
     int *Dd1Lund, *Dd2Lund, *Dd3Lund, *Dd4Lund, *Dd5Lund;
     int *taud1Lund;
 
+  private: 
     std::string eventId;
     UpsilonList upsilon_candidates;
 

@@ -8,10 +8,11 @@ LDFLAGS += -L/usr/local/lib -lsqlite3
 PDT_FILE_PATHNAME = $(shell pwd)/meta/pdt.dat
 CXXFLAGS += -D__PDT_FILE_PATHNAME='"$(PDT_FILE_PATHNAME)"'
 
-target_list = main
+target_list = main main1
 library_list =  RootReader.o BDtaunuReader.o DatReader.o \
                 utilities.o bdtaunu_create_sqldatabase.o \
-                UpsilonCandidate.o UpsilonList.o BDtaunuMcReader.o
+                UpsilonCandidate.o UpsilonList.o BDtaunuMcReader.o \
+                BDtaunuSigMcReader.o create_sigmc_database.o
 
 targets = $(target_list)
 library_objects = $(addprefix src/, $(library_list))

@@ -4,12 +4,12 @@
 #include <errno.h>
 #include <sqlite3.h>
 
-#include "bdtaunu_create_sqldatabase.h"
+#include "create_sigmc_database.h"
 
 using namespace std;
 
 int main() {
-  const char *dbname = "bdtaunu.db";
+  const char *dbname = "sigmc.db";
   if (access(dbname, F_OK) == 0) {
     cout << "error: cannot create \"" << dbname << "\". " << endl;
     cout << "another file with the same name already exists. " << endl;
@@ -25,19 +25,13 @@ int main() {
     return db_status;
   }
 
-  db_status = make_event_weight_table(db, "data/event_weights.txt");
-  db_status = make_machine_learning_sample_assignment_table(db, "meta/generic_ml_assignment.txt");
+  db_status = make_mlsample_assignment_table(db, "meta/sigmc_ml_assignment.txt");
 
   char *errmsg;
   sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, &errmsg);
 
-  db_status = create_event_table(db);
-  db_status = create_candidate_table(db);
-  db_status = create_monte_carlo_table(db);
-  db_status = insert_table(db, "data/sp1237r1.root", "ntp1", 1);
-  db_status = insert_table(db, "data/sp1235r1.root", "ntp1", 1);
-  db_status = insert_table(db, "data/sp1005r1.root", "ntp1", 1);
-  db_status = insert_table(db, "data/sp998r1.root", "ntp1", 1);
+  db_status = create_sigmc_candidate_table(db);
+  db_status = insert_sigmc_table(db, "data/sigmc_fwk.root", "ntp1");
 
   sqlite3_exec(db, "END TRANSACTION", NULL, NULL, &errmsg);
   sqlite3_close_v2(db);

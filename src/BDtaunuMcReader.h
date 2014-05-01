@@ -29,14 +29,12 @@ class BDtaunuMcReader : public BDtaunuReader {
     static std::vector<int> build_dstarstar();
     static std::vector<int> build_dstrange();
 
-  private:
+	protected:
     int mcLen;
     int *mcLund; 
     int *mothIdx;
     int *dauIdx, *dauLen;
     float *mcenergy;
-
-    int mc_evttype;
 
     struct McBMeson {
       int bflavor;
@@ -47,14 +45,18 @@ class BDtaunuMcReader : public BDtaunuReader {
         mc_idx(-1), bmctype(kUndefinedBMcType) {};
     } McB1, McB2;
 
-    virtual void Initialize();
-    virtual void SetBranchAddress();
-    virtual void ClearColumnValues();
+  private:
+    int mc_evttype;
 
     void FillMCInformation();
     void FindBMesons();
     int DetermineBMcType(int bmc_idx);
     int DetermineMcEventType();
+
+	protected:
+    virtual void Initialize();
+    virtual void SetBranchAddress();
+    virtual void ClearColumnValues();
 
   public: 
 
