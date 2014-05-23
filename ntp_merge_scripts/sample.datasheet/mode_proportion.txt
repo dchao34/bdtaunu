@@ -1,0 +1,23 @@
+SP mode and Decay mapping:
+11444    B0->Dtau
+11445    B0->D*tau
+11446    Bc->Dtau
+11447    Bc->D*tau
+
+Branching Fractions:
+Y -> B0 : Y -> B+ = 1 : 1
+B0->Dtau  = 1.1e-3
+B0->D*tau = 1.5e-3
+Bc->Dtau  = 0.77e-3
+Bc->D*tau = 2.04e-3
+
+D0  decay is 36.82% of total
+D*0 decay is 36.82% of total
+D+  decay is 24.29% of total
+D*+ decay is 32.78% of total
+
+Effective branching fractions:
+B0->Dtau  = 1.1e-3 * 0.3682 = 0.4050e-3
+B0->D*tau = 1.5e-3 * 0.3582 = 0.5523e-3
+Bc->Dtau  = 0.77e-3 * 0.2429 = 0.1870e-3
+Bc->D*tau = 2.04e-3 * 0.3278 = 0.6687e-3
