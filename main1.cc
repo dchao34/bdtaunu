@@ -31,7 +31,7 @@ int main() {
   sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, &errmsg);
 
   db_status = create_sigmc_candidate_table(db);
-  db_status = insert_sigmc_table(db, "data/sigmc_fwk.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11444r1.root", "ntp1");
 
   sqlite3_exec(db, "END TRANSACTION", NULL, NULL, &errmsg);
   sqlite3_close_v2(db);

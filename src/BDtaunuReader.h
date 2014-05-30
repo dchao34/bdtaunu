@@ -30,7 +30,13 @@ class BDtaunuReader : public RootReader {
   protected: 
     static std::map<std::string, int> build_lund_map();
 
-    static const int maximum_candidates_allowed;
+    static const int maximum_Y_candidates;
+    static const int maximum_B_candidates;
+    static const int maximum_D_candidates;
+    static const int maximum_tau_candidates;
+    static const int maximum_h_candidates;
+    static const int maximum_l_candidates;
+    static const int maximum_gamma_candidates;
     static std::map<std::string, int> lundIdMap;
 
   private: 
@@ -51,7 +57,8 @@ class BDtaunuReader : public RootReader {
     float *YSigBhMass, *YSigBVtxProbh;
 
   protected: 
-    int nY;
+    int nY, nB, nD; 
+    int ntau, nh, nl, ngamma;
     int *Yd1Idx, *Yd2Idx;
     int *Bd1Idx, *Bd2Idx;
     int *Dd1Idx, *Dd2Idx, *Dd3Idx, *Dd4Idx, *Dd5Idx;

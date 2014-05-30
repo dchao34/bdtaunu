@@ -14,7 +14,13 @@
 
 // The maximum number of candidates allowed in an event. This should
 // be consistent with the number set in BtaTupleMaker. 
-const int BDtaunuReader::maximum_candidates_allowed = 100;
+const int BDtaunuReader::maximum_Y_candidates = 800;
+const int BDtaunuReader::maximum_B_candidates = 400;
+const int BDtaunuReader::maximum_D_candidates = 200;
+const int BDtaunuReader::maximum_tau_candidates = 100;
+const int BDtaunuReader::maximum_h_candidates = 100;
+const int BDtaunuReader::maximum_l_candidates = 100;
+const int BDtaunuReader::maximum_gamma_candidates = 100;
 
 // map<string, int> that associates particle name to its lundId. For
 // example, "B0" : 511.
@@ -70,48 +76,48 @@ BDtaunuReader::BDtaunuReader(
 void BDtaunuReader::Initialize() {
 
   // Allocate space to read in arrays from ntuples. 
-  YBPairMmissPrime2 = new float[maximum_candidates_allowed];
-  YBPairEextra50 = new float[maximum_candidates_allowed];
-  YTagBlP3MagCM = new float[maximum_candidates_allowed];
-  YSigBhP3MagCM = new float[maximum_candidates_allowed];
-  YTagBCosBY = new float[maximum_candidates_allowed];
-  YSigBCosBY = new float[maximum_candidates_allowed];
-  YTagBCosThetaDlCM = new float[maximum_candidates_allowed];
-  YSigBCosThetaDtauCM = new float[maximum_candidates_allowed];
-  YSigBVtxProbB = new float[maximum_candidates_allowed];
-  YBPairCosThetaT = new float[maximum_candidates_allowed];
-  YTagBDMass = new float[maximum_candidates_allowed];
-  YTagBDstarDeltaM = new float[maximum_candidates_allowed];
-  YTagBCosThetaDSoftCM = new float[maximum_candidates_allowed];
-  YTagBsoftP3MagCM = new float[maximum_candidates_allowed];
-  YSigBDMass = new float[maximum_candidates_allowed];
-  YSigBDstarDeltaM = new float[maximum_candidates_allowed];
-  YSigBCosThetaDSoftCM = new float[maximum_candidates_allowed];
-  YSigBsoftP3MagCM = new float[maximum_candidates_allowed];
-  YSigBhMass = new float[maximum_candidates_allowed];
-  YSigBVtxProbh = new float[maximum_candidates_allowed];
+  YBPairMmissPrime2 = new float[maximum_Y_candidates];
+  YBPairEextra50 = new float[maximum_Y_candidates];
+  YTagBlP3MagCM = new float[maximum_Y_candidates];
+  YSigBhP3MagCM = new float[maximum_Y_candidates];
+  YTagBCosBY = new float[maximum_Y_candidates];
+  YSigBCosBY = new float[maximum_Y_candidates];
+  YTagBCosThetaDlCM = new float[maximum_Y_candidates];
+  YSigBCosThetaDtauCM = new float[maximum_Y_candidates];
+  YSigBVtxProbB = new float[maximum_Y_candidates];
+  YBPairCosThetaT = new float[maximum_Y_candidates];
+  YTagBDMass = new float[maximum_Y_candidates];
+  YTagBDstarDeltaM = new float[maximum_Y_candidates];
+  YTagBCosThetaDSoftCM = new float[maximum_Y_candidates];
+  YTagBsoftP3MagCM = new float[maximum_Y_candidates];
+  YSigBDMass = new float[maximum_Y_candidates];
+  YSigBDstarDeltaM = new float[maximum_Y_candidates];
+  YSigBCosThetaDSoftCM = new float[maximum_Y_candidates];
+  YSigBsoftP3MagCM = new float[maximum_Y_candidates];
+  YSigBhMass = new float[maximum_Y_candidates];
+  YSigBVtxProbh = new float[maximum_Y_candidates];
 
-  Yd1Idx = new int[maximum_candidates_allowed];
-  Yd2Idx = new int[maximum_candidates_allowed];
-  Bd1Idx = new int[maximum_candidates_allowed];
-  Bd2Idx = new int[maximum_candidates_allowed];
-  Dd1Idx = new int[maximum_candidates_allowed];
-  Dd2Idx = new int[maximum_candidates_allowed];
-  Dd3Idx = new int[maximum_candidates_allowed];
-  Dd4Idx = new int[maximum_candidates_allowed];
-  Dd5Idx = new int[maximum_candidates_allowed];
-  taud1Idx = new int[maximum_candidates_allowed];
+  Yd1Idx = new int[maximum_Y_candidates];
+  Yd2Idx = new int[maximum_Y_candidates];
+  Bd1Idx = new int[maximum_B_candidates];
+  Bd2Idx = new int[maximum_B_candidates];
+  Dd1Idx = new int[maximum_D_candidates];
+  Dd2Idx = new int[maximum_D_candidates];
+  Dd3Idx = new int[maximum_D_candidates];
+  Dd4Idx = new int[maximum_D_candidates];
+  Dd5Idx = new int[maximum_D_candidates];
+  taud1Idx = new int[maximum_tau_candidates];
 
-  Yd1Lund = new int[maximum_candidates_allowed];
-  Yd2Lund = new int[maximum_candidates_allowed];
-  Bd1Lund = new int[maximum_candidates_allowed];
-  Bd2Lund = new int[maximum_candidates_allowed];
-  Dd1Lund = new int[maximum_candidates_allowed];
-  Dd2Lund = new int[maximum_candidates_allowed];
-  Dd3Lund = new int[maximum_candidates_allowed];
-  Dd4Lund = new int[maximum_candidates_allowed];
-  Dd5Lund = new int[maximum_candidates_allowed];
-  taud1Lund = new int[maximum_candidates_allowed];
+  Yd1Lund = new int[maximum_Y_candidates];
+  Yd2Lund = new int[maximum_Y_candidates];
+  Bd1Lund = new int[maximum_B_candidates];
+  Bd2Lund = new int[maximum_B_candidates];
+  Dd1Lund = new int[maximum_D_candidates];
+  Dd2Lund = new int[maximum_D_candidates];
+  Dd3Lund = new int[maximum_D_candidates];
+  Dd4Lund = new int[maximum_D_candidates];
+  Dd5Lund = new int[maximum_D_candidates];
+  taud1Lund = new int[maximum_tau_candidates];
 
   // Specify the variables where each ntuple branch should be read into. 
   SetBranchAddress();
@@ -127,6 +133,12 @@ void BDtaunuReader::SetBranchAddress() {
   tr->SetBranchAddress("lowerID", &lowerID);
   tr->SetBranchAddress("nTRK", &nTrk);
   tr->SetBranchAddress("nY", &nY);
+  tr->SetBranchAddress("nB", &nB);
+  tr->SetBranchAddress("nD", &nD);
+  tr->SetBranchAddress("ntau", &ntau);
+  tr->SetBranchAddress("nh", &nh);
+  tr->SetBranchAddress("nl", &nl);
+  tr->SetBranchAddress("ngamma", &ngamma);
   tr->SetBranchAddress("R2All", &R2All);
   tr->SetBranchAddress("YBPairMmissPrime2", YBPairMmissPrime2);
   tr->SetBranchAddress("YBPairEextra50", YBPairEextra50);
@@ -178,6 +190,12 @@ void BDtaunuReader::ClearColumnValues() {
   upperID = -999;
   nTrk = -999;
   nY = -999;
+  nB = -999;
+  nD = -999;
+  ntau = -999;
+  nh = -999;
+  nl = -999;
+  ngamma = -999;
   R2All = -999;
   eventId = std::string();
   upsilon_candidates = UpsilonList();
@@ -507,10 +525,19 @@ int BDtaunuReader::next_record() {
 
     // Construct the Y(4S) candidate list for this event. 
     // This fills the UpsilonList upsilon_candidates.
-    // TODO: ntuples only well behaved when nY < 100. 
-    //if (nY < 70) 
-    if (nY < 40) 
+    // ntuples only well behaved when number of reconstructed 
+    // candidates do not exceed maximum allowed. 
+    if ( 
+        (nY < maximum_Y_candidates) &&
+        (nB < maximum_B_candidates) &&
+        (nD < maximum_D_candidates) &&
+        (ntau < maximum_tau_candidates) &&
+        (nh < maximum_h_candidates) &&
+        (nl < maximum_l_candidates) &&
+        (ngamma < maximum_gamma_candidates) 
+       ) {
       FillUpsilonList();
+    }
   }
 
   return next_record_idx;

@@ -47,21 +47,21 @@ BDtaunuSigMcReader::~BDtaunuSigMcReader() {
 
 
 void BDtaunuSigMcReader::Initialize() {
-  hd1Lund = new int[maximum_candidates_allowed];
-  hd2Lund = new int[maximum_candidates_allowed];
-  hd3Lund = new int[maximum_candidates_allowed];
-  hd1Idx = new int[maximum_candidates_allowed];
-  hd2Idx = new int[maximum_candidates_allowed];
-  hd3Idx = new int[maximum_candidates_allowed];
-  ld1Lund = new int[maximum_candidates_allowed];
-  ld2Lund = new int[maximum_candidates_allowed];
-  ld3Lund = new int[maximum_candidates_allowed];
-  ld1Idx = new int[maximum_candidates_allowed];
-  ld2Idx = new int[maximum_candidates_allowed];
-  ld3Idx = new int[maximum_candidates_allowed];
-  hMCIdx = new int[maximum_candidates_allowed];
-  lMCIdx = new int[maximum_candidates_allowed];
-  gammaMCIdx = new int[maximum_candidates_allowed];
+  hd1Lund = new int[maximum_h_candidates];
+  hd2Lund = new int[maximum_h_candidates];
+  hd3Lund = new int[maximum_h_candidates];
+  hd1Idx = new int[maximum_h_candidates];
+  hd2Idx = new int[maximum_h_candidates];
+  hd3Idx = new int[maximum_h_candidates];
+  ld1Lund = new int[maximum_l_candidates];
+  ld2Lund = new int[maximum_l_candidates];
+  ld3Lund = new int[maximum_l_candidates];
+  ld1Idx = new int[maximum_l_candidates];
+  ld2Idx = new int[maximum_l_candidates];
+  ld3Idx = new int[maximum_l_candidates];
+  hMCIdx = new int[maximum_h_candidates];
+  lMCIdx = new int[maximum_l_candidates];
+  gammaMCIdx = new int[maximum_gamma_candidates];
   SetBranchAddress();
   ClearColumnValues();
 }
