@@ -31,7 +31,62 @@ int main() {
   sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, &errmsg);
 
   db_status = create_sigmc_candidate_table(db);
+
   db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11444r1.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11444r2.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11444r3.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11444r4.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11444r5.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11444r6.root", "ntp1");
+
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11445r1.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11445r2.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11445r3.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11445r4.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11445r5.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11445r6.root", "ntp1");
+
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11446r1.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11446r2.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11446r3.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11446r4.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11446r5.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11446r6.root", "ntp1");
+
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11447r1.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11447r2.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11447r3.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11447r4.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11447r5.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/A/sp11447r6.root", "ntp1");
+
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11444r1.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11444r2.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11444r3.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11444r4.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11444r5.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11444r6.root", "ntp1");
+
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11445r1.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11445r2.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11445r3.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11445r4.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11445r5.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11445r6.root", "ntp1");
+
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11446r1.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11446r2.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11446r3.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11446r4.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11446r5.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11446r6.root", "ntp1");
+
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11447r1.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11447r2.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11447r3.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11447r4.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11447r5.root", "ntp1");
+  db_status = insert_sigmc_table(db, "data/signal/may_16_2014/B/sp11447r6.root", "ntp1");
 
   sqlite3_exec(db, "END TRANSACTION", NULL, NULL, &errmsg);
   sqlite3_close_v2(db);

@@ -115,12 +115,13 @@ int insert_sigmc_table(sqlite3 *db,
       "@cand_type "
       ");", -1, &candidate_stmt, NULL);
 
-  int counter = 0;
-
+  std::cout << "begin processing " << root_fname << "." << std::endl;
   BDtaunuSigMcReader rootreader(root_fname, root_trname);
+
+  int counter = 0;
   while (rootreader.next_record() != -1) {
     if (counter % 1000 == 0) {
-      std::cout << "processing event " << counter << std::endl;
+      std::cout << "completed " << counter << " events." << std::endl;
     }
     counter += 1;
 
@@ -164,6 +165,8 @@ int insert_sigmc_table(sqlite3 *db,
     }
 
   }
+  std::cout << "done. " << std::endl;
+  std::cout << std::endl;
 
   db_status = sqlite3_finalize(candidate_stmt);
 
@@ -173,6 +176,9 @@ int insert_sigmc_table(sqlite3 *db,
 int make_mlsample_assignment_table(
     sqlite3 *db, 
     const char *ml_assignment_fname) {
+
+  std::cout << std::endl;
+  std::cout << "making ml assignments. " << std::endl;
 
   char *errmsg;
   sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, &errmsg);
@@ -202,6 +208,9 @@ int make_mlsample_assignment_table(
     db_status = sqlite3_step(stmt);
     db_status = sqlite3_reset(stmt);
   }
+
+  std::cout << "done. " << std::endl;
+  std::cout << std::endl;
 
   db_status = sqlite3_finalize(stmt);
 
