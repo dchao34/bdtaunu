@@ -1,30 +1,30 @@
-#include "DDpiFeatureExtractor.h"
+#include "DDrhoFeatureExtractor.h"
 #include "bdtaunu_definitions.h"
 
 #include <string>
 #include <sstream>
 
-const std::string DDpiFeatureExtractor::candtype_name = "DDpi";
+const std::string DDrhoFeatureExtractor::candtype_name = "DDrho";
 
-DDpiFeatureExtractor::DDpiFeatureExtractor() : 
-  YCandFeatureExtractor(9, 10, 9, 0, 0)  {
+DDrhoFeatureExtractor::DDrhoFeatureExtractor() : 
+  YCandFeatureExtractor(11, 10, 9, 0, 0)  {
 
   Clear();
 }
 
-DDpiFeatureExtractor::DDpiFeatureExtractor(std::string &mlsample) :
-  YCandFeatureExtractor(9, 10, 9, 0, 0) {
+DDrhoFeatureExtractor::DDrhoFeatureExtractor(std::string &mlsample) :
+  YCandFeatureExtractor(11, 10, 9, 0, 0) {
 
   Clear();
   mlsample_type = mlsample;
 }
 
-std::string DDpiFeatureExtractor::get_sql_query_statement() const {
+std::string DDrhoFeatureExtractor::get_sql_query_statement() const {
   return YCandFeatureExtractor::get_sql_query_statement(
             candtype_name, mlsample_type);
 }
 
-void DDpiFeatureExtractor::update_features(sqlite3_stmt *stmt) {
+void DDrhoFeatureExtractor::update_features(sqlite3_stmt *stmt) {
   YCandFeatureExtractor::update_features(stmt);
   numeric_features[0] = tag_lp3;
   numeric_features[1] = tag_cosBY;
@@ -35,6 +35,8 @@ void DDpiFeatureExtractor::update_features(sqlite3_stmt *stmt) {
   numeric_features[6] = eextra50;
   numeric_features[7] = tag_Dmass;
   numeric_features[8] = sig_Dmass;
+  numeric_features[9] = sig_hmass;
+  numeric_features[10] = sig_vtxh;
 
   switch (tag_Dtype) {
     case kDc_Kpipi:
@@ -135,7 +137,7 @@ void DDpiFeatureExtractor::update_features(sqlite3_stmt *stmt) {
   return;
 }
 
-bool DDpiFeatureExtractor::pass_selection() const {
+bool DDrhoFeatureExtractor::pass_selection() const {
 
   if (!YCandFeatureExtractor::pass_selection()) {
     return false;
@@ -176,7 +178,7 @@ bool DDpiFeatureExtractor::pass_selection() const {
   return true;
 }
 
-std::string DDpiFeatureExtractor::get_dat_header() const {
+std::string DDrhoFeatureExtractor::get_dat_header() const {
   std::stringstream ss;
   ss << "truth_match" << "|";
   ss << "tag_lp3" << "|";
@@ -188,13 +190,15 @@ std::string DDpiFeatureExtractor::get_dat_header() const {
   ss << "eextra50" << "|";
   ss << "tag_Dmass" << "|";
   ss << "sig_Dmass" << "|";
+  ss << "sig_hmass" << "|";
+  ss << "sig_vtxh" << "|";
   ss << "tag_Dtype" << "|";
   ss << "sig_Dtype";
   return ss.str();
 }
 
 
-std::string DDpiFeatureExtractor::get_dat_line() const {
+std::string DDrhoFeatureExtractor::get_dat_line() const {
   std::stringstream ss;
   ss << truth_match << "|";
   ss << tag_lp3 << "|";
@@ -206,6 +210,8 @@ std::string DDpiFeatureExtractor::get_dat_line() const {
   ss << eextra50 << "|";
   ss << tag_Dmass << "|";
   ss << sig_Dmass << "|";
+  ss << sig_hmass << "|";
+  ss << sig_vtxh << "|";
   ss << tag_Dtype << "|";
   ss << sig_Dtype;
   return ss.str();
