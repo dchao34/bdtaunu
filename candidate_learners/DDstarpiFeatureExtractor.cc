@@ -242,6 +242,7 @@ bool DDstarpiFeatureExtractor::pass_selection() const {
 
 std::string DDstarpiFeatureExtractor::get_dat_header() const {
   std::stringstream ss;
+  ss << "id" << "|";
   ss << "truth_match" << "|";
   ss << "tag_lp3" << "|";
   ss << "tag_cosBY" << "|";
@@ -263,6 +264,7 @@ std::string DDstarpiFeatureExtractor::get_dat_header() const {
 
 std::string DDstarpiFeatureExtractor::get_dat_line() const {
   std::stringstream ss;
+  ss << id << "|";
   ss << truth_match << "|";
   ss << tag_lp3 << "|";
   ss << tag_cosBY << "|";

@@ -180,6 +180,7 @@ bool DDrhoFeatureExtractor::pass_selection() const {
 
 std::string DDrhoFeatureExtractor::get_dat_header() const {
   std::stringstream ss;
+  ss << "id" << "|";
   ss << "truth_match" << "|";
   ss << "tag_lp3" << "|";
   ss << "tag_cosBY" << "|";
@@ -200,6 +201,7 @@ std::string DDrhoFeatureExtractor::get_dat_header() const {
 
 std::string DDrhoFeatureExtractor::get_dat_line() const {
   std::stringstream ss;
+  ss << id << "|";
   ss << truth_match << "|";
   ss << tag_lp3 << "|";
   ss << tag_cosBY << "|";
