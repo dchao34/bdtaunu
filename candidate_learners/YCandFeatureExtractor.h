@@ -40,7 +40,10 @@ class YCandFeatureExtractor {
 
   public:
     YCandFeatureExtractor();
-    YCandFeatureExtractor(int n_num, int n_tagD, int n_sigD);
+    YCandFeatureExtractor(
+        int n_num, 
+        int n_tagD, int n_sigD,
+        int n_tagDstar, int n_sigDstar);
     virtual ~YCandFeatureExtractor() {};
 
     virtual std::string get_candtype_name() const = 0;

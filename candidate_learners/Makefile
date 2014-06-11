@@ -7,7 +7,7 @@ LDFLAGS += -L/usr/local/lib -lsqlite3
 
 target_list = main
 library_list = YCandFeatureExtractor.o \
-							 DDpiFeatureExtractor.o
+							 DDpiFeatureExtractor.o DDstarpiFeatureExtractor.o
 header_only_list = YCandFeatureExtractorFactory.h
 
 targets = $(target_list)

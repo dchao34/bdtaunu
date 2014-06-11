@@ -1,8 +1,8 @@
 #ifndef __YCANDFEATUREEXTRACTORFACTORY_H__
 #define __YCANDFEATUREEXTRACTORFACTORY_H__
 
-#include "YCandFeatureExtractor.h"
 #include "DDpiFeatureExtractor.h"
+#include "DDstarpiFeatureExtractor.h"
 #include "bdtaunu_definitions.h"
 
 #include <string>
@@ -15,6 +15,8 @@ class YCandFeatureExtractorFactory {
       switch (cand_type) {
         case kDDpi:
           return new DDpiFeatureExtractor(ml_sample_type);
+        case kDDstarpi:
+          return new DDstarpiFeatureExtractor(ml_sample_type);
       }
       throw "Invalid Y(4S) candidate type.";
     }

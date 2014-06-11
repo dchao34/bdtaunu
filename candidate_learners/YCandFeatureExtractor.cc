@@ -74,14 +74,40 @@ YCandFeatureExtractor::YCandFeatureExtractor() :
 }
 YCandFeatureExtractor::YCandFeatureExtractor(
     int n_num, 
-    int n_tagD, 
-    int n_sigD) : 
-    numeric_features(n_num, 0), 
-    tagD_indicators(n_tagD, 0),
-    sigD_indicators(n_sigD, 0), 
-    tagDstar_indicators(), 
-    sigDstar_indicators() {
+    int n_tagD, int n_sigD, 
+    int n_tagDstar, int n_sigDstar) {
+
     Clear();
+
+    if (n_num > 0) {
+      numeric_features = std::vector<double>(n_num, 0);
+    } else {
+      numeric_features = std::vector<double>();
+    }
+
+    if (n_tagD > 0) {
+      tagD_indicators = std::vector<int>(n_tagD, 0);
+    } else {
+      tagD_indicators = std::vector<int>();
+    }
+
+    if (n_sigD > 0) {
+      sigD_indicators = std::vector<int>(n_sigD, 0);
+    } else {
+      sigD_indicators = std::vector<int>();
+    }
+
+    if (n_tagDstar > 0) {
+      tagDstar_indicators = std::vector<int>(n_tagDstar, 0);
+    } else {
+      tagDstar_indicators = std::vector<int>();
+    }
+
+    if (n_sigDstar > 0) {
+      sigDstar_indicators = std::vector<int>(n_sigDstar, 0);
+    } else {
+      sigDstar_indicators = std::vector<int>();
+    }
 }
 
 
