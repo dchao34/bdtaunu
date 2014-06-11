@@ -147,6 +147,7 @@ std::string YCandFeatureExtractor::get_sql_query_statement(
                           "FROM candidates NATURAL JOIN ml_sample "
                            "WHERE ml_sample='" + ml_sample_type
                            + "' AND cand_type=" + cand_type
+                           + " AND division=1"
                            + ";";
   return sql_query;
 }

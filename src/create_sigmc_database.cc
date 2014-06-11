@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include <cstdlib>
 
 #include "BDtaunuSigMcReader.h"
 #include "DatReader.h"
@@ -187,7 +188,8 @@ int make_mlsample_assignment_table(
   sqlite3_stmt *stmt = NULL;
   db_status = sqlite3_prepare_v2(db, "CREATE TABLE ml_sample("
       "babar_event_id TEXT UNIQUE, "
-      "ml_sample TEXT "
+      "ml_sample TEXT, "
+      "division INTEGER "
       ");", -1, &stmt, NULL);
   db_status = sqlite3_step(stmt);
   db_status = sqlite3_finalize(stmt);
@@ -196,15 +198,17 @@ int make_mlsample_assignment_table(
   db_status = sqlite3_prepare_v2(db, 
       "INSERT INTO ml_sample("
       "babar_event_id, "
-      "ml_sample"
+      "ml_sample,"
+      "division"
       ") VALUES("
-      "?1, ?2"
+      "?1, ?2, ?3"
       ");", -1, &stmt, NULL);
 
   DatReader datreader(ml_assignment_fname, "|");
   while (datreader.read_next_line()) {
     db_status = sqlite3_bind_text(stmt, 1, datreader.get_field("eventId").c_str(), -1, SQLITE_STATIC);
     db_status = sqlite3_bind_text(stmt, 2, datreader.get_field("ml_sample").c_str(), -1, SQLITE_STATIC);
+    db_status = sqlite3_bind_int(stmt, 3, atoi(datreader.get_field("division").c_str()));
     db_status = sqlite3_step(stmt);
     db_status = sqlite3_reset(stmt);
   }
