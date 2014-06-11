@@ -3,6 +3,8 @@
 
 #include "DDpiFeatureExtractor.h"
 #include "DDstarpiFeatureExtractor.h"
+#include "DstarDpiFeatureExtractor.h"
+#include "DstarDstarpiFeatureExtractor.h"
 #include "bdtaunu_definitions.h"
 
 #include <string>
@@ -17,6 +19,10 @@ class YCandFeatureExtractorFactory {
           return new DDpiFeatureExtractor(ml_sample_type);
         case kDDstarpi:
           return new DDstarpiFeatureExtractor(ml_sample_type);
+        case kDstarDpi:
+          return new DstarDpiFeatureExtractor(ml_sample_type);
+        case kDstarDstarpi:
+          return new DstarDstarpiFeatureExtractor(ml_sample_type);
       }
       throw "Invalid Y(4S) candidate type.";
     }

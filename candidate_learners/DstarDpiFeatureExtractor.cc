@@ -1,31 +1,34 @@
-#include "DDpiFeatureExtractor.h"
+#include "DstarDpiFeatureExtractor.h"
 #include "bdtaunu_definitions.h"
 
 #include <string>
 #include <sstream>
+#include <cassert>
 
-const std::string DDpiFeatureExtractor::candtype_name = "DDpi";
+const std::string DstarDpiFeatureExtractor::candtype_name = "DstarDpi";
 
-DDpiFeatureExtractor::DDpiFeatureExtractor() : 
-  YCandFeatureExtractor(9, 12, 9, 0, 0)  {
+DstarDpiFeatureExtractor::DstarDpiFeatureExtractor() : 
+  YCandFeatureExtractor(11, 9, 9, 4, 0)  {
 
   Clear();
 }
 
-DDpiFeatureExtractor::DDpiFeatureExtractor(std::string &mlsample) :
-  YCandFeatureExtractor(9, 12, 9, 0, 0) {
+DstarDpiFeatureExtractor::DstarDpiFeatureExtractor(std::string &mlsample) :
+  YCandFeatureExtractor(11, 9, 9, 4, 0)  {
 
   Clear();
   mlsample_type = mlsample;
 }
 
-std::string DDpiFeatureExtractor::get_sql_query_statement() const {
+std::string DstarDpiFeatureExtractor::get_sql_query_statement() const {
   return YCandFeatureExtractor::get_sql_query_statement(
             candtype_name, mlsample_type);
 }
 
-void DDpiFeatureExtractor::update_features(sqlite3_stmt *stmt) {
+void DstarDpiFeatureExtractor::update_features(sqlite3_stmt *stmt) {
+
   YCandFeatureExtractor::update_features(stmt);
+
   numeric_features[0] = tag_lp3;
   numeric_features[1] = tag_cosBY;
   numeric_features[2] = tag_cosThetaDl;
@@ -33,8 +36,10 @@ void DDpiFeatureExtractor::update_features(sqlite3_stmt *stmt) {
   numeric_features[4] = sig_vtxB;
   numeric_features[5] = mmiss_prime2;
   numeric_features[6] = eextra50;
-  numeric_features[7] = tag_Dmass;
-  numeric_features[8] = sig_Dmass;
+  numeric_features[7] = tag_deltaM;
+  numeric_features[8] = tag_cosThetaDSoft;
+  numeric_features[9] = tag_softP3MagCM;
+  numeric_features[10] = sig_Dmass;
 
   switch (tag_Dtype) {
     case kDc_Kpipi:
@@ -50,37 +55,37 @@ void DDpiFeatureExtractor::update_features(sqlite3_stmt *stmt) {
       tagD_indicators[2] = 2;
       break;
     case kDc_Kspipi0:
-      tagD_indicators[3] = 1;
+      tagD_indicators[2] = 3;
       break;
     case kDc_Kspipipi:
       // do nothing
       break;
     case kDc_KKpi:
-      tagD_indicators[4] = 1;
+      tagD_indicators[3] = 1;
       break;
     case kD0_Kpi:
-      tagD_indicators[5] = 1;
+      tagD_indicators[4] = 1;
       break;
     case kD0_Kpipi0:
-      tagD_indicators[6] = 1;
+      tagD_indicators[5] = 1;
       break;
     case kD0_Kpipipi:
-      tagD_indicators[7] = 1;
+      tagD_indicators[6] = 1;
       break;
     case kD0_Kpipipipi0:
       // do nothing
       break;
     case kD0_Kspipi:
-      tagD_indicators[8] = 1;
+      tagD_indicators[7] = 1;
       break;
     case kD0_Kspipipi0:
-      tagD_indicators[8] = 2;
+      tagD_indicators[7] = 2;
       break;
     case kD0_Kspi0:
-      tagD_indicators[8] = 3;
+      tagD_indicators[7] = 3;
       break;
     case kD0_KK:
-      tagD_indicators[9] = 1;
+      tagD_indicators[8] = 1;
       break;
   }
 
@@ -132,35 +137,89 @@ void DDpiFeatureExtractor::update_features(sqlite3_stmt *stmt) {
       break;
   }
 
+  switch (tag_Dstartype) {
+    case kDstar0_D0pi0:
+      tagDstar_indicators[0] = 1;
+      break;
+    case kDstar0_D0gamma:
+      tagDstar_indicators[1] = 1;
+      break;
+    case kDstarc_D0pi:
+      tagDstar_indicators[2] = 1;
+      break;
+    case kDstarc_Dcpi0:
+      tagDstar_indicators[3] = 1;
+      break;
+    case kDstarc_Dcgamma:
+      // do nothing
+      break;
+  }
+
   return;
 }
 
-bool DDpiFeatureExtractor::pass_selection() const {
+bool DstarDpiFeatureExtractor::pass_selection() const {
 
   if (!YCandFeatureExtractor::pass_selection()) {
     return false;
   }
 
-  // tag_Dmass
-  if (
-      (tag_Dmass < 1.84) ||
-      (tag_Dmass > 1.9)
-     ) {
-    return false;
+  // tag_deltaM
+  if (tag_Dstartype == kDstar0_D0pi0) {
+    if (
+        (tag_deltaM < 0.1375) ||
+        (tag_deltaM > 0.1475)
+       ) {
+      return false;
+    }
+  }
+
+  if (tag_Dstartype == kDstar0_D0gamma) {
+    if (
+        (tag_deltaM < 0.13) ||
+        (tag_deltaM > 0.155)
+       ) {
+      return false;
+    }
+  }
+
+  if (tag_Dstartype == kDstarc_D0pi) {
+    if (
+        (tag_deltaM < 0.1425) ||
+        (tag_deltaM > 0.1490)
+       ) {
+      return false;
+    }
+  }
+
+  if (tag_Dstartype == kDstarc_Dcpi0) {
+    if (
+        (tag_deltaM < 0.1375) ||
+        (tag_deltaM > 0.145)
+       ) {
+      return false;
+    }
   }
 
   // sig_Dmass
   if (
-        (sig_Dmass < 1.84) ||
-        (sig_Dmass > 1.9)
-       ) {
-      return false;
+      (sig_Dmass < 1.84) ||
+      (sig_Dmass > 1.9)
+     ) {
+    return false;
   }
 
   // tag_Dtype
   if (
-      (sig_Dtype == kDc_Kspipipi) ||
+      (tag_Dtype == kDc_Kspipipi) ||
       (tag_Dtype == kD0_Kpipipipi0)
+     ) {
+    return false;
+  }
+
+  // tag_Dstartype
+  if (
+      (tag_Dstartype == kDstarc_Dcgamma)
      ) {
     return false;
   }
@@ -173,10 +232,11 @@ bool DDpiFeatureExtractor::pass_selection() const {
     return false;
   }
 
+
   return true;
 }
 
-std::string DDpiFeatureExtractor::get_dat_header() const {
+std::string DstarDpiFeatureExtractor::get_dat_header() const {
   std::stringstream ss;
   ss << "truth_match" << "|";
   ss << "tag_lp3" << "|";
@@ -186,15 +246,18 @@ std::string DDpiFeatureExtractor::get_dat_header() const {
   ss << "sig_vtxB" << "|";
   ss << "mmiss_prime2" << "|";
   ss << "eextra50" << "|";
-  ss << "tag_Dmass" << "|";
+  ss << "tag_deltaM" << "|";
+  ss << "tag_cosThetaDSoft" << "|"; 
+  ss << "tag_softP3MagCM" << "|";
   ss << "sig_Dmass" << "|";
   ss << "tag_Dtype" << "|";
+  ss << "tag_Dstartype" << "|";
   ss << "sig_Dtype";
   return ss.str();
 }
 
 
-std::string DDpiFeatureExtractor::get_dat_line() const {
+std::string DstarDpiFeatureExtractor::get_dat_line() const {
   std::stringstream ss;
   ss << truth_match << "|";
   ss << tag_lp3 << "|";
@@ -204,9 +267,12 @@ std::string DDpiFeatureExtractor::get_dat_line() const {
   ss << sig_vtxB << "|";
   ss << mmiss_prime2 << "|";
   ss << eextra50 << "|";
-  ss << tag_Dmass << "|";
+  ss << tag_deltaM << "|";
+  ss << tag_cosThetaDSoft << "|"; 
+  ss << tag_softP3MagCM << "|";
   ss << sig_Dmass << "|";
   ss << tag_Dtype << "|";
+  ss << tag_Dstartype << "|";
   ss << sig_Dtype;
   return ss.str();
 }
