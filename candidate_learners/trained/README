@@ -1,0 +1,25 @@
+All classifiers trained using candidates from division 1 of sigmc.db.
+
+DDpi:
+-w1 63 -w-1 1 -c 8192.0 -g 0.000122 -b 1
+
+DDstarpi:
+-w1 51 -w-1 1 -c 2.0 -g 0.000122 -b 1
+
+DstarDpi:
+-w1 28 -w-1 1 -c 2.0 -g 0.000122 -b 1
+
+DstarDstarpi:
+-w1 25 -w-1 1 -c 32.0 -g 0.000122 -b 1
+
+DDrho:
+-w1 56 -w-1 1 -c 128.0 -g 0.000122 -b 1
+
+DDstarrho:
+-w1 47 -w-1 1 -c 512.0 -g 0.000122 -b 1
+
+DstarDrho:
+-w1 23 -w-1 1 -c 2048.0 -g 0.000122 -b 1
+
+DstarDstarrho:
+-w1 18 -w-1 1 -c 512.0 -g 3.0517578125e-05 -b 1
