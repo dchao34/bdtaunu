@@ -1,0 +1,32 @@
+digraph G {
+
+ size ="8,8";
+ 
+ Event [shape=box]; 
+ Candidate [shape=box, peripheries=2];
+ BelongsTo [shape=diamond, peripheries=2];
+ Candidate -> BelongsTo[arrowhead=none];
+ BelongsTo -> Event [arrowhead=curve];
+
+ CandIdx[peripheries=2]
+ Candidate -> CandIdx[arrowhead=none];
+ Candidate -> CandFeatures[arrowhead=none];
+
+ BabarId [peripheries=2, label=<<u>BabarId</u>>];
+ Event -> BabarId [arrowhead=none];
+ Event -> EventFeatures [arrowhead=none];
+ Event -> MLSample [arrowhead=none];
+ Event -> Division [arrowhead=none];
+
+ SVMBestCand[shape=diamond, label="SVM best candidate"];
+ SVMBestCand -> Event;
+ SVMBestCand -> Candidate;
+
+ MCisa [label="isa", shape=triangle];
+ MCEvent [shape=box, label="MC Event"];
+ Event -> MCisa[arrowhead=none];
+ MCisa -> MCEvent[arrowhead=none];
+
+ MCEvent -> TruthInfo;
+
+}
