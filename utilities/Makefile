@@ -19,7 +19,7 @@ lib: $(OBJECTS)
 	fi; \
 	$(CXX) $${SHARED_LIB_FLAG} $(addprefix $(PKG_LIBPATH)/, $(OBJECTS)) $(LDFLAGS) -o $(PKG_LIBPATH)/$(LIBNAME)
 
-$(OBJECTS) : %.o : %.cc $(PKG_INCPATH)/%.h
+$(OBJECTS) : %.o : %.cc %.h
 	$(CXX) $(CFLAGS) $(INCFLAGS) -c $< -o $(PKG_LIBPATH)/$@
 
 clean:

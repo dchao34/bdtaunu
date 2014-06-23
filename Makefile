@@ -7,7 +7,7 @@ PKG_LIBPATH = ./lib
 INCPATH = -I$(PKG_INCPATH) -I/usr/local/include
 LDPATH = -L$(PKG_LIBPATH) -L/usr/local/lib
 
-SHARED_LIBARIES = utilities
+SHARED_LIBARIES = utilities createdb
 
 CXXFLAGS = $(INCPATH)
 CXXFLAGS += $(shell root-config --cflags)
@@ -16,10 +16,7 @@ LDFLAGS = $(LDPATH)
 LDFLAGS += $(addprefix -l, $(SHARED_LIBARIES)) -lsqlite3
 LDFLAGS += $(shell root-config --libs)
 
-PDT_FILE_PATHNAME = $(shell pwd)/meta/pdt.dat
-CXXFLAGS += -D__PDT_FILE_PATHNAME='"$(PDT_FILE_PATHNAME)"'
-
-TARGETS = test
+TARGETS = test build_database
 
 all : CXXFLAGS += -O3
 all : $(TARGETS)
