@@ -5,10 +5,10 @@
 #include <cstdlib>
 
 #include "BDtaunuSigMcReader.h"
-#include "DatReader.h"
+#include "utilities/DatReader.h"
 #include "UpsilonList.h"
 
-#include "utilities.h"
+#include "utilities/helpers.h"
 #include "create_sigmc_database.h"
  
 int create_sigmc_candidate_table(sqlite3 *db) {

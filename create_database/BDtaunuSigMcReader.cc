@@ -8,7 +8,7 @@
 
 #include "BDtaunuMcReader.h"
 #include "BDtaunuSigMcReader.h"
-#include "utilities.h"
+#include "utilities/helpers.h"
 #include "bdtaunu_definitions.h"
 
 BDtaunuSigMcReader::BDtaunuSigMcReader() : BDtaunuMcReader() {

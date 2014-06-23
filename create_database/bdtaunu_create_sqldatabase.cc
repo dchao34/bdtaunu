@@ -6,7 +6,7 @@
 #include "DatReader.h"
 #include "UpsilonList.h"
 
-#include "utilities.h"
+#include "utilities/helpers.h"
 #include "bdtaunu_create_sqldatabase.h"
 
 int create_event_table(sqlite3 *db) {
