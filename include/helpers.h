@@ -1,5 +1,5 @@
-#ifndef __UTILITIES_H__
-#define __UTILITIES_H__
+#ifndef __HELPERS_H__
+#define __HELPERS_H__
 
 /*! \file utilities.h
  *  \brief General utility functions. 
