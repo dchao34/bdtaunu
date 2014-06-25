@@ -42,7 +42,9 @@ void McEventSQLiteTableBuilder::BindColumns() {
   db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@sp_mode"), sp_mode);
   assert(db_status == SQLITE_OK);
   db_status = sqlite3_bind_text(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@ml_sample"), sample_assignment_map[babar_event_id].first.c_str(), -1, SQLITE_STATIC);
+  assert(db_status == SQLITE_OK);
   db_status = sqlite3_bind_text(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@division"), sample_assignment_map[babar_event_id].second.c_str(), -1, SQLITE_STATIC);
+  assert(db_status == SQLITE_OK);
   db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@mc_evttype"), mc_evttype);
   assert(db_status == SQLITE_OK);
 }
