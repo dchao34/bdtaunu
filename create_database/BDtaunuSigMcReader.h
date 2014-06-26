@@ -27,8 +27,8 @@ class BDtaunuSigMcReader : public BDtaunuMcReader {
     void FillTruthMatchInfo();
 
     //! Data and functions needed to implement the truth matcher. 
-    int *hd1Lund, *hd2Lund, *hd3Lund;
-    int *hd1Idx, *hd2Idx, *hd3Idx;
+    int *hd1Lund, *hd2Lund;
+    int *hd1Idx, *hd2Idx;
     int *ld1Lund, *ld2Lund, *ld3Lund;
     int *ld1Idx, *ld2Idx, *ld3Idx;
     int *hMCIdx, *lMCIdx, *gammaMCIdx;

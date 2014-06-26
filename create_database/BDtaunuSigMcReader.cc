@@ -30,10 +30,8 @@ BDtaunuSigMcReader::BDtaunuSigMcReader(
 BDtaunuSigMcReader::~BDtaunuSigMcReader() {
   delete[] hd1Lund;
   delete[] hd2Lund;
-  delete[] hd3Lund;
   delete[] hd1Idx;
   delete[] hd2Idx;
-  delete[] hd3Idx;
   delete[] ld1Lund;
   delete[] ld2Lund;
   delete[] ld3Lund;
@@ -49,10 +47,8 @@ BDtaunuSigMcReader::~BDtaunuSigMcReader() {
 void BDtaunuSigMcReader::Initialize() {
   hd1Lund = new int[maximum_h_candidates];
   hd2Lund = new int[maximum_h_candidates];
-  hd3Lund = new int[maximum_h_candidates];
   hd1Idx = new int[maximum_h_candidates];
   hd2Idx = new int[maximum_h_candidates];
-  hd3Idx = new int[maximum_h_candidates];
   ld1Lund = new int[maximum_l_candidates];
   ld2Lund = new int[maximum_l_candidates];
   ld3Lund = new int[maximum_l_candidates];
@@ -70,10 +66,8 @@ void BDtaunuSigMcReader::SetBranchAddress() {
   BDtaunuMcReader::SetBranchAddress();
   tr->SetBranchAddress("hd1Lund", hd1Lund);
   tr->SetBranchAddress("hd2Lund", hd2Lund);
-  tr->SetBranchAddress("hd3Lund", hd3Lund);
   tr->SetBranchAddress("hd1Idx", hd1Idx);
   tr->SetBranchAddress("hd2Idx", hd2Idx);
-  tr->SetBranchAddress("hd3Idx", hd3Idx);
   tr->SetBranchAddress("ld1Lund", ld1Lund);
   tr->SetBranchAddress("ld2Lund", ld2Lund);
   tr->SetBranchAddress("ld3Lund", ld3Lund);
@@ -217,11 +211,9 @@ void BDtaunuSigMcReader::build_dau_map() {
   // hadrons; see hblock in cand_block()
   std::pair<int*, int*> hd1(hd1Lund, hd1Idx);
   std::pair<int*, int*> hd2(hd2Lund, hd2Idx);
-  std::pair<int*, int*> hd3(hd3Lund, hd3Idx);
   std::vector<std::pair<int*, int*> > hDaus;
   hDaus.push_back(hd1);
   hDaus.push_back(hd2);
-  hDaus.push_back(hd3);
   dau_map[hblock] = hDaus;
 
   
