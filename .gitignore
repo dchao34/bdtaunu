@@ -1,4 +1,7 @@
 data/
 html/
 latex/
+lib/
 *.o
+.RData
+.Rhistory
