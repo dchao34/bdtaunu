@@ -97,7 +97,9 @@ int BDtaunuSigMcReader::next_record() {
 
   int next_record_idx = BDtaunuMcReader::next_record();
   if (next_record_idx > -1) {
-    FillTruthMatchInfo();
+    if (!IsMaxCandidateExceeded()) {
+      FillTruthMatchInfo();
+    }
   }
 
   return next_record_idx;

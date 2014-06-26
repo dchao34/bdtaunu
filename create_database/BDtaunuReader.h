@@ -91,8 +91,9 @@ class BDtaunuReader : public RootReader {
     virtual void SetBranchAddress();
     virtual void ClearColumnValues();
 
-
   public: 
+
+    bool IsMaxCandidateExceeded() const;
 
     //! Default construction undefined. 
     BDtaunuReader();

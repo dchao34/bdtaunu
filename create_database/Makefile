@@ -1,5 +1,5 @@
 CXX ?= g++
-CFLAGS = -Wall -O3 -fPIC
+CXXFLAGS = -Wall -fPIC
 
 PKG_INCPATH = ../include
 PKG_LIBPATH = ../lib
@@ -9,7 +9,7 @@ LDFLAGS = -L$(PKG_LIBPATH) -lutilities -L/usr/local/lib -lsqlite3
 LDFLAGS += $(shell root-config --libs)
 
 PDT_FILE_PATHNAME = $(shell pwd | sed 's/\/[^/]*$$//')/meta/pdt.dat
-CFLAGS += -D__PDT_FILE_PATHNAME='"$(PDT_FILE_PATHNAME)"'
+CXXFLAGS += -D__PDT_FILE_PATHNAME='"$(PDT_FILE_PATHNAME)"'
 
 OS = $(shell uname)
 
@@ -20,6 +20,13 @@ OBJECTS = RootReader.o BDtaunuReader.o BDtaunuMcReader.o BDtaunuSigMcReader.o \
 
 LIBNAME = libcreatedb.so
 
+all : CXXFLAGS += -O3
+all : lib
+
+debug : CXX += -DDEBUG -g
+debug : CXXFLAGS += -O0
+debug : lib
+
 lib: $(OBJECTS)
 	if [ "$(OS)" = "Darwin" ]; then \
 		SHARED_LIB_FLAG="-dynamiclib -Wl,-install_name,@rpath/$(LIBNAME)"; \
@@ -29,7 +36,7 @@ lib: $(OBJECTS)
 	$(CXX) $${SHARED_LIB_FLAG} $(addprefix $(PKG_LIBPATH)/, $(OBJECTS)) $(LDFLAGS) -o $(PKG_LIBPATH)/$(LIBNAME)
 
 $(OBJECTS) : %.o : %.cc %.h
-	$(CXX) $(CFLAGS) $(INCFLAGS) -c $< -o $(PKG_LIBPATH)/$@
+	$(CXX) $(CXXFLAGS) $(INCFLAGS) -c $< -o $(PKG_LIBPATH)/$@
 
 clean:
 	rm -f *~ $(PKG_LIBPATH)/$(LIBNAME) $(addprefix $(PKG_LIBPATH)/, $(OBJECTS))

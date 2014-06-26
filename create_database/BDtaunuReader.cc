@@ -504,6 +504,24 @@ int BDtaunuReader::DetermineTauMode(int tau_d1lundId) {
   }
 }
 
+// Determine whether the maximum number of allowed candidates 
+// have been exceeded. Events that exceed the maximum are not 
+// well behaved and should be skipped.
+bool BDtaunuReader::IsMaxCandidateExceeded() const {
+    if ( 
+        (nY < maximum_Y_candidates) &&
+        (nB < maximum_B_candidates) &&
+        (nD < maximum_D_candidates) &&
+        (ntau < maximum_tau_candidates) &&
+        (nh < maximum_h_candidates) &&
+        (nl < maximum_l_candidates) &&
+        (ngamma < maximum_gamma_candidates) 
+       ) {
+      return false;
+    } else {
+      return true;
+    }
+}
 
 // Read in the next event in the ntuple. It computes all relevant
 // information as a side effect. 
@@ -524,18 +542,8 @@ int BDtaunuReader::next_record() {
               + to_string(lowerID);
 
     // Construct the Y(4S) candidate list for this event. 
-    // This fills the UpsilonList upsilon_candidates.
-    // ntuples only well behaved when number of reconstructed 
-    // candidates do not exceed maximum allowed. 
-    if ( 
-        (nY < maximum_Y_candidates) &&
-        (nB < maximum_B_candidates) &&
-        (nD < maximum_D_candidates) &&
-        (ntau < maximum_tau_candidates) &&
-        (nh < maximum_h_candidates) &&
-        (nl < maximum_l_candidates) &&
-        (ngamma < maximum_gamma_candidates) 
-       ) {
+    // Maximum number of candidates must not be exceeded.
+    if (!IsMaxCandidateExceeded()) { 
       FillUpsilonList();
     }
   }

@@ -334,7 +334,9 @@ int BDtaunuMcReader::next_record() {
 
   int next_record_idx = BDtaunuReader::next_record();
   if (next_record_idx > -1) {
-    FillMCInformation();
+    if (!IsMaxCandidateExceeded()) {
+      FillMCInformation();
+    }
   }
 
   return next_record_idx;

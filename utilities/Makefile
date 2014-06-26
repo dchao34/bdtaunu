@@ -1,5 +1,5 @@
 CXX ?= g++
-CFLAGS = -Wall -O3 -fPIC
+CXXFLAGS = -Wall -fPIC
 
 PKG_INCPATH = ../include
 PKG_LIBPATH = ../lib
@@ -11,6 +11,13 @@ OS = $(shell uname)
 OBJECTS = helpers.o DatReader.o
 LIBNAME = libutilities.so
 
+all : CXXFLAGS += -O3
+all : lib
+
+debug : CXX += -DDEBUG -g
+debug : CXXFLAGS += -O0
+debug : lib
+
 lib: $(OBJECTS)
 	if [ "$(OS)" = "Darwin" ]; then \
 		SHARED_LIB_FLAG="-dynamiclib -Wl,-install_name,@rpath/$(LIBNAME)"; \
@@ -20,7 +27,7 @@ lib: $(OBJECTS)
 	$(CXX) $${SHARED_LIB_FLAG} $(addprefix $(PKG_LIBPATH)/, $(OBJECTS)) $(LDFLAGS) -o $(PKG_LIBPATH)/$(LIBNAME)
 
 $(OBJECTS) : %.o : %.cc %.h
-	$(CXX) $(CFLAGS) $(INCFLAGS) -c $< -o $(PKG_LIBPATH)/$@
+	$(CXX) $(CXXFLAGS) $(INCFLAGS) -c $< -o $(PKG_LIBPATH)/$@
 
 clean:
 	rm -f *~ $(PKG_LIBPATH)/$(LIBNAME) $(addprefix $(PKG_LIBPATH)/, $(OBJECTS))

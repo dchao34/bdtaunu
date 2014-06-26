@@ -25,6 +25,7 @@ McEventSQLiteTableBuilder::McEventSQLiteTableBuilder(sqlite3* database, const ch
   table_name = "McEvent";
 
   meta_colnames.push_back(std::pair<std::string, std::string>("sp_mode", "INTEGER"));
+  meta_colnames.push_back(std::pair<std::string, std::string>("event_weight", "REAL"));
   meta_colnames.push_back(std::pair<std::string, std::string>("ml_sample", "TEXT"));
   meta_colnames.push_back(std::pair<std::string, std::string>("division", "TEXT"));
   meta_colnames.push_back(std::pair<std::string, std::string>("mc_evttype", "INTEGER"));
@@ -40,6 +41,8 @@ void McEventSQLiteTableBuilder::BindColumns() {
   EventSQLiteTableBuilder::BindColumns();
 
   db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@sp_mode"), sp_mode);
+  assert(db_status == SQLITE_OK);
+  db_status = sqlite3_bind_double(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@event_weight"), event_weight);
   assert(db_status == SQLITE_OK);
   db_status = sqlite3_bind_text(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@ml_sample"), sample_assignment_map[babar_event_id].first.c_str(), -1, SQLITE_STATIC);
   assert(db_status == SQLITE_OK);
