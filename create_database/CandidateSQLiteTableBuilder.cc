@@ -43,6 +43,8 @@ CandidateSQLiteTableBuilder::CandidateSQLiteTableBuilder(sqlite3* database) :
   cand_level_feature_colnames.push_back(std::pair<std::string, std::string>("sig_vtxh", "REAL"));
   cand_level_feature_colnames.push_back(std::pair<std::string, std::string>("sig_Dtype", "INTEGER"));
   cand_level_feature_colnames.push_back(std::pair<std::string, std::string>("sig_Dstartype", "INTEGER"));
+
+  bestcand_colnames.push_back(std::pair<std::string, std::string>("svm_score", "REAL"));
 }
 
 CandidateSQLiteTableBuilder::~CandidateSQLiteTableBuilder() {
@@ -78,14 +80,19 @@ std::string CandidateSQLiteTableBuilder::ConstructCreateStatement() const {
     ++it;
   }
 
+  it = bestcand_colnames.begin();
+  while (it != bestcand_colnames.end()) {
+    column_string += (", " + it->first + " " + it->second);
+    ++it;
+  }
+
   std::string foreign_constraint_string =
     "FOREIGN KEY(babar_event_id) REFERENCES " + 
     event_table_name + "(babar_event_id)";
 
   std::string sql_statement  = "CREATE TABLE ";
   sql_statement += cand_table_name;
-  //sql_statement += ("(" + column_string + ", " + foreign_constraint_string + ");");
-  sql_statement += ("(" + column_string + ");");
+  sql_statement += ("(" + column_string + ", " + foreign_constraint_string + ");");
 
   return sql_statement;
 }
@@ -126,6 +133,13 @@ std::string CandidateSQLiteTableBuilder::ConstructInsertStatement() const {
   
   it = cand_level_feature_colnames.begin();
   while (it != cand_level_feature_colnames.end()) {
+    column_string += (", " + it->first);
+    value_string += (", @" + it->first);
+    ++it;
+  }
+  
+  it = bestcand_colnames.begin();
+  while (it != bestcand_colnames.end()) {
     column_string += (", " + it->first);
     value_string += (", @" + it->first);
     ++it;
@@ -194,5 +208,7 @@ void CandidateSQLiteTableBuilder::BindColumns() {
   db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@sig_Dtype"), sig_Dtype);
   assert(db_status == SQLITE_OK);
   db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@sig_Dstartype"), sig_Dstartype);
+  assert(db_status == SQLITE_OK);
+  db_status = sqlite3_bind_double(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@svm_score"), svm_score);
   assert(db_status == SQLITE_OK);
 }

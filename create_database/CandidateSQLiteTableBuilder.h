@@ -19,6 +19,7 @@ class CandidateSQLiteTableBuilder : public SQLiteTableBuilder {
     std::vector<std::pair<std::string, std::string> > meta_colnames;
     std::vector<std::pair<std::string, std::string> > event_level_feature_colnames;
     std::vector<std::pair<std::string, std::string> > cand_level_feature_colnames;
+    std::vector<std::pair<std::string, std::string> > bestcand_colnames;
 
     std::string babar_event_id;
     int cand_idx;
@@ -52,6 +53,8 @@ class CandidateSQLiteTableBuilder : public SQLiteTableBuilder {
     double sig_vtxh;
     int sig_Dtype;
     int sig_Dstartype;
+
+    double svm_score;
 
     std::string ConstructCreateStatement() const;
     std::string ConstructInsertStatement() const;
@@ -91,6 +94,8 @@ class CandidateSQLiteTableBuilder : public SQLiteTableBuilder {
     void set_sig_vtxh(double value) { sig_vtxh = value; }
     void set_sig_Dtype(int value) { sig_Dtype = value; }
     void set_sig_Dstartype(int value) { sig_Dstartype = value; }
+
+    void set_svm_score(double value) { svm_score = value; }
 };
 
 #endif

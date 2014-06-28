@@ -16,7 +16,8 @@ OS = $(shell uname)
 OBJECTS = RootReader.o BDtaunuReader.o BDtaunuMcReader.o BDtaunuSigMcReader.o \
           UpsilonCandidate.o UpsilonList.o \
           SQLiteTableBuilder.o EventSQLiteTableBuilder.o McEventSQLiteTableBuilder.o \
-					CandidateSQLiteTableBuilder.o McCandidateSQLiteTableBuilder.o
+					CandidateSQLiteTableBuilder.o McCandidateSQLiteTableBuilder.o \
+					EventStatusSQLiteTableBuilder.o
 
 LIBNAME = libcreatedb.so
 
