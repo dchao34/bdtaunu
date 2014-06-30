@@ -12,6 +12,10 @@
 #include "create_database/BDtaunuSigMcReader.h"
 #include "create_database/McEventSQLiteTableBuilder.h"
 #include "create_database/McCandidateSQLiteTableBuilder.h"
+#include "create_database/EventStatusSQLiteTableBuilder.h"
+#include "create_database/OptimalCandidateSQLiteTableBuilder.h"
+
+#include "candidate_selection/YCandSvmScorer.h"
 
 #include "utilities/helpers.h"
 #include "utilities/DatReader.h"
@@ -58,6 +62,14 @@ int main() {
   McCandidateSQLiteTableBuilder candidate_builder(db);
   candidate_builder.CreateTable();
 
+  EventStatusSQLiteTableBuilder status_builder(db);
+  status_builder.CreateTable();
+
+  OptimalCandidateSQLiteTableBuilder optcand_builder(db);
+  optcand_builder.CreateTable();
+
+  YCandSvmScorer svm_scorer;
+
   map<pair<int, int>, double> event_weights = 
     build_event_weight_map("data/root/generic/may_14_2014/event_weights.txt");
 
@@ -100,8 +112,15 @@ int main() {
           event_builder.set_nY(rootreader.get_nY());
           event_builder.InsertTable();
 
+          int svm_optcand_idx = 0;
+          double max_svm_score = 0;
+          int min_eextra_optcand_idx = -1;
+          double min_eextra = 10.0;
+          int no_candidates_passed_cuts = 1;
           while (candidates.next_candidate() != -1) {
+
             UpsilonCandidate curr_cand = candidates.get_current_candidate();
+            svm_scorer.predict(curr_cand);
 
             candidate_builder.set_babar_event_id(curr_cand.get_eventId());
             candidate_builder.set_cand_idx(curr_cand.get_event_candidate_index());
@@ -132,9 +151,39 @@ int main() {
             candidate_builder.set_sig_vtxh(curr_cand.get_sig_vtxh());
             candidate_builder.set_sig_Dtype(curr_cand.get_sig_d_mode());
             candidate_builder.set_sig_Dstartype(curr_cand.get_sig_dstar_mode());
+            candidate_builder.set_svm_score(svm_scorer.get_score());
 
             candidate_builder.InsertTable();
+
+            if (svm_scorer.passed_selection()) {
+              no_candidates_passed_cuts = 0;
+            }
+
+            int curr_cand_idx = curr_cand.get_event_candidate_index();
+
+            double svm_score = svm_scorer.get_score();
+            if (svm_score > max_svm_score) {
+              max_svm_score = svm_score;
+              svm_optcand_idx = curr_cand_idx;
+            }
+
+            double eextra = curr_cand.get_eextra50();
+            if (eextra < min_eextra) {
+              min_eextra = eextra;
+              min_eextra_optcand_idx = curr_cand_idx;
+            }
           }
+
+          status_builder.set_babar_event_id(rootreader.get_eventId());
+          status_builder.set_no_candidates_passed_cuts(no_candidates_passed_cuts);
+          status_builder.InsertTable();
+
+          optcand_builder.set_babar_event_id(rootreader.get_eventId());
+          optcand_builder.set_svm_optcand_idx(svm_optcand_idx);
+          optcand_builder.set_min_eextra_optcand_idx(min_eextra_optcand_idx);
+          optcand_builder.InsertTable();
+
+
         }
 
         std::cout << "done. " << std::endl;
