@@ -7,7 +7,7 @@ PKG_LIBPATH = ./lib
 INCPATH = -I$(PKG_INCPATH) -I/usr/local/include
 LDPATH = -L$(PKG_LIBPATH) -L/usr/local/lib
 
-SHARED_LIBARIES = utilities createdb
+SHARED_LIBARIES = utilities createdb candselect
 
 CXXFLAGS = $(INCPATH)
 CXXFLAGS += $(shell root-config --cflags)
@@ -16,7 +16,7 @@ LDFLAGS = $(LDPATH)
 LDFLAGS += $(addprefix -l, $(SHARED_LIBARIES)) -lsqlite3
 LDFLAGS += $(shell root-config --libs)
 
-TARGETS = build_sigmc_db build_generic_db
+TARGETS = test_sigmc test1 test2 test3
 
 all : CXXFLAGS += -O3
 all : $(TARGETS)
