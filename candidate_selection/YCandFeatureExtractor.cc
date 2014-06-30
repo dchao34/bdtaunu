@@ -124,7 +124,7 @@ void YCandFeatureExtractor::ClearFeatures() {
 
 }
 
-bool YCandFeatureExtractor::pass_selection() const {
+bool YCandFeatureExtractor::passed_selection() const {
 
   // tag_lp3
   if (
@@ -376,9 +376,9 @@ void DDpiFeatureExtractor::extract_features() {
   return;
 }
 
-bool DDpiFeatureExtractor::pass_selection() const {
+bool DDpiFeatureExtractor::passed_selection() const {
 
-  if (!YCandFeatureExtractor::pass_selection()) {
+  if (!YCandFeatureExtractor::passed_selection()) {
     return false;
   }
 
@@ -550,9 +550,9 @@ void DDstarpiFeatureExtractor::extract_features() {
   return;
 }
 
-bool DDstarpiFeatureExtractor::pass_selection() const {
+bool DDstarpiFeatureExtractor::passed_selection() const {
 
-  if (!YCandFeatureExtractor::pass_selection()) {
+  if (!YCandFeatureExtractor::passed_selection()) {
     return false;
   }
 
@@ -765,9 +765,9 @@ void DstarDpiFeatureExtractor::extract_features() {
   return;
 }
 
-bool DstarDpiFeatureExtractor::pass_selection() const {
+bool DstarDpiFeatureExtractor::passed_selection() const {
 
-  if (!YCandFeatureExtractor::pass_selection()) {
+  if (!YCandFeatureExtractor::passed_selection()) {
     return false;
   }
 
@@ -996,9 +996,9 @@ void DstarDstarpiFeatureExtractor::extract_features() {
   return;
 }
 
-bool DstarDstarpiFeatureExtractor::pass_selection() const {
+bool DstarDstarpiFeatureExtractor::passed_selection() const {
 
-  if (!YCandFeatureExtractor::pass_selection()) {
+  if (!YCandFeatureExtractor::passed_selection()) {
     return false;
   }
 
@@ -1223,9 +1223,9 @@ void DDrhoFeatureExtractor::extract_features() {
   return;
 }
 
-bool DDrhoFeatureExtractor::pass_selection() const {
+bool DDrhoFeatureExtractor::passed_selection() const {
 
-  if (!YCandFeatureExtractor::pass_selection()) {
+  if (!YCandFeatureExtractor::passed_selection()) {
     return false;
   }
 
@@ -1400,9 +1400,9 @@ void DDstarrhoFeatureExtractor::extract_features() {
   return;
 }
 
-bool DDstarrhoFeatureExtractor::pass_selection() const {
+bool DDstarrhoFeatureExtractor::passed_selection() const {
 
-  if (!YCandFeatureExtractor::pass_selection()) {
+  if (!YCandFeatureExtractor::passed_selection()) {
     return false;
   }
 
@@ -1612,9 +1612,9 @@ void DstarDrhoFeatureExtractor::extract_features() {
   return;
 }
 
-bool DstarDrhoFeatureExtractor::pass_selection() const {
+bool DstarDrhoFeatureExtractor::passed_selection() const {
 
-  if (!YCandFeatureExtractor::pass_selection()) {
+  if (!YCandFeatureExtractor::passed_selection()) {
     return false;
   }
 
@@ -1845,9 +1845,9 @@ void DstarDstarrhoFeatureExtractor::extract_features() {
   return;
 }
 
-bool DstarDstarrhoFeatureExtractor::pass_selection() const {
+bool DstarDstarrhoFeatureExtractor::passed_selection() const {
 
-  if (!YCandFeatureExtractor::pass_selection()) {
+  if (!YCandFeatureExtractor::passed_selection()) {
     return false;
   }
 

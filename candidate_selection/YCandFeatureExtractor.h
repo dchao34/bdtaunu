@@ -37,7 +37,7 @@ class YCandFeatureExtractor {
         int n_tagDstar, int n_sigDstar);
     virtual ~YCandFeatureExtractor() {};
 
-    virtual bool pass_selection() const;
+    virtual bool passed_selection() const;
     virtual void extract_features() = 0;
     void extract_features(const UpsilonCandidate&);
 
@@ -83,7 +83,7 @@ class DDpiFeatureExtractor : public YCandFeatureExtractor {
     ~DDpiFeatureExtractor() {};
 
     void extract_features();
-    bool pass_selection() const;
+    bool passed_selection() const;
 
 };
 
@@ -94,7 +94,7 @@ class DDstarpiFeatureExtractor : public YCandFeatureExtractor {
       YCandFeatureExtractor(11, 9, 7, 0, 4)  { ClearCache(); ClearFeatures(); }
 
     void extract_features();
-    bool pass_selection() const;
+    bool passed_selection() const;
 
 };
 
@@ -105,7 +105,7 @@ class DstarDpiFeatureExtractor : public YCandFeatureExtractor {
       YCandFeatureExtractor(11, 9, 9, 4, 0)  { ClearCache(); ClearFeatures(); }
 
     void extract_features();
-    bool pass_selection() const;
+    bool passed_selection() const;
 
 };
 
@@ -116,7 +116,7 @@ class DstarDstarpiFeatureExtractor : public YCandFeatureExtractor {
       YCandFeatureExtractor(13, 12, 9, 4, 4)  { ClearCache(); ClearFeatures(); }
 
     void extract_features();
-    bool pass_selection() const;
+    bool passed_selection() const;
 
 };
 
@@ -128,7 +128,7 @@ class DDrhoFeatureExtractor : public YCandFeatureExtractor {
     ~DDrhoFeatureExtractor() {};
 
     void extract_features();
-    bool pass_selection() const;
+    bool passed_selection() const;
 
 };
 
@@ -139,7 +139,7 @@ class DDstarrhoFeatureExtractor : public YCandFeatureExtractor {
       YCandFeatureExtractor(13, 9, 9, 0, 4)  { ClearCache(); ClearFeatures(); }
 
     void extract_features();
-    bool pass_selection() const;
+    bool passed_selection() const;
 
 };
 
@@ -150,7 +150,7 @@ class DstarDrhoFeatureExtractor : public YCandFeatureExtractor {
       YCandFeatureExtractor(13, 9, 9, 4, 0)  { ClearCache(); ClearFeatures(); }
 
     void extract_features();
-    bool pass_selection() const;
+    bool passed_selection() const;
 
 };
 
@@ -161,7 +161,7 @@ class DstarDstarrhoFeatureExtractor : public YCandFeatureExtractor {
       YCandFeatureExtractor(15, 9, 9, 4, 4)  { ClearCache(); ClearFeatures(); }
 
     void extract_features();
-    bool pass_selection() const;
+    bool passed_selection() const;
 
 };
 

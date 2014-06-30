@@ -33,6 +33,7 @@ class YCandSvmScorer {
     void SwitchAdapter(int cand_type);
 
     double predicted_score;
+    bool passed_cuts;
 
   public:
     YCandSvmScorer(); 
@@ -41,6 +42,7 @@ class YCandSvmScorer {
     void predict(const UpsilonCandidate &cand);
 
     double get_score() const { return predicted_score; }
+    bool passed_selection() const { return passed_cuts; }
 
 };
 

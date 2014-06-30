@@ -84,8 +84,16 @@ void YCandSvmScorer::SwitchAdapter(int cand_type) {
 }
 
 void YCandSvmScorer::predict(const UpsilonCandidate &cand) {
+
   SwitchAdapter(cand.get_cand_type());
+
   curr_extr->extract_features(cand);
+  if (curr_extr->passed_selection()) {
+    passed_cuts = true;
+  } else {
+    passed_cuts = false;
+  }
+
   curr_adtr->set_features(*curr_extr);
   curr_adtr->svm_predict();
   predicted_score = (curr_adtr->get_prob())[0];

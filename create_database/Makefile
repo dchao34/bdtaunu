@@ -17,7 +17,7 @@ OBJECTS = RootReader.o BDtaunuReader.o BDtaunuMcReader.o BDtaunuSigMcReader.o \
           UpsilonCandidate.o UpsilonList.o \
           SQLiteTableBuilder.o EventSQLiteTableBuilder.o McEventSQLiteTableBuilder.o \
 					CandidateSQLiteTableBuilder.o McCandidateSQLiteTableBuilder.o \
-					EventStatusSQLiteTableBuilder.o
+					EventStatusSQLiteTableBuilder.o OptimalCandidateSQLiteTableBuilder.o
 
 LIBNAME = libcreatedb.so
 
