@@ -1,14 +1,7 @@
 #ifndef __YCANDFEATUREEXTRACTORFACTORY_H__
 #define __YCANDFEATUREEXTRACTORFACTORY_H__
 
-#include "DDpiFeatureExtractor.h"
-#include "DDstarpiFeatureExtractor.h"
-#include "DstarDpiFeatureExtractor.h"
-#include "DstarDstarpiFeatureExtractor.h"
-#include "DDrhoFeatureExtractor.h"
-#include "DDstarrhoFeatureExtractor.h"
-#include "DstarDrhoFeatureExtractor.h"
-#include "DstarDstarrhoFeatureExtractor.h"
+#include "YCandFeatureExtractor.h"
 #include "bdtaunu_definitions.h"
 
 class YCandFeatureExtractorFactory {

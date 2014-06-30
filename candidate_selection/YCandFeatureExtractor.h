@@ -5,6 +5,8 @@
 #include <string>
 #include <map>
 
+#include "create_database/UpsilonCandidate.h"
+
 class YCandFeatureExtractor {
 
   protected:
@@ -24,7 +26,8 @@ class YCandFeatureExtractor {
     std::vector<int> tagD_indicators, sigD_indicators;
     std::vector<int> tagDstar_indicators, sigDstar_indicators;
 
-    void Clear();
+    void ClearCache();
+    void ClearFeatures();
 
   public:
     YCandFeatureExtractor();
@@ -34,8 +37,9 @@ class YCandFeatureExtractor {
         int n_tagDstar, int n_sigDstar);
     virtual ~YCandFeatureExtractor() {};
 
-    virtual void extract_features() = 0;
     virtual bool pass_selection() const;
+    virtual void extract_features() = 0;
+    void extract_features(const UpsilonCandidate&);
 
     const std::vector<double>& get_numeric_features() const { return numeric_features; }
     const std::vector<int>& get_tagD_indicators() const { return tagD_indicators; }
@@ -69,6 +73,96 @@ class YCandFeatureExtractor {
     void set_sig_Dstartype(int value) { sig_Dstartype = value; }
 
     std::string get_libsvm_line() const;
+};
+
+class DDpiFeatureExtractor : public YCandFeatureExtractor {
+
+  public:
+    DDpiFeatureExtractor() : 
+      YCandFeatureExtractor(9, 10, 9, 0, 0)  { ClearCache(); ClearFeatures(); }
+    ~DDpiFeatureExtractor() {};
+
+    void extract_features();
+    bool pass_selection() const;
+
+};
+
+class DDstarpiFeatureExtractor : public YCandFeatureExtractor {
+
+  public:
+    DDstarpiFeatureExtractor() :
+      YCandFeatureExtractor(11, 9, 7, 0, 4)  { ClearCache(); ClearFeatures(); }
+
+    void extract_features();
+    bool pass_selection() const;
+
+};
+
+class DstarDpiFeatureExtractor : public YCandFeatureExtractor {
+
+  public:
+    DstarDpiFeatureExtractor() :
+      YCandFeatureExtractor(11, 9, 9, 4, 0)  { ClearCache(); ClearFeatures(); }
+
+    void extract_features();
+    bool pass_selection() const;
+
+};
+
+class DstarDstarpiFeatureExtractor : public YCandFeatureExtractor {
+
+  public:
+    DstarDstarpiFeatureExtractor() :
+      YCandFeatureExtractor(13, 12, 9, 4, 4)  { ClearCache(); ClearFeatures(); }
+
+    void extract_features();
+    bool pass_selection() const;
+
+};
+
+class DDrhoFeatureExtractor : public YCandFeatureExtractor {
+
+  public:
+    DDrhoFeatureExtractor() : 
+      YCandFeatureExtractor(11, 10, 9, 0, 0)  { ClearCache(); ClearFeatures(); }
+    ~DDrhoFeatureExtractor() {};
+
+    void extract_features();
+    bool pass_selection() const;
+
+};
+
+class DDstarrhoFeatureExtractor : public YCandFeatureExtractor {
+
+  public:
+    DDstarrhoFeatureExtractor() :
+      YCandFeatureExtractor(13, 9, 9, 0, 4)  { ClearCache(); ClearFeatures(); }
+
+    void extract_features();
+    bool pass_selection() const;
+
+};
+
+class DstarDrhoFeatureExtractor : public YCandFeatureExtractor {
+
+  public:
+    DstarDrhoFeatureExtractor() :
+      YCandFeatureExtractor(13, 9, 9, 4, 0)  { ClearCache(); ClearFeatures(); }
+
+    void extract_features();
+    bool pass_selection() const;
+
+};
+
+class DstarDstarrhoFeatureExtractor : public YCandFeatureExtractor {
+
+  public:
+    DstarDstarrhoFeatureExtractor() :
+      YCandFeatureExtractor(15, 9, 9, 4, 4)  { ClearCache(); ClearFeatures(); }
+
+    void extract_features();
+    bool pass_selection() const;
+
 };
 
 #endif

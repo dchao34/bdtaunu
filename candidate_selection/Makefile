@@ -5,20 +5,15 @@ PKG_INCPATH = ../include
 PKG_LIBPATH = ../lib
 INCFLAGS = -I$(PKG_INCPATH) -I/usr/local/include
 INCFLAGS += $(shell root-config --cflags)
-LDFLAGS = -L$(PKG_LIBPATH) -lutilities -L/usr/local/lib -lsqlite3
+LDFLAGS = -L$(PKG_LIBPATH) -lutilities -lcreatedb -L/usr/local/lib -lsqlite3
 LDFLAGS += $(shell root-config --libs)
 
-MODEL_ROOTNAME = $(shell pwd | sed 's/\/[^/]*$$//')/candidate_learners/trained
+MODEL_ROOTNAME = $(shell pwd | sed 's/\/[^/]*$$//')/meta/svm_candidate_learners
 CXXFLAGS += -D__MODEL_ROOTNAME='"$(MODEL_ROOTNAME)"'
 
 OS = $(shell uname)
 
-OBJECTS = YCandFeatureExtractor.o \
-					DDpiFeatureExtractor.o DDstarpiFeatureExtractor.o \
-					DstarDpiFeatureExtractor.o DstarDstarpiFeatureExtractor.o \
-					DDrhoFeatureExtractor.o DDstarrhoFeatureExtractor.o \
-					DstarDrhoFeatureExtractor.o DstarDstarrhoFeatureExtractor.o \
-					CandidateSvmScorer.o DDpiSvmScorer.o
+OBJECTS = YCandFeatureExtractor.o YCandSvmAdapter.o YCandSvmScorer.o
 
 LIBNAME = libcandselect.so
 
