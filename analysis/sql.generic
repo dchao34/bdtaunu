@@ -1,0 +1,12 @@
+SELECT Event.id, event_weight, sp_mode, mc_evttype, cand_type, 
+       nTrk, R2, eextra50, mmiss_prime2, cosThetaT, tag_lp3, 
+       tag_cosBY, tag_cosThetaDl, tag_Dmass, tag_deltaM, 
+       tag_cosThetaDSoft, tag_softP3MagCM, tag_Dtype, tag_Dstartype, 
+       sig_hp3, sig_cosBY, sig_cosThetaDtau, sig_vtxB, sig_Dmass, 
+       sig_deltaM, sig_cosThetaDSoft, sig_softP3MagCM, sig_hmass, 
+       sig_vtxh, sig_Dtype, sig_Dstartype, svm_score
+FROM McEvent Event, (McCandidate C JOIN OptimalCandidate S ON 
+                                   C.babar_event_id = S.babar_event_id AND C.cand_idx = S.svm) SvmCand
+WHERE (Event.babar_event_id = SvmCand.babar_event_id AND
+       Event.ml_sample = 'explore' AND 
+       Event.division = 1);

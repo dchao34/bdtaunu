@@ -1,0 +1,6 @@
+SELECT Event.id, truth_match, eextra50, svm_score
+FROM McEvent Event, (McCandidate C JOIN OptimalCandidate S ON 
+                                   C.babar_event_id = S.babar_event_id AND C.cand_idx = S.svm) SvmCand
+WHERE (Event.babar_event_id = SvmCand.babar_event_id AND
+       Event.ml_sample = 'explore' AND 
+       Event.division = 1);

@@ -1,0 +1,5 @@
+SELECT truth_match, eextra50, svm_score
+FROM (McCandidate JOIN McEvent ON 
+                  McCandidate.babar_event_id = McEvent.babar_event_id) C
+WHERE (McEvent.ml_sample = 'explore' AND 
+       McEvent.division = 1);
