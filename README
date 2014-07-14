@@ -1,2 +1,3 @@
-Takes the ntuples generated from SLAC and writes the relevant
-information into SQL.
+Analysis code for B -> D(*) tau nu, using semileptonic tags with tau decays to hadrons. 
+
+See subdirectories for their purpose in the analysis chian. 

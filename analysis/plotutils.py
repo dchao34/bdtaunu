@@ -1,3 +1,7 @@
+"""@package plotutils
+Convenient plotting functions using Matplotlib.
+"""
+
 #! /Library/Frameworks/Python.framework/Versions/2.7/bin/python
 
 import numpy as np
@@ -7,22 +11,92 @@ from sklearn.grid_search import GridSearchCV
 
 
 def SilvermanBandwidth(X):
+    """Compute bandwidth for a Gaussian KDE with Silverman's rule.
+
+    Parameters
+    ----------
+    X: Numpy array with shape (n, 1). This is the same as
+       scikit-learn's convention for a single feature over
+       all records.
+
+    Returns
+    -------
+    Real number: The smoothing bandwidth of the input determined
+                 using Silverman's rule.
+    """
     return 1.06 * np.std(X) * (len(X) ** (-0.2))
 
 
 def FreedmanDiaconisBinwidth(x):
+    """Compute histogram binwidth using Freedman-Diaconis' rule.
+
+    Parameters
+    ----------
+    x: Numpy array with shape (n, ).
+
+    Returns
+    -------
+    Integer: The number of bins determined using Freedman-Diaconis'
+             rule. The result is rounded down to the nearest integer.
+    """
     hist_range = x.max() - x.min()
     IQR = np.percentile(x, 75) - np.percentile(x, 25)
     return int(hist_range / (2 * IQR * (len(x) ** (-1.0 / 3))))
 
 
 def ExtractArrayByCategory(arr, varname, catname, cat_idx):
+    """Extract a column from structured array for a specified category.
+
+    Given a structured array, extract a specific column for a specific
+    category of records. For example, return feature x for records that
+    belong to category c.
+
+    Parameters
+    ----------
+    arr: Numpy structured array.
+    varname: Name of the column to extract.
+    catname: Name of the column indicating the category of each record.
+    cat_idx: The specific category of interest.
+
+    Returns
+    -------
+    Numpy array: Shape is (n, ), where n is the number of records
+                 belonging to the category of interest.
+    """
     x, c = arr[varname], arr[catname]
     return x[c == cat_idx]
 
 
 def StackByCategory(arr, varname, catname, wgtname=None,
                     cat_dict=None, ax=None, **kwargs):
+    """Make a stacked histogram grouped by a specific category.
+
+    Given a structured array, make a stacked histogram of a some
+    variable grouped by some category. For example, make a stacked
+    histogram of height grouped by species type.
+
+    Parameters
+    ----------
+    arr: Numpy structured array.
+
+    varname: Name of the column to histogram.
+
+    catname: Name of the column with the categories to group by.
+
+    wgtname: Name of the column containing observation weights.
+             Defaults to weight 1 for all records.
+
+    cat_dict: Dictionary that provides a mapping between specific
+              category indices with a more descriptive label.
+
+    ax: Plotting axis to draw on. Defaults to pyplot.gca().
+
+    **kwargs: **kwargs for pyplot.hist().
+
+    Returns
+    -------
+    (counts, bins, patches): Same as pyplot.hist().
+    """
 
     if not ax:
         ax = plt.gca()
@@ -58,6 +132,10 @@ def NormByCategory(arr, varname, catname,
                    exclude=[], cat_dict=None,
                    ax=None,
                    **kwargs):
+    """Make a normed histograms grouped by a specific category.
+
+    Obsolete. Prefer using KdeByCategory to study densities.
+    """
 
     if not ax:
         ax = plt.gca()
@@ -92,8 +170,30 @@ def NormByCategory(arr, varname, catname,
 def KdeByCategory(arr, varname, catname,
                   exclude=[], cat_dict=None,
                   legend_loc=1, legend_size=12,
-                  ax=None, xlim=None,
-                  **kwargs):
+                  ax=None, xlim=None):
+    """Estimate and plot probability densities grouped by category.
+
+    Given a structured array, estimate and plot probability densities
+    for a specific variable grouped by some category.
+
+    The densities are estiamted using Gaussian kernels with
+    Silverman's rule for bandwidth selection.
+
+    Parameters
+    ----------
+    arr: Numpy structured array.
+
+    varname: Name of the column to estimate the probability density.
+
+    catname: Name of the column with the categories to group by.
+
+    exclude: List of category indices to exclude from consideration.
+
+    cat_dict: Dictionary that provides a mapping between specific
+              category indices with a more descriptive label.
+
+    ax: Plotting axis to draw on. Defaults to pyplot.gca().
+    """
 
     if not ax:
         ax = plt.gca()
@@ -142,6 +242,40 @@ def KdeOverHist(arr, varname, catname, cat_idx, cat_dict=None,
                 silverman=True, bandwidths=[], cv=False, bins=None,
                 legend_loc=1, legend_size=12,
                 ax=None):
+    """Plot estimated probability density overlayed on a histogram.
+
+    Given a structured array, a specific variable, and a specific
+    category, estimate and plot probability densities using various
+    techniques and overlay the results on a histogram.
+
+    The densities are estimated using Gaussian kernels. The various
+    techniques are really various bandwidth selection techniques.
+
+    Parameters
+    ----------
+    arr: Numpy structured array.
+
+    varname: Name of the column to plot.
+
+    catname: Name of the column with the category information.
+
+    cat_idx: The specific index of the category of interest.
+
+    cat_dict: Dictionary that provides a mapping between specific
+              category indices with a more descriptive label.
+
+    silverman: Use Silverman's rule to estimate the bandwidth.
+
+    bandwidths: List of bandwidths to try. Manual "dial-in"s.
+
+    cv: Use cross validation to estimate the bandwidth. See
+        source for the details/parameters.
+
+    bins: Number of bins for the histogram. If left alone,
+          this defaults to the Freedman-Diaconis rule.
+
+    ax: Plotting axis to draw on. Defaults to pyplot.gca().
+    """
 
     if not ax:
         ax = plt.gca()
