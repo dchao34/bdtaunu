@@ -10,6 +10,17 @@
 
 #include "SQLiteTableBuilder.h"
 
+//! Creates the Event table. 
+/*! Schema:
+ *  Event(id INTEGER PRIMARY KEY, 
+ *        babar_event_id TEXT UNIQUE, 
+ *        nY INTEGER, 
+ *        run_number INTEGER, 
+ *        nTrk INTEGER, 
+ *        R2 REAL)
+ *  
+ *  Use the public set functions to set the column values. These values 
+ *  are then inserted into the table when InsertTable() is called. */
 class EventSQLiteTableBuilder : public SQLiteTableBuilder {
 
   protected:
@@ -31,6 +42,8 @@ class EventSQLiteTableBuilder : public SQLiteTableBuilder {
 
   public:
     EventSQLiteTableBuilder() {};
+
+    //! Create the table and put it in database db. 
     EventSQLiteTableBuilder(sqlite3 *db);
     virtual ~EventSQLiteTableBuilder();
 
