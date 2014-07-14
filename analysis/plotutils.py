@@ -166,7 +166,7 @@ def KdeOverHist(arr, varname, catname, cat_idx, cat_dict=None,
                   'rtol': 1e-4}
         kdes.append(KernelDensity(**params).fit(X))
         labels.append(
-            'h={0}, Silverman'.format(
+            'h={0} (SR)'.format(
                 round(SilvermanBandwidth(X), 2)))
 
     # Cross Validation bandwidth
@@ -184,7 +184,7 @@ def KdeOverHist(arr, varname, catname, cat_idx, cat_dict=None,
                   'rtol': 1e-4}
         kdes.append(KernelDensity(**params).fit(X))
         labels.append(
-            'h={0}, CV'.format(
+            'h={0} (CV)'.format(
                 round(grid.best_params_['bandwidth'], 2)))
 
     # Plot KDE results
@@ -197,7 +197,7 @@ def KdeOverHist(arr, varname, catname, cat_idx, cat_dict=None,
     hist_label = 'B = {0}'
     if not bins:
         bins = FreedmanDiaconisBinwidth(x)
-        hist_label += ', FD'
+        hist_label += ' (FD)'
     hist_label = hist_label.format(bins)
 
     ax.hist(x, bins=bins, histtype='stepfilled',
