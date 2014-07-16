@@ -20,12 +20,14 @@ class BDtaunuMcReader : public BDtaunuReader {
     const static std::vector<int> ell;
     const static std::vector<int> nu;
     const static std::vector<int> dmeson;
+    const static std::vector<int> dstar;
     const static std::vector<int> dstarstar;
     const static std::vector<int> dstrange;
 
     static std::vector<int> build_ell();
     static std::vector<int> build_nu();
     static std::vector<int> build_dmeson();
+    static std::vector<int> build_dstar();
     static std::vector<int> build_dstarstar();
     static std::vector<int> build_dstrange();
 
@@ -46,12 +48,9 @@ class BDtaunuMcReader : public BDtaunuReader {
     } McB1, McB2;
 
   private:
-    int mc_evttype;
-
     void FillMCInformation();
     void FindBMesons();
     int DetermineBMcType(int bmc_idx);
-    int DetermineMcEventType();
 
 	protected:
     virtual void Initialize();
@@ -78,10 +77,13 @@ class BDtaunuMcReader : public BDtaunuReader {
      * with the event. */
     virtual int next_record();
 
-    //! MC event type. 
-    /*! Returns an int that corresponds to the #McEventType enum in
-     * bdtaunu_definitions.h */
-    int get_mc_evttype() const { return mc_evttype; }
+    //! B MC type of first truth B. 
+    /*! Returns an int that corresponds to the #BMcType enum in */
+    int get_b1mctype() const { return McB1.bmctype; }
+
+    //! B MC type of second truth B. 
+    /*! Returns an int that corresponds to the #BMcType enum in */
+    int get_b2mctype() const { return McB2.bmctype; }
 };
 
 #endif

@@ -96,86 +96,150 @@ enum SampleType {
  * have energy below 20 MeV. */
 enum BMcType {
 
-  //! Dummy label for when there are no truth \f$B\f$ mesons.
-  kNoB = 0,
+  //! No truth \f$B\f$ mesons.
+  kCont = 0,
 
-  //! Truth \f$B\f$ decays as \f$B\rightarrow D^{(*)}\tau\nu_\tau\f$.
+  //! Truth \f$B\f$ decays as \f$B\rightarrow D\tau\nu_\tau\f$.
   kDtau = 1,
 
-  //! Truth \f$B\f$ decays as \f$B\rightarrow D^{(*)}\ell\nu_\ell\f$
-  /*! \f$\ell=e,\,\mu\f$. */
-  kDl = 2,
+  //! Truth \f$B\f$ decays as \f$B\rightarrow D^{*}\tau\nu_\tau\f$.
+  kDstartau = 2,
 
-  //! Truth \f$B\f$ decays as \f$B\rightarrow D^{(*)}\ell\nu_\ell X\f$
-  /*! \f$X\f$ is any sequence of particles. */
-  kD_SL = 3,
+  //! Truth \f$B\f$ decays as \f$B\rightarrow D\ell\nu_\ell\f$
+  /*! \f$\ell=e,\,\mu\f$. */
+  kDl = 3,
+
+  //! Truth \f$B\f$ decays as \f$B\rightarrow D^{*}\ell\nu_\ell\f$
+  /*! \f$\ell=e,\,\mu\f$. */
+  kDstarl = 4,
 
   //! Truth \f$B\f$ decays as \f$B\rightarrow D^{**}\ell\nu_\ell X\f$
   /*! \f$X\f$ is any sequence of particles. */
-  kDstarstar_SL = 4,
+  kDstarstar_SL = 5,
+
+  //! Truth \f$B\f$ decays as \f$B\rightarrow D^{(*)}\ell\nu_\ell X\f$
+  /*! \f$X\f$ is any sequence of particles. */
+  kD_SL = 6,
 
   //! Truth \f$B\f$ decays as \f$B\rightarrow X\ell\nu_\ell\f$
   /*! \f$X\f$ is any sequence of particles not involving a charm meson. */
-  k0Charm_SL = 5,
+  k0Charm_SL = 7,
 
   //! Truth \f$B\f$ decays hadronically. Daughters contain no charm mesons. 
-  k0Charm_Had = 6,
+  k0Charm_Had = 8,
 
   //! Truth \f$B\f$ decays hadronically. Daughters contain 1 charm meson. 
-  k1Charm_Had = 7,
+  k1Charm_Had = 9,
 
   //! Truth \f$B\f$ decays hadronically. Daughters contain 2 charm mesons. 
-  k2Charm_Had = 8,
+  k2Charm_Had = 10,
 
   //! Undefined B MC type. Indicates error. 
   kUndefinedBMcType = -1,
 };
 
-//! MC Event Types. 
+//! MC Event Types, Definition A. 
 /*! This labels Monte Carlo events into various signal and background
  * truth categories. 
  * 
  * The categorization is based on the #BMcType of the two truth
  * \f$B\f$ mesons. */
-enum McEventType {
+enum McEventTypeA {
 
-  //! Signal event. 
-  /*! An event is a signal if there exists at least one truth \f$B\f$
-   * which decays in the mode \f$B\rightarrow D^{(*)}\tau\nu_\tau\f$.
-   * This is the case when both #BMcType are #kDtau. */
-  kSignal = 0,
+  //! \f$B\rightarrow D\tau\nu_\tau\f$ signal event.
+  /*! An event is in this category if there exists at least one truth \f$B\f$
+   * which decays in the mode \f$B\rightarrow D\tau\nu_\tau\f$. 
+   * If one truth \f$B\f$ is \f$B\rightarrow D\tau\nu_\tau\f$ and the other 
+   * is \f$B\rightarrow D\tau\nu_\tau\f$, then it is assigned with probability
+   * 0.5 to either #kDtau_SigA or #kDstartau_SigA. */
+  kDtau_SigA = 0,
 
-  //! Normalization event. 
-  /*! An event is normalization if there exists at least one truth \f$B\f$
-   * which decays in the mode \f$B\rightarrow D^{(*)}\ell\nu_\ell\f$,
-   * where \f$\ell=e,\,\mu\f$, and the other truth \f$B\f$ is not
-   * #kDtau.
+  //! \f$B\rightarrow D^*\tau\nu_\tau\f$ signal event.
+  /*! An event is in this category there exists at least one truth \f$B\f$
+   * which decays in the mode \f$B\rightarrow D^*\tau\nu_\tau\f$.
+   * If one truth \f$B\f$ is \f$B\rightarrow D\tau\nu_\tau\f$ and the other 
+   * is \f$B\rightarrow D\tau\nu_\tau\f$, then it is assigned with probability
+   * 0.5 to either #kDtau_SigA or #kDstartau_SigA. */
+  kDstartau_SigA = 1,
+
+  //! \f$B\rightarrow D\ell\nu_\ell\f$ normalization event.
+  /*! An event is in this category if there exists at least one truth \f$B\f$
+   * which decays in the mode \f$B\rightarrow D\ell\nu_\ell\f$,
+   * and the event is neither #kDtau_SigA, #kDstartau_SigA, or #kDstarstar_BkgA.
    *
-   * This is the case when at least one #BMcType is #kDl and the other
-   * is not #kDtau. */
-  kNormalization = 1,
+   * If one truth \f$B\f$ is \f$B\rightarrow D\ell\nu_\ell\f$ and the other 
+   * is \f$B\rightarrow D\ell\nu_\ell\f$, then it is assigned with probability
+   * 0.5 to either #kDl_NormA or #kDstarl_NormA. */
+  kDl_NormA = 2,
 
-  //! Semileptonic-Semileptonic background. 
-  /*! Event when both truth \f$B\f$ mesons are either #kD_SL,
-   * #kDstarstar_SL, or #k0Charm_SL. */
-  kSLSL_Bkg = 2,
+  //! \f$B\rightarrow D^*\ell\nu_\ell\f$ normalization event.
+  /*! An event is in this category there exists at least one truth \f$B\f$
+   * which decays in the mode \f$B\rightarrow D^*\ell\nu_\ell\f$,
+   * and the event is neither #kDtau_SigA, #kDstartau_SigA, or #kDstarstar_BkgA.
+   *
+   * If one truth \f$B\f$ is \f$B\rightarrow D\ell\nu_\ell\f$ and the other 
+   * is \f$B\rightarrow D\ell\nu_\ell\f$, then it is assigned with probability
+   * 0.5 to either #kDl_NormA or #kDstarl_NormA. */
+  kDstarl_NormA = 3,
 
-  //! Semileptonic-Hadron background. 
+  //! \f$D^{**}\f$ background event. 
+  /*! The event has at least one truth \f$B\f$ with #BMcType #kDstarstar_SL,
+   *  and the event is neither #kDtau_Sig or #kDstartau_Sig. */
+  kDstarstar_BkgA = 4,
+
+  //! Semileptonic background. 
   /*! Event when one truth \f$B\f$ mesons is either #k0Charm_Had,
    * #k1Charm_Had, or #k2Charm_Had, and the other is either #kD_SL,
    * #kDstarstar_SL, or #k0Charm_SL. */
-  kSLHad_Bkg = 3,
+  kSL_BkgA = 5,
 
-  //! Hadron-Hadron background. 
+  //! Hadronic background. 
   /*! Event when both truth \f$B\f$ mesons are either #k0Charm_Had,
    * #k1Charm_Had, or #k2Charm_Had. */
-  kHadHad_Bkg = 4,
+  kHad_BkgA = 6,
 
-  //! Continuum event. 
-  kContinuum_Bkg = 5,
+  //! Continuum background. 
+  kCont_BkgA = 7,
 
   //! Undefined MC event type. Indicates error. 
-  kUndefinedMcEventType = -1,
+  kUndefinedMcEventTypeA = -1,
+};
+
+//! MC Event Types, Definition B. 
+/*! This labels Monte Carlo events into various signal and background 
+ *  truth categories. It is based on the #BMcType of a randomly chosen 
+ *  truth B meson. */ 
+enum McEventTypeB {
+
+  //! \f$B\rightarrow D\tau\nu_\tau\f$ signal event.
+  kDtau_SigB = 0,
+
+  //! \f$B\rightarrow D^*\tau\nu_\tau\f$ signal event.
+  kDstartau_SigB = 1,
+
+  //! \f$B\rightarrow D\ell\nu_\ell\f$ normalization event.
+  /*! \f$\ell=e,\,\mu\f$. */
+  kDl_NormB = 2,
+
+  //! \f$B\rightarrow D^*\ell\nu_\ell\f$ normalization event.
+  /*! \f$\ell=e,\,\mu\f$. */
+  kDstarl_NormB = 3,
+
+  //! \f$B\rightarrow D^{**}\ell\nu_\ell X\f$ background event.
+  /*! \f$X\f$ is any sequence of particles. */
+  kDstarstar_BkgB = 4,
+
+  //! Other semileptonic background event.
+  kSL_BkgB = 5,
+
+  //! Hadronic background event.
+  kHad_BkgB = 6,
+
+  //! Continuum background event.
+  kCont_BkgB = 7,
+
+  //! Undefined MC event type. Indicates error. 
+  kUndefinedMcEventTypeB = -1,
 };
 
 #endif

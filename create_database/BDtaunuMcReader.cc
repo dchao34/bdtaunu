@@ -33,17 +33,25 @@ std::vector<int> BDtaunuMcReader::build_nu() {
 }
 const std::vector<int> BDtaunuMcReader::nu = build_nu();
 
-// D and D* mesons. 
+// D mesons. 
 std::vector<int> BDtaunuMcReader::build_dmeson() {
   std::vector<int> dmeson_temp;
   dmeson_temp.push_back(abs(lundIdMap["D+"]));
   dmeson_temp.push_back(abs(lundIdMap["D0"]));
-  dmeson_temp.push_back(abs(lundIdMap["D*+"]));
-  dmeson_temp.push_back(abs(lundIdMap["D*0"]));
   std::sort(dmeson_temp.begin(), dmeson_temp.end());
   return dmeson_temp;
 }
 const std::vector<int> BDtaunuMcReader::dmeson = build_dmeson();
+
+// D* mesons. 
+std::vector<int> BDtaunuMcReader::build_dstar() {
+  std::vector<int> dstar_temp;
+  dstar_temp.push_back(abs(lundIdMap["D*+"]));
+  dstar_temp.push_back(abs(lundIdMap["D*0"]));
+  std::sort(dstar_temp.begin(), dstar_temp.end());
+  return dstar_temp;
+}
+const std::vector<int> BDtaunuMcReader::dstar = build_dstar();
 
 // D** mesons. 
 std::vector<int> BDtaunuMcReader::build_dstarstar() {
@@ -134,7 +142,6 @@ void BDtaunuMcReader::ClearColumnValues() {
   McB2.bflavor = kUndefinedBFlavor;
   McB2.bmctype = kUndefinedBMcType;
   McB2.mc_idx = -1;
-  mc_evttype = kUndefinedMcEventType;
 }
 
 // Find the MC B meson's from the mcLund array of the event. Determine
@@ -184,15 +191,15 @@ int BDtaunuMcReader::DetermineBMcType(int bmc_idx) {
 
   // Return if no MC B mesons are in the event. 
   if (bmc_idx == -1) 
-    return kNoB;
+    return kCont;
 
   // Count the number of daughters of the first generation B daughters
   // and record the lundId of relevant daughters.
   int n_daughters = 0;
-  int ell_lund, nu_lund, d_lund;
-  ell_lund = nu_lund = d_lund = 0;
-  int n_ell, n_nu, n_d, n_dstarstar, n_dstrange, n_other;
-  n_ell = n_nu = n_d = n_dstarstar = n_dstrange = n_other = 0;
+  int ell_lund, nu_lund;
+  ell_lund = nu_lund = 0;
+  int n_ell, n_nu, n_d, n_dstar, n_dstarstar, n_dstrange, n_other;
+  n_ell = n_nu = n_d = n_dstar =  n_dstarstar = n_dstrange = n_other = 0;
 
   // Scan through the entire first generation daughter. 
   int begin_dauIdx = dauIdx[bmc_idx];
@@ -216,7 +223,8 @@ int BDtaunuMcReader::DetermineBMcType(int bmc_idx) {
       nu_lund = abs(mcLund[i]);
     } else if (std::binary_search(dmeson.begin(), dmeson.end(), abs(mcLund[i]))) {
       n_d += 1;
-      d_lund = abs(mcLund[i]);
+    } else if (std::binary_search(dstar.begin(), dstar.end(), abs(mcLund[i]))) {
+      n_dstar += 1;
     } else if (std::binary_search(dstarstar.begin(), dstarstar.end(), abs(mcLund[i]))) {
       n_dstarstar += 1;
     } else if (std::binary_search(dstrange.begin(), dstrange.end(), abs(mcLund[i]))) {
@@ -239,9 +247,19 @@ int BDtaunuMcReader::DetermineBMcType(int bmc_idx) {
       } else {
         return kD_SL;
       }
+    } else if (n_dstar == 1) {
+      if (n_daughters == 3) {
+        if (ell_lund == abs(lundIdMap["tau-"])) {
+          return kDstartau;
+        } else {
+          return kDstarl;
+        }
+      } else {
+        return kD_SL;
+      }
     } else if (n_dstarstar == 1) {
       return kDstarstar_SL;
-    } else if (n_d + n_dstarstar == 0) {
+    } else if (n_d + n_dstar + n_dstarstar == 0) {
       return k0Charm_SL;
     } else {
       return kUndefinedBMcType;
@@ -262,59 +280,6 @@ int BDtaunuMcReader::DetermineBMcType(int bmc_idx) {
   }
 }
 
-// Determine the MC event type based on the B MC types. See
-// bdtaunu_definitions.h for the definitions. 
-int BDtaunuMcReader::DetermineMcEventType() {
-  if (McB1.bmctype == kNoB && McB2.bmctype == kNoB) {
-    return kContinuum_Bkg;
-  } else if (McB1.bmctype == kDtau || McB2.bmctype == kDtau) {
-    return kSignal;
-  } else if (McB1.bmctype == kDl || McB2.bmctype == kDl) {
-    return kNormalization;
-  } else {
-    int b1_dectype, b2_dectype;
-    b1_dectype = b2_dectype = -2;
-
-    switch (McB1.bmctype) {
-      case kD_SL:
-      case kDstarstar_SL:
-      case k0Charm_SL:
-        b1_dectype = 0;
-        break;
-      case k0Charm_Had:
-      case k1Charm_Had:
-      case k2Charm_Had:
-        b1_dectype = 1;
-        break;
-    }
-
-    switch (McB2.bmctype) {
-      case kD_SL:
-      case kDstarstar_SL:
-      case k0Charm_SL:
-        b2_dectype = 0;
-        break;
-      case k0Charm_Had:
-      case k1Charm_Had:
-      case k2Charm_Had:
-        b2_dectype = 1;
-        break;
-    }
-
-    int dectype_sum = b1_dectype + b2_dectype;
-    switch (dectype_sum) {
-      case 0:
-        return kSLSL_Bkg;
-      case 1:
-        return kSLHad_Bkg;
-      case 2:
-        return kHadHad_Bkg;
-      default: 
-        return kUndefinedMcEventType;
-    }
-  }
-}
-
 // Main method that fills MC information.
 void BDtaunuMcReader::FillMCInformation() {
 
@@ -324,11 +289,10 @@ void BDtaunuMcReader::FillMCInformation() {
   // Determine B MC types. 
   McB1.bmctype = DetermineBMcType(McB1.mc_idx);
   McB2.bmctype = DetermineBMcType(McB2.mc_idx);
-  
-  // Determine MC event types. 
-  mc_evttype = DetermineMcEventType();
+
 }
 
+// get the next event
 int BDtaunuMcReader::next_record() {
   ClearColumnValues();
 

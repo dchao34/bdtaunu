@@ -79,6 +79,8 @@ int main() {
   for (int folder = 0; folder < 1; folder++) {
     for (int sp = 0; sp < 4; sp++) {
       for (int run = 1; run <= 6; run++) {
+    //for (int sp = 0; sp < 1; sp++) {
+    //  for (int run = 1; run <= 1; run++) {
 
         string root_fname = data_folders[folder];
         root_fname += ("sp" + to_string(sp_modes[sp]) + "r" + to_string(run) + ".root");
@@ -106,7 +108,8 @@ int main() {
           event_builder.set_run(run);
           event_builder.set_sp_mode(sp_modes[sp]);
           event_builder.set_event_weight(event_weights[pair<int, int>(sp_modes[sp], run)]);
-          event_builder.set_mc_evttype(rootreader.get_mc_evttype());
+          event_builder.set_b1mctype(rootreader.get_b1mctype());
+          event_builder.set_b2mctype(rootreader.get_b2mctype());
           event_builder.set_nTrk(rootreader.get_nTrk());
           event_builder.set_R2(rootreader.get_R2All());
           event_builder.set_nY(rootreader.get_nY());

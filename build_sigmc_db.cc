@@ -90,7 +90,8 @@ int main() {
           event_builder.set_run(run);
           event_builder.set_sp_mode(spmode);
           event_builder.set_event_weight(1.0);
-          event_builder.set_mc_evttype(rootreader.get_mc_evttype());
+          event_builder.set_b1mctype(rootreader.get_b1mctype());
+          event_builder.set_b2mctype(rootreader.get_b2mctype());
           event_builder.set_nTrk(rootreader.get_nTrk());
           event_builder.set_R2(rootreader.get_R2All());
           event_builder.set_nY(rootreader.get_nY());
