@@ -1,4 +1,4 @@
-SELECT Event.id, event_weight, sp_mode, mc_evttype, cand_type, 
+SELECT Event.id, event_weight, sp_mode, mc_evttypeA, mc_evttypeB, cand_type, 
        nTrk, R2, eextra50, mmiss_prime2, cosThetaT, tag_lp3, 
        tag_cosBY, tag_cosThetaDl, tag_Dmass, tag_deltaM, 
        tag_cosThetaDSoft, tag_softP3MagCM, tag_Dtype, tag_Dstartype, 

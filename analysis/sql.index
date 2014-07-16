@@ -1,0 +1,5 @@
+CREATE INDEX CandIdx ON McCandidate(babar_event_id, cand_idx);
+CREATE INDEX SvmCand ON OptimalCandidate(babar_event_id, svm);
+CREATE INDEX MLIdx ON McEvent(ml_sample);
+CREATE INDEX EventIdx ON McEvent(babar_event_id);
+CREATE INDEX divIdx ON McEvent(division);
