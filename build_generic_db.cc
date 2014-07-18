@@ -77,10 +77,10 @@ int main() {
   int sp_modes[4] = { 1235, 1237, 1005, 998 };
 
   for (int folder = 0; folder < 1; folder++) {
-    for (int sp = 0; sp < 4; sp++) {
-      for (int run = 1; run <= 6; run++) {
-    //for (int sp = 0; sp < 1; sp++) {
-    //  for (int run = 1; run <= 1; run++) {
+    //for (int sp = 0; sp < 4; sp++) {
+    //  for (int run = 1; run <= 6; run++) {
+    for (int sp = 0; sp < 1; sp++) {
+      for (int run = 1; run <= 1; run++) {
 
         string root_fname = data_folders[folder];
         root_fname += ("sp" + to_string(sp_modes[sp]) + "r" + to_string(run) + ".root");
@@ -158,10 +158,6 @@ int main() {
 
             candidate_builder.InsertTable();
 
-            if (svm_scorer.passed_selection()) {
-              no_candidates_passed_cuts = 0;
-            }
-
             int curr_cand_idx = curr_cand.get_event_candidate_index();
 
             double svm_score = svm_scorer.get_score();
@@ -178,7 +174,6 @@ int main() {
           }
 
           status_builder.set_babar_event_id(rootreader.get_eventId());
-          status_builder.set_no_candidates_passed_cuts(no_candidates_passed_cuts);
           status_builder.InsertTable();
 
           optcand_builder.set_babar_event_id(rootreader.get_eventId());

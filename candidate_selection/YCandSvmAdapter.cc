@@ -4,7 +4,7 @@
 #include <cassert>
 #include <iostream>
 
-#include "svm.h"
+#include "utilities/svm.h"
 #include "YCandFeatureExtractor.h"
 #include "YCandSvmAdapter.h"
 

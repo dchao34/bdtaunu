@@ -160,7 +160,6 @@ int main() {
           }
 
           status_builder.set_babar_event_id(rootreader.get_eventId());
-          status_builder.set_no_candidates_passed_cuts(no_candidates_passed_cuts);
           status_builder.InsertTable();
 
           optcand_builder.set_babar_event_id(rootreader.get_eventId());

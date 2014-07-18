@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "YCandFeatureExtractor.h"
-#include "svm.h"
+#include "utilities/svm.h"
 
 class YCandSvmAdapter {
 

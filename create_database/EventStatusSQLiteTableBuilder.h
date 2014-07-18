@@ -16,10 +16,12 @@ class EventStatusSQLiteTableBuilder : public SQLiteTableBuilder {
     std::string table_name;
     std::vector<std::pair<std::string, std::string> > id_colnames;
     std::vector<std::pair<std::string, std::string> > code_colnames;
+    std::vector<std::pair<std::string, std::string> > score_colnames;
 
     std::string babar_event_id;
-    int no_candidates_passed_cuts;
-    int failed_event_selection;
+    int failed_event_precuts;
+    double signal_score;
+    double continuum_score;
 
     std::string ConstructCreateStatement() const;
     std::string ConstructInsertStatement() const;
@@ -32,8 +34,9 @@ class EventStatusSQLiteTableBuilder : public SQLiteTableBuilder {
     virtual ~EventStatusSQLiteTableBuilder();
 
     void set_babar_event_id(std::string id) { babar_event_id = id; }
-    void set_no_candidates_passed_cuts(int value) { no_candidates_passed_cuts = value; }
-    void set_failed_event_selection(int value) { failed_event_selection = value; }
+    void set_failed_event_precuts(int value) { failed_event_precuts = value; }
+    void set_signal_score(double value) { signal_score = value; }
+    void set_continuum_score(double value) { continuum_score = value; }
 
 };
 
