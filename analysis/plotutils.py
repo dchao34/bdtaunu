@@ -67,8 +67,52 @@ def ExtractArrayByCategory(arr, varname, catname, cat_idx):
     return x[c == cat_idx]
 
 
+def GroupCategories(x, c, groups=None, labels=None, exclude=[]):
+    """Get numpy arrays based on specified groupings of categories.
+
+    Given numpy array x of elements and another numpy array c whose
+    elements are the categories x belongs to. Return a list of
+    numpy arrays whose elements are those in x belonging in the same
+    group.
+
+    Parameters
+    ----------
+    x: Numpy array with shape (n, ) to project.
+    c: Numpy array with shape (n, ) whose elements are the categories.
+    groups: dictionary whose keys are integers and values are lists
+            whose elements are categories that should be grouped in
+            one larger category.
+    labels: dictionary of more descriptive names. Its keys are the same
+            as those in groups and values are strings.
+    exclude: List of groups to exclude from the result. Each list element
+             corresponds to a key in groups.
+
+    Returns
+    -------
+    list: Each element is a numpy array corresponding to x projected into
+          the prespecified groups.
+    list: Labels for each numpy array element returned.
+    """
+
+    if not groups:
+        groups = dict([(i, [i]) for i in map(int, np.unique(c))])
+
+    if not labels:
+        labels = dict([(i, str(i)) for i in groups.keys()])
+
+    x_i, label_i = [], []
+    for g in groups.items():
+        if g[0] not in exclude:
+            x_i.append(x[reduce(np.logical_or,
+                                map(np.equal, [c] * len(g[1]), g[1]))])
+            label_i.append(labels[g[0]])
+
+    return x_i, label_i
+
+
 def StackByCategory(arr, varname, catname, wgtname=None,
-                    cat_dict=None, ax=None, **kwargs):
+                    cat_groups=None, cat_labels=None, cat_exclude=[],
+                    ax=None, **kwargs):
     """Make a stacked histogram grouped by a specific category.
 
     Given a structured array, make a stacked histogram of a some
@@ -86,8 +130,14 @@ def StackByCategory(arr, varname, catname, wgtname=None,
     wgtname: Name of the column containing observation weights.
              Defaults to weight 1 for all records.
 
-    cat_dict: Dictionary that provides a mapping between specific
-              category indices with a more descriptive label.
+    cat_groups: Dictionary that group finer categories into larger ones.
+                Keys are integers and values are list of finer category
+                indices.
+
+    cat_labels: Dictionary that provides a mapping between specific
+                cat_group category indices with a more descriptive label.
+
+    cat_exclude: List of cat_group category indices to exclude.
 
     ax: Plotting axis to draw on. Defaults to pyplot.gca().
 
@@ -102,18 +152,13 @@ def StackByCategory(arr, varname, catname, wgtname=None,
         ax = plt.gca()
 
     x, c = arr[varname], arr[catname]
-    x_i = [x[c == i] for i in np.unique(c)]
-
-    labels = []
-    if cat_dict:
-        labels = [cat_dict[i] for i in map(int, np.unique(c))]
-    else:
-        labels = map(str, map(int, np.unique(c)))
+    x_i, labels = GroupCategories(x, c, cat_groups, cat_labels, cat_exclude)
 
     w_i = None
     if wgtname:
         w = arr[wgtname]
-        w_i = [w[c == i] for i in np.unique(c)]
+        w_i, labels = GroupCategories(w, c,
+                                      cat_groups, cat_labels, cat_exclude)
 
     counts, bins, patches = ax.hist(x_i, weights=w_i,
                                     stacked=True, label=labels,
@@ -168,7 +213,7 @@ def NormByCategory(arr, varname, catname,
 
 
 def KdeByCategory(arr, varname, catname,
-                  exclude=[], cat_dict=None,
+                  cat_groups=None, cat_labels=None, cat_exclude=[],
                   legend_loc=1, legend_size=12,
                   ax=None, xlim=None):
     """Estimate and plot probability densities grouped by category.
@@ -187,10 +232,14 @@ def KdeByCategory(arr, varname, catname,
 
     catname: Name of the column with the categories to group by.
 
-    exclude: List of category indices to exclude from consideration.
+    cat_groups: Dictionary that group finer categories into larger ones.
+                Keys are integers and values are list of finer category
+                indices.
 
-    cat_dict: Dictionary that provides a mapping between specific
-              category indices with a more descriptive label.
+    cat_labels: Dictionary that provides a mapping between specific
+                cat_group category indices with a more descriptive label.
+
+    cat_exclude: List of cat_group category indices to exclude.
 
     ax: Plotting axis to draw on. Defaults to pyplot.gca().
     """
@@ -202,19 +251,7 @@ def KdeByCategory(arr, varname, catname,
         ax.set_xlim(xlim)
 
     x, c = arr[varname], arr[catname]
-
-    cat = []
-    for i in map(int, np.unique(c)):
-        if i not in exclude:
-            cat.append(i)
-
-    x_i = [x[c == i] for i in cat]
-
-    labels = []
-    if cat_dict:
-        labels = [cat_dict[i] for i in cat]
-    else:
-        labels = map(str, map(int, cat))
+    x_i, labels = GroupCategories(x, c, cat_groups, cat_labels, cat_exclude)
 
     kde_i = []
     for x in x_i:
