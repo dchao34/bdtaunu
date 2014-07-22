@@ -200,7 +200,7 @@ void EventSvmAdapter::svm_predict() {
 }
 
 SignalSvmAdapter::SignalSvmAdapter() {
-  InitializeFeatures(2, 12, 0, 0, 0, 0, 0);
+  InitializeFeatures(2, 10, 0, 0, 0, 0, 0);
   std::string trained_path = std::string(__MODEL_ROOTNAME);
   std::string model_fname = trained_path + "/models/sig.model";
   std::string scale_fname = trained_path + "/ranges/sig.range";
@@ -208,9 +208,41 @@ SignalSvmAdapter::SignalSvmAdapter() {
 }
 
 ContinuumSvmAdapter::ContinuumSvmAdapter() {
-  InitializeFeatures(2, 10, 0, 0, 0, 0, 0);
+  InitializeFeatures(2, 12, 0, 0, 0, 0, 0);
   std::string trained_path = std::string(__MODEL_ROOTNAME);
   std::string model_fname = trained_path + "/models/cont.model";
   std::string scale_fname = trained_path + "/ranges/cont.range";
+  InitializeSvm(model_fname.c_str(), scale_fname.c_str());
+}
+
+SigVsSLSvmAdapter::SigVsSLSvmAdapter() {
+  InitializeFeatures(2, 12, 0, 0, 0, 0, 0);
+  std::string trained_path = std::string(__MODEL_ROOTNAME);
+  std::string model_fname = trained_path + "/models/sigVsl.model";
+  std::string scale_fname = trained_path + "/ranges/sigVsl.range";
+  InitializeSvm(model_fname.c_str(), scale_fname.c_str());
+}
+
+SigVsHadSvmAdapter::SigVsHadSvmAdapter() {
+  InitializeFeatures(2, 12, 0, 0, 0, 0, 0);
+  std::string trained_path = std::string(__MODEL_ROOTNAME);
+  std::string model_fname = trained_path + "/models/sigVhad.model";
+  std::string scale_fname = trained_path + "/ranges/sigVhad.range";
+  InitializeSvm(model_fname.c_str(), scale_fname.c_str());
+}
+
+SigVsContSvmAdapter::SigVsContSvmAdapter() {
+  InitializeFeatures(2, 12, 0, 0, 0, 0, 0);
+  std::string trained_path = std::string(__MODEL_ROOTNAME);
+  std::string model_fname = trained_path + "/models/sigVcont.model";
+  std::string scale_fname = trained_path + "/ranges/sigVcont.range";
+  InitializeSvm(model_fname.c_str(), scale_fname.c_str());
+}
+
+SigVsAllSvmAdapter::SigVsAllSvmAdapter() {
+  InitializeFeatures(2, 12, 0, 0, 0, 0, 0);
+  std::string trained_path = std::string(__MODEL_ROOTNAME);
+  std::string model_fname = trained_path + "/models/sigVall.model";
+  std::string scale_fname = trained_path + "/ranges/sigVall.range";
   InitializeSvm(model_fname.c_str(), scale_fname.c_str());
 }

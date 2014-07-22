@@ -15,6 +15,10 @@ EventStatusSQLiteTableBuilder::EventStatusSQLiteTableBuilder(sqlite3* database) 
   code_colnames.push_back(std::pair<std::string, std::string>("failed_event_precuts", "INTEGER DEFAULT 0"));
   score_colnames.push_back(std::pair<std::string, std::string>("signal_score", "REAL DEFAULT 0"));
   score_colnames.push_back(std::pair<std::string, std::string>("continuum_score", "REAL DEFAULT 0"));
+  score_colnames.push_back(std::pair<std::string, std::string>("sig_sl_score", "REAL DEFAULT 0"));
+  score_colnames.push_back(std::pair<std::string, std::string>("sig_had_score", "REAL DEFAULT 0"));
+  score_colnames.push_back(std::pair<std::string, std::string>("sig_cont_score", "REAL DEFAULT 0"));
+  score_colnames.push_back(std::pair<std::string, std::string>("sig_all_score", "REAL DEFAULT 0"));
 }
 
 EventStatusSQLiteTableBuilder::~EventStatusSQLiteTableBuilder() {
@@ -100,5 +104,13 @@ void EventStatusSQLiteTableBuilder::BindColumns() {
   db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@signal_score"), signal_score);
   assert(db_status == SQLITE_OK);
   db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@continuum_score"), continuum_score);
+  assert(db_status == SQLITE_OK);
+  db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@sig_sl_score"), sig_sl_score);
+  assert(db_status == SQLITE_OK);
+  db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@sig_had_score"), sig_had_score);
+  assert(db_status == SQLITE_OK);
+  db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@sig_cont_score"), sig_cont_score);
+  assert(db_status == SQLITE_OK);
+  db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@sig_all_score"), sig_all_score);
   assert(db_status == SQLITE_OK);
 }

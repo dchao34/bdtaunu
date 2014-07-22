@@ -5,6 +5,8 @@
 #include <string>
 #include <map>
 
+#include "Event.h"
+
 class EventFeatureExtractor {
 
   protected:
@@ -47,6 +49,7 @@ class EventFeatureExtractor {
     virtual int categorize_event_type() const;
     virtual bool passed_selection() const;
     virtual void extract_features() = 0;
+    void extract_features(const Event &event);
 
     const std::vector<double>& get_numeric_features() const { return numeric_features; }
     const std::vector<int>& get_cand_type_indicators() const { return tagD_indicators; }
@@ -93,6 +96,9 @@ class EventFeatureExtractor {
 
 class ContinuumFeatureExtractor : public EventFeatureExtractor {
   public:
+
+    using EventFeatureExtractor::extract_features;
+
     ContinuumFeatureExtractor() :
         EventFeatureExtractor(12, 0, 0, 0, 0, 0)  { ClearCache(); ClearFeatures(); }
 
@@ -102,8 +108,59 @@ class ContinuumFeatureExtractor : public EventFeatureExtractor {
 
 class SignalFeatureExtractor : public EventFeatureExtractor {
   public:
+
+    using EventFeatureExtractor::extract_features;
+
     SignalFeatureExtractor() :
         EventFeatureExtractor(10, 0, 0, 0, 0, 0)  { ClearCache(); ClearFeatures(); }
+
+    int categorize_event_type() const;
+    void extract_features();
+};
+
+class SigVsSLFeatureExtractor : public EventFeatureExtractor {
+  public:
+
+    using EventFeatureExtractor::extract_features;
+
+    SigVsSLFeatureExtractor() :
+        EventFeatureExtractor(10, 0, 0, 0, 0, 0)  { ClearCache(); ClearFeatures(); }
+
+    int categorize_event_type() const;
+    void extract_features();
+};
+
+class SigVsHadFeatureExtractor : public EventFeatureExtractor {
+  public:
+
+    using EventFeatureExtractor::extract_features;
+
+    SigVsHadFeatureExtractor() :
+        EventFeatureExtractor(10, 0, 0, 0, 0, 0)  { ClearCache(); ClearFeatures(); }
+
+    int categorize_event_type() const;
+    void extract_features();
+};
+
+class SigVsContFeatureExtractor : public EventFeatureExtractor {
+  public:
+
+    using EventFeatureExtractor::extract_features;
+
+    SigVsContFeatureExtractor() :
+        EventFeatureExtractor(12, 0, 0, 0, 0, 0)  { ClearCache(); ClearFeatures(); }
+
+    int categorize_event_type() const;
+    void extract_features();
+};
+
+class SigVsAllFeatureExtractor : public EventFeatureExtractor {
+  public:
+
+    using EventFeatureExtractor::extract_features;
+
+    SigVsAllFeatureExtractor() :
+        EventFeatureExtractor(12, 0, 0, 0, 0, 0)  { ClearCache(); ClearFeatures(); }
 
     int categorize_event_type() const;
     void extract_features();

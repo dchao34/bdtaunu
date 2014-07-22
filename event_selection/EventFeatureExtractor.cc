@@ -7,6 +7,8 @@
 #include "EventFeatureExtractor.h"
 #include "utilities/helpers.h"
 
+#include "Event.h"
+
 EventFeatureExtractor::EventFeatureExtractor() : 
   numeric_features(), 
   cand_type_indicators(), 
@@ -190,6 +192,47 @@ int EventFeatureExtractor::categorize_event_type() const {
   return mc_evttypeA;
 }
 
+void EventFeatureExtractor::extract_features(const Event &event) {
+
+  ClearCache();
+
+  id = event.get_id();
+  mc_evttypeA = event.get_mc_evttype();
+  event_weight = event.get_event_weight();
+  cand_type = event.get_upsilon().get_cand_type();
+  tag_Dtype = event.get_upsilon().get_tag_d_mode();
+  tag_Dstartype = event.get_upsilon().get_tag_dstar_mode();
+  sig_Dtype = event.get_upsilon().get_sig_d_mode();
+  sig_Dstartype = event.get_upsilon().get_sig_dstar_mode();
+  nTrk = event.get_nTrk();
+  R2 = event.get_R2();
+  cosThetaT = event.get_upsilon().get_cosThetaT();
+  eextra50 = event.get_upsilon().get_eextra50();
+  mmiss_prime2 = event.get_upsilon().get_mmiss_prime2();
+  tag_lp3 = event.get_upsilon().get_tag_lp3();
+  tag_cosBY = event.get_upsilon().get_tag_cosBY();
+  tag_cosThetaDl = event.get_upsilon().get_tag_cosThetaDl();
+  sig_hp3 = event.get_upsilon().get_sig_hp3();
+  sig_cosBY = event.get_upsilon().get_sig_cosBY();
+  sig_cosThetaDtau = event.get_upsilon().get_sig_cosThetaDtau();
+  sig_vtxB = event.get_upsilon().get_sig_vtxB();
+  svm_score = event.get_ups_svm_score();
+
+  tag_Dmass = event.get_upsilon().get_tag_Dmass();
+  tag_deltaM = event.get_upsilon().get_tag_deltaM();
+  tag_cosThetaDSoft = event.get_upsilon().get_tag_cosThetaDSoft();
+  tag_softP3MagCM = event.get_upsilon().get_tag_softP3MagCM();
+  sig_Dmass = event.get_upsilon().get_sig_Dmass();
+  sig_deltaM = event.get_upsilon().get_sig_deltaM();
+  sig_cosThetaDSoft = event.get_upsilon().get_sig_cosThetaDSoft();
+  sig_softP3MagCM = event.get_upsilon().get_sig_softP3MagCM();
+  sig_hmass = event.get_upsilon().get_sig_hmass();
+  sig_vtxh = event.get_upsilon().get_sig_vtxh();
+
+  extract_features();
+
+}
+
 
 std::string EventFeatureExtractor::get_libsvm_line() const {
 
@@ -325,5 +368,125 @@ void SignalFeatureExtractor::extract_features() {
   numeric_features[7] = sig_cosBY;
   numeric_features[8] = sig_cosThetaDtau;
   numeric_features[9] = sig_vtxB;
+
+}
+
+int SigVsSLFeatureExtractor::categorize_event_type() const {
+  switch (mc_evttypeA) {
+    case 0:
+    case 1:
+      return 1;
+    case 2:
+    case 3:
+    case 4:
+      return -1;
+    default:
+      return 0;
+  }
+}
+
+void SigVsSLFeatureExtractor::extract_features() {
+
+  ClearFeatures();
+
+  numeric_features[0] = nTrk;
+  numeric_features[1] = eextra50;
+  numeric_features[2] = mmiss_prime2;
+  numeric_features[3] = tag_cosBY;
+  numeric_features[4] = tag_lp3;
+  numeric_features[5] = tag_cosThetaDl;
+  numeric_features[6] = sig_hp3;
+  numeric_features[7] = sig_cosBY;
+  numeric_features[8] = sig_cosThetaDtau;
+  numeric_features[9] = sig_vtxB;
+
+}
+
+int SigVsHadFeatureExtractor::categorize_event_type() const {
+  switch (mc_evttypeA) {
+    case 0:
+    case 1:
+      return 1;
+    case 5:
+      return -1;
+    default:
+      return 0;
+  }
+}
+
+void SigVsHadFeatureExtractor::extract_features() {
+
+  ClearFeatures();
+
+  numeric_features[0] = nTrk;
+  numeric_features[1] = eextra50;
+  numeric_features[2] = mmiss_prime2;
+  numeric_features[3] = tag_cosBY;
+  numeric_features[4] = tag_lp3;
+  numeric_features[5] = tag_cosThetaDl;
+  numeric_features[6] = sig_hp3;
+  numeric_features[7] = sig_cosBY;
+  numeric_features[8] = sig_cosThetaDtau;
+  numeric_features[9] = sig_vtxB;
+
+}
+
+int SigVsContFeatureExtractor::categorize_event_type() const {
+  switch (mc_evttypeA) {
+    case 0:
+    case 1:
+      return 1;
+    case 7:
+      return -1;
+    default:
+      return 0;
+  }
+}
+
+void SigVsContFeatureExtractor::extract_features() {
+
+  ClearFeatures();
+
+  numeric_features[0] = nTrk;
+  numeric_features[1] = R2;
+  numeric_features[2] = cosThetaT;
+  numeric_features[3] = eextra50;
+  numeric_features[4] = mmiss_prime2;
+  numeric_features[5] = tag_cosBY;
+  numeric_features[6] = tag_lp3;
+  numeric_features[7] = tag_cosThetaDl;
+  numeric_features[8] = sig_hp3;
+  numeric_features[9] = sig_cosBY;
+  numeric_features[10] = sig_cosThetaDtau;
+  numeric_features[11] = sig_vtxB;
+
+}
+
+int SigVsAllFeatureExtractor::categorize_event_type() const {
+  switch (mc_evttypeA) {
+    case 0:
+    case 1:
+      return 1;
+    default:
+      return -1;
+  }
+}
+
+void SigVsAllFeatureExtractor::extract_features() {
+
+  ClearFeatures();
+
+  numeric_features[0] = nTrk;
+  numeric_features[1] = R2;
+  numeric_features[2] = cosThetaT;
+  numeric_features[3] = eextra50;
+  numeric_features[4] = mmiss_prime2;
+  numeric_features[5] = tag_cosBY;
+  numeric_features[6] = tag_lp3;
+  numeric_features[7] = tag_cosThetaDl;
+  numeric_features[8] = sig_hp3;
+  numeric_features[9] = sig_cosBY;
+  numeric_features[10] = sig_cosThetaDtau;
+  numeric_features[11] = sig_vtxB;
 
 }

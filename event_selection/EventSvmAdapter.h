@@ -74,4 +74,28 @@ class ContinuumSvmAdapter : public EventSvmAdapter {
     ~ContinuumSvmAdapter() { Cleanup(); }
 };
 
+class SigVsSLSvmAdapter : public EventSvmAdapter {
+  public:
+    SigVsSLSvmAdapter();
+    ~SigVsSLSvmAdapter() { Cleanup(); }
+};
+
+class SigVsHadSvmAdapter : public EventSvmAdapter {
+  public:
+    SigVsHadSvmAdapter();
+    ~SigVsHadSvmAdapter() { Cleanup(); }
+};
+
+class SigVsContSvmAdapter : public EventSvmAdapter {
+  public:
+    SigVsContSvmAdapter();
+    ~SigVsContSvmAdapter() { Cleanup(); }
+};
+
+class SigVsAllSvmAdapter : public EventSvmAdapter {
+  public:
+    SigVsAllSvmAdapter();
+    ~SigVsAllSvmAdapter() { Cleanup(); }
+};
+
 #endif

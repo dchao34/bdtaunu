@@ -77,10 +77,10 @@ int main() {
   int sp_modes[4] = { 1235, 1237, 1005, 998 };
 
   for (int folder = 0; folder < 1; folder++) {
-    //for (int sp = 0; sp < 4; sp++) {
-    //  for (int run = 1; run <= 6; run++) {
-    for (int sp = 0; sp < 1; sp++) {
-      for (int run = 1; run <= 1; run++) {
+    for (int sp = 0; sp < 4; sp++) {
+      for (int run = 1; run <= 6; run++) {
+    //for (int sp = 0; sp < 1; sp++) {
+      //for (int run = 1; run <= 1; run++) {
 
         string root_fname = data_folders[folder];
         root_fname += ("sp" + to_string(sp_modes[sp]) + "r" + to_string(run) + ".root");

@@ -6,7 +6,7 @@ PKG_LIBPATH = ../lib
 INCFLAGS = -I$(PKG_INCPATH) -I/usr/local/include
 INCFLAGS += $(shell root-config --cflags)
 
-SHARED_LIBARIES = utilities createdb sqlite3
+SHARED_LIBARIES = utilities createdb sqlite3 svm
 LDFLAGS = -L$(PKG_LIBPATH) -L/usr/local/lib
 LDFLAGS += $(addprefix -l, $(SHARED_LIBARIES))
 LDFLAGS += $(shell root-config --libs)
@@ -18,7 +18,9 @@ OS = $(shell uname)
 
 OBJECTS = SQLiteAccessor.o SQLiteReader.o EventSQLiteReader.o \
 				  SQLiteUpdater.o EventStatusSQLiteUpdater.o \
-				  EventFeatureExtractor.o
+					Event.o \
+				  EventFeatureExtractor.o EventSvmAdapter.o \
+					EventSvmScorer.o
 
 LIBNAME = libeventselect.so
 

@@ -19,7 +19,7 @@ void print_usage(char **argv) {
        << "division "
        << endl;
   cout << "  event_extractor_type: One of the following strings." << endl;
-  cout << "     sig, or cont" << endl;
+  cout << "     sig, cont, sigVsl, sigVhad, sigVcont, or sigVall" << endl;
   cout << endl;
   cout << "  ml_sample_type: One of the following strings." << endl;
   cout << "     all, explore, train, validate, or test" << endl;
@@ -46,6 +46,9 @@ int main(int argc, char **argv) {
 
   string weight_fname = libsvm_fname + ".wgt";
   ofstream weight_file(weight_fname.c_str(), ofstream::out);
+
+  string eventId_fname = libsvm_fname + ".eventId";
+  ofstream eventId_file(eventId_fname.c_str(), ofstream::out);
 
   while (reader->next_record()) {
     extractor->set_id(reader->get_id());
@@ -90,11 +93,13 @@ int main(int argc, char **argv) {
     }
 
     extractor->extract_features();
+    eventId_file << reader->get_babar_event_id() << endl;
     libsvm_file << extractor->get_libsvm_line() << endl;
     weight_file << extractor->get_event_weight() << endl;
 
   }
 
+  eventId_file.close();
   libsvm_file.close();
   weight_file.close();
 
