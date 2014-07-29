@@ -110,9 +110,40 @@ def GroupCategories(x, c, groups=None, labels=None, exclude=[]):
     return x_i, label_i
 
 
+def ApplySelectionCuts(x, selection_dict):
+    """Apply cuts on a structure array x.
+
+    Given a structure array x and selection dictionary with the format
+    { 'varname': (lower, upper) ... }, return another structured array
+    that is appropriately filtered. lower and upper are the lower and
+    upper limits a record can have for variable 'varname'.
+
+    Parameters
+    ----------
+    x: Numpy array structured array.
+    c: Dictionary of selction cuts.
+
+    Returns
+    -------
+    Numpy structured array: Each element is a numpy array that passes
+                            conditions imposed by selection_dict.
+    """
+
+    logic = np.ones(len(x), dtype=bool)
+    for c in selection_dict.items():
+        varname, lower, upper = c[0], c[1][0], c[1][1]
+        if lower:
+            logic = np.logical_and(logic, x[varname] > lower)
+        if upper:
+            logic = np.logical_and(logic, x[varname] < upper)
+
+    return x[logic]
+
+
 def StackByCategory(arr, varname, catname, wgtname=None,
                     cat_groups=None, cat_labels=None, cat_exclude=[],
-                    ax=None, **kwargs):
+                    cut_dict=None,
+                    ax=None, xlim=None, **kwargs):
     """Make a stacked histogram grouped by a specific category.
 
     Given a structured array, make a stacked histogram of a some
@@ -129,6 +160,8 @@ def StackByCategory(arr, varname, catname, wgtname=None,
 
     wgtname: Name of the column containing observation weights.
              Defaults to weight 1 for all records.
+
+    cut_dict: Dictionary of selection cuts.
 
     cat_groups: Dictionary that group finer categories into larger ones.
                 Keys are integers and values are list of finer category
@@ -150,6 +183,12 @@ def StackByCategory(arr, varname, catname, wgtname=None,
 
     if not ax:
         ax = plt.gca()
+
+    if xlim:
+        ax.set_xlim(xlim)
+
+    if cut_dict:
+        arr = ApplySelectionCuts(arr, cut_dict)
 
     x, c = arr[varname], arr[catname]
     x_i, labels = GroupCategories(x, c, cat_groups, cat_labels, cat_exclude)
@@ -214,6 +253,7 @@ def NormByCategory(arr, varname, catname,
 
 def KdeByCategory(arr, varname, catname,
                   cat_groups=None, cat_labels=None, cat_exclude=[],
+                  cut_dict=None,
                   legend_loc=1, legend_size=12,
                   ax=None, xlim=None):
     """Estimate and plot probability densities grouped by category.
@@ -241,6 +281,8 @@ def KdeByCategory(arr, varname, catname,
 
     cat_exclude: List of cat_group category indices to exclude.
 
+    cut_dict: Dictionary of selection cuts.
+
     ax: Plotting axis to draw on. Defaults to pyplot.gca().
     """
 
@@ -249,6 +291,9 @@ def KdeByCategory(arr, varname, catname,
 
     if xlim:
         ax.set_xlim(xlim)
+
+    if cut_dict:
+        arr = ApplySelectionCuts(arr, cut_dict)
 
     x, c = arr[varname], arr[catname]
     x_i, labels = GroupCategories(x, c, cat_groups, cat_labels, cat_exclude)
