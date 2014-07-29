@@ -20,6 +20,10 @@ EventStatusSQLiteUpdater::EventStatusSQLiteUpdater(const char *dbname) :
   target_colnames.push_back("failed_event_precuts");
   target_colnames.push_back("signal_score");
   target_colnames.push_back("continuum_score");
+  target_colnames.push_back("sig_sl_score");
+  target_colnames.push_back("sig_had_score");
+  target_colnames.push_back("sig_cont_score");
+  target_colnames.push_back("sig_all_score");
 
   constraint_colnames.push_back("babar_event_id");
 
@@ -64,6 +68,14 @@ void EventStatusSQLiteUpdater::BindColumns() {
   db_status = sqlite3_bind_double(stmt, sqlite3_bind_parameter_index(stmt, "@signal_score"), signal_score);
   assert(db_status == SQLITE_OK);
   db_status = sqlite3_bind_double(stmt, sqlite3_bind_parameter_index(stmt, "@continuum_score"), continuum_score);
+  assert(db_status == SQLITE_OK);
+  db_status = sqlite3_bind_double(stmt, sqlite3_bind_parameter_index(stmt, "@sig_sl_score"), sig_sl_score);
+  assert(db_status == SQLITE_OK);
+  db_status = sqlite3_bind_double(stmt, sqlite3_bind_parameter_index(stmt, "@sig_had_score"), sig_had_score);
+  assert(db_status == SQLITE_OK);
+  db_status = sqlite3_bind_double(stmt, sqlite3_bind_parameter_index(stmt, "@sig_cont_score"), sig_cont_score);
+  assert(db_status == SQLITE_OK);
+  db_status = sqlite3_bind_double(stmt, sqlite3_bind_parameter_index(stmt, "@sig_all_score"), sig_all_score);
   assert(db_status == SQLITE_OK);
   db_status = sqlite3_bind_text(stmt, sqlite3_bind_parameter_index(stmt, "@babar_event_id"), babar_event_id.c_str(), -1, SQLITE_STATIC);
   assert(db_status == SQLITE_OK);

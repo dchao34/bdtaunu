@@ -216,7 +216,7 @@ ContinuumSvmAdapter::ContinuumSvmAdapter() {
 }
 
 SigVsSLSvmAdapter::SigVsSLSvmAdapter() {
-  InitializeFeatures(2, 12, 0, 0, 0, 0, 0);
+  InitializeFeatures(2, 10, 0, 0, 0, 0, 0);
   std::string trained_path = std::string(__MODEL_ROOTNAME);
   std::string model_fname = trained_path + "/models/sigVsl.model";
   std::string scale_fname = trained_path + "/ranges/sigVsl.range";
@@ -224,7 +224,7 @@ SigVsSLSvmAdapter::SigVsSLSvmAdapter() {
 }
 
 SigVsHadSvmAdapter::SigVsHadSvmAdapter() {
-  InitializeFeatures(2, 12, 0, 0, 0, 0, 0);
+  InitializeFeatures(2, 10, 0, 0, 0, 0, 0);
   std::string trained_path = std::string(__MODEL_ROOTNAME);
   std::string model_fname = trained_path + "/models/sigVhad.model";
   std::string scale_fname = trained_path + "/ranges/sigVhad.range";

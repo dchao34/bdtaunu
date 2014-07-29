@@ -19,6 +19,10 @@ struct Status {
   int failed_event_precuts;
   double signal_score;
   double continuum_score;
+  double sig_sl_score;
+  double sig_had_score;
+  double sig_cont_score;
+  double sig_all_score;
 };
 
 int main(int argc, char **argv) {
@@ -92,6 +96,10 @@ int main(int argc, char **argv) {
 
     s.signal_score = svm_scorer.get_signal_score();
     s.continuum_score = svm_scorer.get_continuum_score();
+    s.sig_sl_score = svm_scorer.get_sig_sl_score();
+    s.sig_had_score = svm_scorer.get_sig_had_score();
+    s.sig_cont_score = svm_scorer.get_sig_cont_score();
+    s.sig_all_score = svm_scorer.get_sig_all_score();
     updates[reader->get_babar_event_id()] = s;
   }
   delete reader;
@@ -103,6 +111,10 @@ int main(int argc, char **argv) {
     updater.set_failed_event_precuts((it->second).failed_event_precuts);
     updater.set_signal_score((it->second).signal_score);
     updater.set_continuum_score((it->second).continuum_score);
+    updater.set_sig_sl_score((it->second).sig_sl_score);
+    updater.set_sig_had_score((it->second).sig_had_score);
+    updater.set_sig_cont_score((it->second).sig_cont_score);
+    updater.set_sig_all_score((it->second).sig_all_score);
     updater.UpdateTable();
     ++it;
   }
