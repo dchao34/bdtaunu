@@ -87,6 +87,16 @@ std::vector<int> BDtaunuMcReader::build_dstrange() {
 }
 const std::vector<int> BDtaunuMcReader::dstrange = build_dstrange();
 
+// pion. 
+std::vector<int> BDtaunuMcReader::build_pion() {
+  std::vector<int> pion_temp;
+  pion_temp.push_back(abs(lundIdMap["pi+"]));
+  pion_temp.push_back(abs(lundIdMap["pi0"]));
+  std::sort(pion_temp.begin(), pion_temp.end());
+  return pion_temp;
+}
+const std::vector<int> BDtaunuMcReader::pion = build_pion();
+
 
 BDtaunuMcReader::BDtaunuMcReader() : BDtaunuReader() {
   Initialize();
@@ -136,12 +146,18 @@ void BDtaunuMcReader::SetBranchAddress() {
 void BDtaunuMcReader::ClearColumnValues() {
   BDtaunuReader::ClearColumnValues();
   mcLen = 0;
+
   McB1.bflavor = kUndefinedBFlavor;
-  McB1.bmctype = kUndefinedBMcType;
   McB1.mc_idx = -1;
+  McB1.bmctype = kUndefinedBMcType;
+  McB1.dtau_max_photon_energy = -1;
+  McB1.taumctype = ktau_undefined_mc;
+
   McB2.bflavor = kUndefinedBFlavor;
-  McB2.bmctype = kUndefinedBMcType;
   McB2.mc_idx = -1;
+  McB2.bmctype = kUndefinedBMcType;
+  McB2.dtau_max_photon_energy = -1;
+  McB2.taumctype = ktau_undefined_mc;
 }
 
 // Find the MC B meson's from the mcLund array of the event. Determine
@@ -187,29 +203,34 @@ void BDtaunuMcReader::FindBMesons() {
 }
 
 // Determine the B MC types. 
-int BDtaunuMcReader::DetermineBMcType(int bmc_idx) {
+void BDtaunuMcReader::DetermineBMcType(McBMeson &mcB) {
 
   // Return if no MC B mesons are in the event. 
-  if (bmc_idx == -1) 
-    return kCont;
+  if (mcB.mc_idx == -1) {
+    mcB.bmctype = kCont;
+    return;
+  }
 
   // Count the number of daughters of the first generation B daughters
   // and record the lundId of relevant daughters.
   int n_daughters = 0;
   int ell_lund, nu_lund;
   ell_lund = nu_lund = 0;
-  int n_ell, n_nu, n_d, n_dstar, n_dstarstar, n_dstrange, n_other;
-  n_ell = n_nu = n_d = n_dstar =  n_dstarstar = n_dstrange = n_other = 0;
+  int n_ell, n_nu, n_d, n_dstar, n_dstarstar, n_dstrange, n_pi, n_other;
+  n_ell = n_nu = n_d = n_dstar = n_dstarstar = n_dstrange = n_pi = n_other = 0;
+
+  int ell_idx = -1;
 
   // Scan through the entire first generation daughter. 
-  int begin_dauIdx = dauIdx[bmc_idx];
-  int end_dauIdx = begin_dauIdx + dauLen[bmc_idx];
+  int begin_dauIdx = dauIdx[mcB.mc_idx];
+  int end_dauIdx = begin_dauIdx + dauLen[mcB.mc_idx];
   for (int i = begin_dauIdx; i < end_dauIdx; i++) {
 
-    // Ignore daughters that have less than min_photon_energy (20
-    // MeV). They are probably spurious particles generated in MC. 
-    if (mcLund[i] == lundIdMap["gamma"] && 
-        mcenergy[i] < min_photon_energy) {
+    // Note down max photon energy, but don't use it to classify B type.
+    if (mcLund[i] == lundIdMap["gamma"]) {
+      if (mcenergy[i] > mcB.dtau_max_photon_energy) {
+        mcB.dtau_max_photon_energy = mcenergy[i];
+      }
       continue;
     }
     n_daughters += 1;
@@ -218,6 +239,7 @@ int BDtaunuMcReader::DetermineBMcType(int bmc_idx) {
     if (std::binary_search(ell.begin(), ell.end(), abs(mcLund[i]))) {
       n_ell += 1;
       ell_lund = abs(mcLund[i]);
+      ell_idx = i;
     } else if (std::binary_search(nu.begin(), nu.end(), abs(mcLund[i]))) {
       n_nu += 1;
       nu_lund = abs(mcLund[i]);
@@ -229,6 +251,8 @@ int BDtaunuMcReader::DetermineBMcType(int bmc_idx) {
       n_dstarstar += 1;
     } else if (std::binary_search(dstrange.begin(), dstrange.end(), abs(mcLund[i]))) {
       n_dstrange += 1;
+    } else if (std::binary_search(pion.begin(), pion.end(), abs(mcLund[i]))) {
+      n_pi += 1;
     } else {
       n_other += 1;
     }
@@ -240,43 +264,64 @@ int BDtaunuMcReader::DetermineBMcType(int bmc_idx) {
     if (n_d == 1) {
       if (n_daughters == 3) {
         if (ell_lund == abs(lundIdMap["tau-"])) {
-          return kDtau;
+          mcB.bmctype = kDtau;
         } else {
-          return kDl;
+          mcB.bmctype = kDl;
         }
+      } else if (n_pi > 0) {
+        mcB.bmctype = kDstarstar_nonres;
       } else {
-        return kD_SL;
+        mcB.bmctype = kD_SL;
       }
     } else if (n_dstar == 1) {
       if (n_daughters == 3) {
         if (ell_lund == abs(lundIdMap["tau-"])) {
-          return kDstartau;
+          mcB.bmctype = kDstartau;
         } else {
-          return kDstarl;
+          mcB.bmctype = kDstarl;
         }
+      } else if (n_pi > 0) {
+        mcB.bmctype = kDstarstar_nonres;
       } else {
-        return kD_SL;
+        mcB.bmctype = kD_SL;
       }
     } else if (n_dstarstar == 1) {
-      return kDstarstar_SL;
+      mcB.bmctype = kDstarstar_res;
     } else if (n_d + n_dstar + n_dstarstar == 0) {
-      return k0Charm_SL;
+      mcB.bmctype = k0D_SL;
     } else {
-      return kUndefinedBMcType;
+      mcB.bmctype = kUndefinedBMcType;
     }
   } else if (n_ell == 0 && n_nu == 0) {
     int nD = n_dstarstar + n_dstrange + n_d;
     if (nD == 0)  {
-      return k0Charm_Had;
+      mcB.bmctype = k0Charm_Had;
     } else if (nD == 1) {
-      return k1Charm_Had;
+      mcB.bmctype = k1Charm_Had;
     } else if (nD == 2) {
-      return k2Charm_Had;
+      mcB.bmctype = k2Charm_Had;
     } else {
-      return kUndefinedBMcType;
+      mcB.bmctype = kUndefinedBMcType;
     }
   } else {
-    return kUndefinedBMcType;
+    mcB.bmctype = kUndefinedBMcType;
+  }
+
+  // Determine tau mc type
+  if (mcB.bmctype == kDtau || mcB.bmctype == kDstartau) {
+    mcB.taumctype = ktau_had_mc;
+
+    int begin_dauIdx = dauIdx[ell_idx];
+    int end_dauIdx = begin_dauIdx + dauLen[ell_idx];
+    for (int i = begin_dauIdx; i < end_dauIdx; i++) {
+      if (abs(mcLund[i]) == lundIdMap["e-"]) {
+        mcB.taumctype = ktau_e_mc;
+      } else if (abs(mcLund[i]) == lundIdMap["mu-"]) {
+        mcB.taumctype = ktau_mu_mc;
+      } else {
+        continue;
+      }
+    }
   }
 }
 
@@ -287,8 +332,8 @@ void BDtaunuMcReader::FillMCInformation() {
   FindBMesons();
 
   // Determine B MC types. 
-  McB1.bmctype = DetermineBMcType(McB1.mc_idx);
-  McB2.bmctype = DetermineBMcType(McB2.mc_idx);
+  DetermineBMcType(McB1);
+  DetermineBMcType(McB2);
 
 }
 

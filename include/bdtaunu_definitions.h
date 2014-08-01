@@ -86,14 +86,19 @@ enum SampleType {
   kUndefinedSampleType = -1,    /*!< Undefined */
 };
 
-//! Truth B MC Types. 
+//! Truth B MC Types.
 /*! This labels truth \f$B\f$ mesons into various decay categories
  * that will be helpful in characterizing whether the event is signal
  * or background. 
  *
- * The label is done by examining the \f$B\f$ meson's decay daughters.
- * Note that we are currently ignoring \f$\gamma\f$ daughters that
- * have energy below 20 MeV. */
+ * The label is done by examining the \f$B\f$ meson's decay daughters. 
+ *
+ * \f$B\f$ \f$\gamma\f$ daughters are currently ignored in determining 
+ * the MC type. However, the energy of the photon with the highest energy 
+ * is saved; one can use this to determine whether the event has radiative 
+ * photons involved. Therefore, the following descriptions omit the 
+ * \f$+n\gamma\f$, \f$n\geq0\f$, though this is needed to be technically 
+ * correct. */
 enum BMcType {
 
   //! No truth \f$B\f$ mesons.
@@ -115,15 +120,15 @@ enum BMcType {
 
   //! Truth \f$B\f$ decays as \f$B\rightarrow D^{**}\ell\nu_\ell X\f$
   /*! \f$X\f$ is any sequence of particles. */
-  kDstarstar_SL = 5,
+  kDstarstar_res = 5,
 
-  //! Truth \f$B\f$ decays as \f$B\rightarrow D^{(*)}\ell\nu_\ell X\f$
+  //! Truth \f$B\f$ decays as \f$B\rightarrow D^{(*)}n\pi^{\pm,0}\ell\nu_\ell X\f$
   /*! \f$X\f$ is any sequence of particles. */
-  kD_SL = 6,
+  kDstarstar_nonres = 6,
 
   //! Truth \f$B\f$ decays as \f$B\rightarrow X\ell\nu_\ell\f$
   /*! \f$X\f$ is any sequence of particles not involving a charm meson. */
-  k0Charm_SL = 7,
+  kCharmless_SL = 7,
 
   //! Truth \f$B\f$ decays hadronically. Daughters contain no charm mesons. 
   k0Charm_Had = 8,
@@ -138,7 +143,32 @@ enum BMcType {
   kUndefinedBMcType = -1,
 };
 
-//! MC Event Types, Definition A. 
+
+//! Truth \f$\tau\f$ MC Types. See Details. 
+/*! Truth \f$\tau\f$ MC Types for truth \f$B\f$'s decaying as 
+ * \f$B\rightarrow D^{(*)}\tau\nu_\tau\f$. Any other \f$B\f$ decay types
+ * will have this value undefined. */
+enum TauMcType {
+
+  //! Truth \f$\tau\f$ decays as \f$\tau\rightarrow e+\nu_e+X\f$.
+  ktau_e_mc = 0, 
+
+  //! Truth \f$\tau\f$ decays as \f$\tau\rightarrow \mu+\nu_\mu+X\f$.
+  ktau_mu_mc = 1, 
+
+  //! Truth \f$\tau\f$ decays as \f$\tau\rightarrow K+X\f$.
+  ktau_k_mc = 2, 
+
+  //! Truth \f$\tau\f$ decays as \f$\tau\rightarrow X\f$.
+  /*! \f$X\f$ is any sequence of particles not involving \f$e, \mu, K\f$. */
+  ktau_h_mc = 3, 
+
+  //! Undefined \f$\tau\f$ MC type.
+  ktau_undefined_mc = -1, 
+};
+
+
+//! MC Event Types, Definition A. This will soon be obsolete. 
 /*! This labels Monte Carlo events into various signal and background
  * truth categories. 
  * 
@@ -203,43 +233,6 @@ enum McEventTypeA {
 
   //! Undefined MC event type. Indicates error. 
   kUndefinedMcEventTypeA = -1,
-};
-
-//! MC Event Types, Definition B. 
-/*! This labels Monte Carlo events into various signal and background 
- *  truth categories. It is based on the #BMcType of a randomly chosen 
- *  truth B meson. */ 
-enum McEventTypeB {
-
-  //! \f$B\rightarrow D\tau\nu_\tau\f$ signal event.
-  kDtau_SigB = 0,
-
-  //! \f$B\rightarrow D^*\tau\nu_\tau\f$ signal event.
-  kDstartau_SigB = 1,
-
-  //! \f$B\rightarrow D\ell\nu_\ell\f$ normalization event.
-  /*! \f$\ell=e,\,\mu\f$. */
-  kDl_NormB = 2,
-
-  //! \f$B\rightarrow D^*\ell\nu_\ell\f$ normalization event.
-  /*! \f$\ell=e,\,\mu\f$. */
-  kDstarl_NormB = 3,
-
-  //! \f$B\rightarrow D^{**}\ell\nu_\ell X\f$ background event.
-  /*! \f$X\f$ is any sequence of particles. */
-  kDstarstar_BkgB = 4,
-
-  //! Other semileptonic background event.
-  kSL_BkgB = 5,
-
-  //! Hadronic background event.
-  kHad_BkgB = 6,
-
-  //! Continuum background event.
-  kCont_BkgB = 7,
-
-  //! Undefined MC event type. Indicates error. 
-  kUndefinedMcEventTypeB = -1,
 };
 
 #endif

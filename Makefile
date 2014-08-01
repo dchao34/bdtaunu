@@ -16,7 +16,7 @@ LDFLAGS = $(LDPATH)
 LDFLAGS += $(addprefix -l, $(SHARED_LIBARIES)) -lsqlite3
 LDFLAGS += $(shell root-config --libs)
 
-TARGETS = main build_sigmc_db build_generic_db
+TARGETS = build_generic_db #update_event_svm_scores build_sigmc_db 
 
 all : CXXFLAGS += -O3
 all : $(TARGETS)

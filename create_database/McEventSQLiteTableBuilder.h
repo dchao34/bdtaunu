@@ -13,6 +13,8 @@ class McEventSQLiteTableBuilder : public EventSQLiteTableBuilder {
 
   private:
     int b1mctype, b2mctype;
+    int b1_taumctype, b2_taumctype;
+    double b1_dtau_max_photon_energy, b2_dtau_max_photon_energy;
     int sp_mode;
     double event_weight;
 
@@ -23,7 +25,6 @@ class McEventSQLiteTableBuilder : public EventSQLiteTableBuilder {
     void BindColumns();
 
     int DetermineMcEventTypeDefA() const;
-    int DetermineMcEventTypeDefB() const;
 
   public:
     McEventSQLiteTableBuilder() {};
@@ -32,6 +33,10 @@ class McEventSQLiteTableBuilder : public EventSQLiteTableBuilder {
 
     void set_b1mctype(int value) { b1mctype = value; }
     void set_b2mctype(int value) { b2mctype = value; }
+    void set_b1_taumctype(int value) { b1_taumctype = value; }
+    void set_b2_taumctype(int value) { b2_taumctype = value; }
+    void set_b1_dtau_max_photon_energy(double value) { b1_dtau_max_photon_energy = value; }
+    void set_b2_dtau_max_photon_energy(double value) { b2_dtau_max_photon_energy = value; }
     void set_sp_mode(int spmode) { sp_mode = spmode; }
     void set_event_weight(double evt_wgt) { event_weight = evt_wgt; }
 };

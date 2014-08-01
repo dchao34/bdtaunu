@@ -23,6 +23,7 @@ class BDtaunuMcReader : public BDtaunuReader {
     const static std::vector<int> dstar;
     const static std::vector<int> dstarstar;
     const static std::vector<int> dstrange;
+    const static std::vector<int> pion;
 
     static std::vector<int> build_ell();
     static std::vector<int> build_nu();
@@ -30,6 +31,7 @@ class BDtaunuMcReader : public BDtaunuReader {
     static std::vector<int> build_dstar();
     static std::vector<int> build_dstarstar();
     static std::vector<int> build_dstrange();
+    static std::vector<int> build_pion();
 
 	protected:
     int mcLen;
@@ -42,15 +44,18 @@ class BDtaunuMcReader : public BDtaunuReader {
       int bflavor;
       int mc_idx;
       int bmctype;
+      double dtau_max_photon_energy;
+      int taumctype;
       McBMeson() :
         bflavor(kUndefinedBFlavor), 
-        mc_idx(-1), bmctype(kUndefinedBMcType) {};
+        mc_idx(-1), bmctype(kUndefinedBMcType),
+        dtau_max_photon_energy(-1), taumctype(ktau_undefined_mc) {};
     } McB1, McB2;
 
   private:
     void FillMCInformation();
     void FindBMesons();
-    int DetermineBMcType(int bmc_idx);
+    void DetermineBMcType(McBMeson &mcB);
 
 	protected:
     virtual void Initialize();
@@ -84,6 +89,11 @@ class BDtaunuMcReader : public BDtaunuReader {
     //! B MC type of second truth B. 
     /*! Returns an int that corresponds to the #BMcType enum in */
     int get_b2mctype() const { return McB2.bmctype; }
+
+    int get_b1_taumctype() const { return McB1.taumctype; }
+    int get_b2_taumctype() const { return McB2.taumctype; }
+    double get_b1_dtau_max_photon_energy() const { return McB1.dtau_max_photon_energy; }
+    double get_b2_dtau_max_photon_energy() const { return McB2.dtau_max_photon_energy; }
 };
 
 #endif

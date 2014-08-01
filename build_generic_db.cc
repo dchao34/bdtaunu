@@ -110,6 +110,10 @@ int main() {
           event_builder.set_event_weight(event_weights[pair<int, int>(sp_modes[sp], run)]);
           event_builder.set_b1mctype(rootreader.get_b1mctype());
           event_builder.set_b2mctype(rootreader.get_b2mctype());
+          event_builder.set_b1_taumctype(rootreader.get_b1_taumctype());
+          event_builder.set_b2_taumctype(rootreader.get_b2_taumctype());
+          event_builder.set_b1_dtau_max_photon_energy(rootreader.get_b1_dtau_max_photon_energy());
+          event_builder.set_b2_dtau_max_photon_energy(rootreader.get_b2_dtau_max_photon_energy());
           event_builder.set_nTrk(rootreader.get_nTrk());
           event_builder.set_R2(rootreader.get_R2All());
           event_builder.set_nY(rootreader.get_nY());
