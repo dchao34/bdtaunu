@@ -164,7 +164,7 @@ enum TauMcType {
   ktau_h_mc = 3, 
 
   //! Undefined \f$\tau\f$ MC type.
-  ktau_undefined_mc = -1, 
+  kUndefinedTauMcType = -1, 
 };
 
 

@@ -24,6 +24,8 @@ class UpsilonCandidate {
     int tag_dstar_mode, tag_d_mode;
     int sig_dstar_mode, sig_d_mode;
     int sig_tau_mode;
+    
+    int l_ePidMap, l_muPidMap;
 
     void copy_candidate(const UpsilonCandidate &cand);
 
@@ -49,6 +51,26 @@ class UpsilonCandidate {
         int tag_dstar_mode, int tag_d_mode,
         int sig_dstar_mode, int sig_d_mode,
         int sig_tau_mode);
+
+    //! Constructs candidate with specified attributes. 
+    UpsilonCandidate(
+        std::string& eventId, int event_candidate_index, 
+        float eextra50, float mmiss_prime2, 
+        float tag_lp3, float sig_hp3, 
+        float tag_cosBY, float sig_cosBY, 
+        float tag_cosThetaDl, float sig_cosThetaDtau, 
+        float sig_vtxB, 
+        float cosThetaT, 
+        float tag_Dmass, float tag_deltaM, 
+        float tag_cosThetaDSoft, float tag_softP3MagCM,
+        float sig_Dmass, float sig_deltaM, 
+        float sig_cosThetaDSoft, float sig_softP3MagCM, 
+        float sig_hmass, float sig_vtxh, 
+        int bflavor, 
+        int tag_dstar_mode, int tag_d_mode,
+        int sig_dstar_mode, int sig_d_mode,
+        int sig_tau_mode,
+        int l_ePidMap, int l_muPidMap); 
 
     UpsilonCandidate(const UpsilonCandidate &cand);
     ~UpsilonCandidate() {};
@@ -186,6 +208,18 @@ class UpsilonCandidate {
     /*! Returns an int that corresponds to the #SampleType enum in
      * bdtaunu_definitions.h */
     int get_sample_type() const;
+
+    //! Electron PID map of tag lepton.
+    /*! Bit map is here:
+     * http://www.slac.stanford.edu/BFROOT/www/Physics/Tools/Pid/Selectors/r24c/selectors.html
+     */
+    int get_l_ePidMap() const { return l_ePidMap; }
+
+    //! Muon PID map of tag lepton.
+    /*! Bit map is here:
+     * http://www.slac.stanford.edu/BFROOT/www/Physics/Tools/Pid/Selectors/r24c/selectors.html
+     */
+    int get_l_muPidMap() const { return l_muPidMap; }
 };
 
 #endif

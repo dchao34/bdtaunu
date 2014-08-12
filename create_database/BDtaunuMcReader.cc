@@ -149,15 +149,15 @@ void BDtaunuMcReader::ClearColumnValues() {
 
   McB1.bflavor = kUndefinedBFlavor;
   McB1.mc_idx = -1;
-  McB1.bmctype = kUndefinedBMcType;
+  McB1.b_mctype = kUndefinedBMcType;
+  McB1.tau_mctype = kUndefinedTauMcType;
   McB1.dtau_max_photon_energy = -1;
-  McB1.taumctype = ktau_undefined_mc;
 
   McB2.bflavor = kUndefinedBFlavor;
   McB2.mc_idx = -1;
-  McB2.bmctype = kUndefinedBMcType;
+  McB2.b_mctype = kUndefinedBMcType;
+  McB2.tau_mctype = kUndefinedTauMcType;
   McB2.dtau_max_photon_energy = -1;
-  McB2.taumctype = ktau_undefined_mc;
 }
 
 // Find the MC B meson's from the mcLund array of the event. Determine
@@ -207,19 +207,23 @@ void BDtaunuMcReader::DetermineBMcType(McBMeson &mcB) {
 
   // Return if no MC B mesons are in the event. 
   if (mcB.mc_idx == -1) {
-    mcB.bmctype = kCont;
+    mcB.b_mctype = kCont;
     return;
   }
 
   // Count the number of daughters of the first generation B daughters
   // and record the lundId of relevant daughters.
   int n_daughters = 0;
+
+  int n_ell, n_nu;
+  n_ell = n_nu = 0;
+
+  int n_d, n_dstar, n_dstarstar, n_dstrange, n_pi, n_other;
+  n_d = n_dstar = n_dstarstar = n_dstrange = n_pi = n_other = 0;
+
   int ell_lund, nu_lund;
   ell_lund = nu_lund = 0;
-  int n_ell, n_nu, n_d, n_dstar, n_dstarstar, n_dstrange, n_pi, n_other;
-  n_ell = n_nu = n_d = n_dstar = n_dstarstar = n_dstrange = n_pi = n_other = 0;
-
-  int ell_idx = -1;
+  int ell_mcidx = -1;
 
   // Scan through the entire first generation daughter. 
   int begin_dauIdx = dauIdx[mcB.mc_idx];
@@ -239,7 +243,7 @@ void BDtaunuMcReader::DetermineBMcType(McBMeson &mcB) {
     if (std::binary_search(ell.begin(), ell.end(), abs(mcLund[i]))) {
       n_ell += 1;
       ell_lund = abs(mcLund[i]);
-      ell_idx = i;
+      ell_mcidx = i;
     } else if (std::binary_search(nu.begin(), nu.end(), abs(mcLund[i]))) {
       n_nu += 1;
       nu_lund = abs(mcLund[i]);
@@ -261,67 +265,67 @@ void BDtaunuMcReader::DetermineBMcType(McBMeson &mcB) {
   // Determine the B MC Type. See bdtaunu_definitions.h for the
   // definitions. 
   if (n_ell == 1 && n_nu == 1) {
-    if (n_d == 1) {
-      if (n_daughters == 3) {
-        if (ell_lund == abs(lundIdMap["tau-"])) {
-          mcB.bmctype = kDtau;
-        } else {
-          mcB.bmctype = kDl;
-        }
-      } else if (n_pi > 0) {
-        mcB.bmctype = kDstarstar_nonres;
-      } else {
-        mcB.bmctype = kD_SL;
-      }
-    } else if (n_dstar == 1) {
-      if (n_daughters == 3) {
-        if (ell_lund == abs(lundIdMap["tau-"])) {
-          mcB.bmctype = kDstartau;
-        } else {
-          mcB.bmctype = kDstarl;
-        }
-      } else if (n_pi > 0) {
-        mcB.bmctype = kDstarstar_nonres;
-      } else {
-        mcB.bmctype = kD_SL;
-      }
-    } else if (n_dstarstar == 1) {
-      mcB.bmctype = kDstarstar_res;
-    } else if (n_d + n_dstar + n_dstarstar == 0) {
-      mcB.bmctype = k0D_SL;
+    if (n_d + n_dstar + n_dstarstar == 0) {
+      mcB.b_mctype = kCharmless_SL;
+    } else if (n_dstarstar > 0) {
+      mcB.b_mctype = kDstarstar_res;
     } else {
-      mcB.bmctype = kUndefinedBMcType;
+      assert(n_d + n_dstar == 1);
+      if (n_daughters == 3) {
+        if (ell_lund == abs(lundIdMap["tau-"])) {
+          if (n_d == 1) {
+            mcB.b_mctype = kDtau;
+          } else {
+            mcB.b_mctype = kDstartau;
+          }
+        } else {
+          if (n_d == 1) {
+            mcB.b_mctype = kDl;
+          } else {
+            mcB.b_mctype = kDstarl;
+          }
+        }
+      } else {
+        mcB.b_mctype = kDstarstar_nonres;
+      }
     }
   } else if (n_ell == 0 && n_nu == 0) {
-    int nD = n_dstarstar + n_dstrange + n_d;
+    int nD = n_d + n_dstar + n_dstarstar + n_dstrange;
     if (nD == 0)  {
-      mcB.bmctype = k0Charm_Had;
+      mcB.b_mctype = k0Charm_Had;
     } else if (nD == 1) {
-      mcB.bmctype = k1Charm_Had;
+      mcB.b_mctype = k1Charm_Had;
     } else if (nD == 2) {
-      mcB.bmctype = k2Charm_Had;
+      mcB.b_mctype = k2Charm_Had;
     } else {
-      mcB.bmctype = kUndefinedBMcType;
+      mcB.b_mctype = kUndefinedBMcType;
     }
   } else {
-    mcB.bmctype = kUndefinedBMcType;
+    mcB.b_mctype = kUndefinedBMcType;
   }
 
   // Determine tau mc type
-  if (mcB.bmctype == kDtau || mcB.bmctype == kDstartau) {
-    mcB.taumctype = ktau_had_mc;
+  if (mcB.b_mctype == kDtau || mcB.b_mctype == kDstartau) {
+    mcB.tau_mctype = ktau_h_mc;
 
-    int begin_dauIdx = dauIdx[ell_idx];
-    int end_dauIdx = begin_dauIdx + dauLen[ell_idx];
+    int begin_dauIdx = dauIdx[ell_mcidx];
+    int end_dauIdx = begin_dauIdx + dauLen[ell_mcidx];
     for (int i = begin_dauIdx; i < end_dauIdx; i++) {
-      if (abs(mcLund[i]) == lundIdMap["e-"]) {
-        mcB.taumctype = ktau_e_mc;
-      } else if (abs(mcLund[i]) == lundIdMap["mu-"]) {
-        mcB.taumctype = ktau_mu_mc;
+      if (abs(mcLund[i]) == abs(lundIdMap["e-"])) {
+        mcB.tau_mctype = ktau_e_mc;
+        break;
+      } else if (abs(mcLund[i]) == abs(lundIdMap["mu-"])) {
+        mcB.tau_mctype = ktau_mu_mc;
+        break;
+      } else if (abs(mcLund[i]) == abs(lundIdMap["K-"])) {
+        mcB.tau_mctype = ktau_k_mc;
+        break;
       } else {
         continue;
       }
     }
+  } else {
+    mcB.tau_mctype = kUndefinedTauMcType;
   }
 }
 

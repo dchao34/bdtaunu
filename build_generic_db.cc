@@ -108,10 +108,10 @@ int main() {
           event_builder.set_run(run);
           event_builder.set_sp_mode(sp_modes[sp]);
           event_builder.set_event_weight(event_weights[pair<int, int>(sp_modes[sp], run)]);
-          event_builder.set_b1mctype(rootreader.get_b1mctype());
-          event_builder.set_b2mctype(rootreader.get_b2mctype());
-          event_builder.set_b1_taumctype(rootreader.get_b1_taumctype());
-          event_builder.set_b2_taumctype(rootreader.get_b2_taumctype());
+          event_builder.set_b1_mctype(rootreader.get_b1_mctype());
+          event_builder.set_b2_mctype(rootreader.get_b2_mctype());
+          event_builder.set_b1_tau_mctype(rootreader.get_b1_tau_mctype());
+          event_builder.set_b2_tau_mctype(rootreader.get_b2_tau_mctype());
           event_builder.set_b1_dtau_max_photon_energy(rootreader.get_b1_dtau_max_photon_energy());
           event_builder.set_b2_dtau_max_photon_energy(rootreader.get_b2_dtau_max_photon_energy());
           event_builder.set_nTrk(rootreader.get_nTrk());
@@ -158,6 +158,8 @@ int main() {
             candidate_builder.set_sig_vtxh(curr_cand.get_sig_vtxh());
             candidate_builder.set_sig_Dtype(curr_cand.get_sig_d_mode());
             candidate_builder.set_sig_Dstartype(curr_cand.get_sig_dstar_mode());
+            candidate_builder.set_tag_l_ePid(curr_cand.get_l_ePidMap());
+            candidate_builder.set_tag_l_muPid(curr_cand.get_l_muPidMap());
             candidate_builder.set_svm_score(svm_scorer.get_score());
 
             candidate_builder.InsertTable();

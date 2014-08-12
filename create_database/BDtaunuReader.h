@@ -56,6 +56,9 @@ class BDtaunuReader : public RootReader {
     float *YSigBCosThetaDSoftCM, *YSigBsoftP3MagCM;
     float *YSigBhMass, *YSigBVtxProbh;
 
+    int *lTrkIdx, *hTrkIdx;
+    int *eSelectorsMap, *muSelectorsMap, *KSelectorsMap, *piSelectorsMap;
+
   protected: 
     int nY, nB, nD; 
     int ntau, nh, nl, ngamma;
@@ -84,6 +87,10 @@ class BDtaunuReader : public RootReader {
     int DetermineDMode(int D_lundId, int Dd1_lundId, int Dd2_lundId, 
                        int Dd3_lundId, int Dd4_lundId, int Dd5_lundId); 
     int DetermineTauMode(int taud1_lundId);
+
+    void ComputeCandidatePid(
+        int cand_idx, 
+        int &l_ePidMap, int &l_muPidMap); 
 
   protected: 
 

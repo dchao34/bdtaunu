@@ -34,10 +34,10 @@ McEventSQLiteTableBuilder::McEventSQLiteTableBuilder(sqlite3* database, const ch
   meta_colnames.push_back(std::pair<std::string, std::string>("ml_sample", "TEXT"));
   meta_colnames.push_back(std::pair<std::string, std::string>("division", "TEXT"));
   meta_colnames.push_back(std::pair<std::string, std::string>("mc_evttypeA", "INTEGER"));
-  meta_colnames.push_back(std::pair<std::string, std::string>("b1mctype", "INTEGER"));
-  meta_colnames.push_back(std::pair<std::string, std::string>("b2mctype", "INTEGER"));
-  meta_colnames.push_back(std::pair<std::string, std::string>("b1_taumctype", "INTEGER"));
-  meta_colnames.push_back(std::pair<std::string, std::string>("b2_taumctype", "INTEGER"));
+  meta_colnames.push_back(std::pair<std::string, std::string>("b1_mctype", "INTEGER"));
+  meta_colnames.push_back(std::pair<std::string, std::string>("b2_mctype", "INTEGER"));
+  meta_colnames.push_back(std::pair<std::string, std::string>("b1_tau_mctype", "INTEGER"));
+  meta_colnames.push_back(std::pair<std::string, std::string>("b2_tau_mctype", "INTEGER"));
   meta_colnames.push_back(std::pair<std::string, std::string>("b1_dtau_max_photon_energy", "REAL"));
   meta_colnames.push_back(std::pair<std::string, std::string>("b2_dtau_max_photon_energy", "REAL"));
 
@@ -61,13 +61,13 @@ void McEventSQLiteTableBuilder::BindColumns() {
   assert(db_status == SQLITE_OK);
   db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@mc_evttypeA"), DetermineMcEventTypeDefA());
   assert(db_status == SQLITE_OK);
-  db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@b1mctype"), b1mctype);
+  db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@b1_mctype"), b1_mctype);
   assert(db_status == SQLITE_OK);
-  db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@b2mctype"), b2mctype);
+  db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@b2_mctype"), b2_mctype);
   assert(db_status == SQLITE_OK);
-  db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@b1_taumctype"), b1_taumctype);
+  db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@b1_tau_mctype"), b1_tau_mctype);
   assert(db_status == SQLITE_OK);
-  db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@b2_taumctype"), b2_taumctype);
+  db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@b2_tau_mctype"), b2_tau_mctype);
   assert(db_status == SQLITE_OK);
   db_status = sqlite3_bind_double(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@b1_dtau_max_photon_energy"), b1_dtau_max_photon_energy);
   assert(db_status == SQLITE_OK);
@@ -76,72 +76,6 @@ void McEventSQLiteTableBuilder::BindColumns() {
 }
 
 int McEventSQLiteTableBuilder::DetermineMcEventTypeDefA() const {
-
-  if (b1mctype == kCont && b2mctype == kCont) {
-    return kCont_BkgA;
-  } else if ((b1mctype == kDtau && b2mctype == kDstartau) ||
-             (b1mctype == kDstartau && b2mctype == kDtau)) {
-    if ((truthB_idx_map.find(babar_event_id))->second == 0) {
-      return kDtau_SigA;
-    } else {
-      return kDstartau_SigA;
-    }
-  } else if (b1mctype == kDtau || b2mctype == kDtau) {
-      return kDtau_SigA;
-  } else if (b1mctype == kDstartau || b2mctype == kDstartau) {
-      return kDstartau_SigA;
-  } else if (b1mctype == kDstarstar_res || b2mctype == kDstarstar_res ||
-             b1mctype == kDstarstar_nonres || b2mctype == kDstarstar_nonres ) {
-    return kDstarstar_BkgA;
-  } else if ((b1mctype == kDl && b2mctype == kDstarl) ||
-             (b1mctype == kDstarl && b2mctype == kDl)) {
-    if ((truthB_idx_map.find(babar_event_id))->second == 0) {
-      return kDl_NormA;
-    } else {
-      return kDstarl_NormA;
-    }
-  } else if (b1mctype == kDl || b2mctype == kDl) {
-      return kDl_NormA;
-  } else if (b1mctype == kDstarl || b2mctype == kDstarl) {
-      return kDstarl_NormA;
-  } else {
-    int b1_dectype, b2_dectype;
-    b1_dectype = b2_dectype = -2;
-
-    switch (b1mctype) {
-      case kD_SL:
-      case k0D_SL:
-        b1_dectype = 0;
-        break;
-      case k0Charm_Had:
-      case k1Charm_Had:
-      case k2Charm_Had:
-        b1_dectype = 1;
-        break;
-    }
-
-    switch (b2mctype) {
-      case kD_SL:
-      case k0D_SL:
-        b2_dectype = 0;
-        break;
-      case k0Charm_Had:
-      case k1Charm_Had:
-      case k2Charm_Had:
-        b2_dectype = 1;
-        break;
-    }
-
-    int dectype_sum = b1_dectype + b2_dectype;
-    switch (dectype_sum) {
-      case 0:
-      case 1:
-        return kSL_BkgA;
-      case 2:
-        return kHad_BkgA;
-      default:
-        return kUndefinedMcEventTypeA;
-    }
-  }
+  return -1;
 }
 

@@ -43,13 +43,15 @@ class BDtaunuMcReader : public BDtaunuReader {
     struct McBMeson {
       int bflavor;
       int mc_idx;
-      int bmctype;
+      int b_mctype;
+      int tau_mctype;
       double dtau_max_photon_energy;
-      int taumctype;
       McBMeson() :
         bflavor(kUndefinedBFlavor), 
-        mc_idx(-1), bmctype(kUndefinedBMcType),
-        dtau_max_photon_energy(-1), taumctype(ktau_undefined_mc) {};
+        mc_idx(-1), 
+        b_mctype(kUndefinedBMcType),
+        tau_mctype(kUndefinedTauMcType), 
+        dtau_max_photon_energy(-1) {};
     } McB1, McB2;
 
   private:
@@ -84,15 +86,26 @@ class BDtaunuMcReader : public BDtaunuReader {
 
     //! B MC type of first truth B. 
     /*! Returns an int that corresponds to the #BMcType enum in */
-    int get_b1mctype() const { return McB1.bmctype; }
+    int get_b1_mctype() const { return McB1.b_mctype; }
 
     //! B MC type of second truth B. 
     /*! Returns an int that corresponds to the #BMcType enum in */
-    int get_b2mctype() const { return McB2.bmctype; }
+    int get_b2_mctype() const { return McB2.b_mctype; }
 
-    int get_b1_taumctype() const { return McB1.taumctype; }
-    int get_b2_taumctype() const { return McB2.taumctype; }
+    //! tau MC type of first truth B 
+    /*! Returns an int corresponding to #TauMcType enum. */
+    int get_b1_tau_mctype() const { return McB1.tau_mctype; }
+
+    //! tau MC type of second truth B 
+    /*! Returns an int corresponding to #TauMcType enum. */
+    int get_b2_tau_mctype() const { return McB2.tau_mctype; }
+
+    //! Energy of the highest energy photon of first truth B. 
+    /*! Returns -1 if no photons exist. */
     double get_b1_dtau_max_photon_energy() const { return McB1.dtau_max_photon_energy; }
+
+    //! Energy of the highest energy photon of second truth B. 
+    /*! Returns -1 if no photons exist. */
     double get_b2_dtau_max_photon_energy() const { return McB2.dtau_max_photon_energy; }
 };
 

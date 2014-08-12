@@ -97,6 +97,13 @@ void BDtaunuReader::Initialize() {
   YSigBhMass = new float[maximum_Y_candidates];
   YSigBVtxProbh = new float[maximum_Y_candidates];
 
+  lTrkIdx = new int[maximum_l_candidates];
+  hTrkIdx = new int[maximum_h_candidates];
+  eSelectorsMap = new int[maximum_h_candidates + maximum_l_candidates];
+  muSelectorsMap = new int[maximum_h_candidates + maximum_l_candidates];
+  KSelectorsMap = new int[maximum_h_candidates + maximum_l_candidates];
+  piSelectorsMap = new int[maximum_h_candidates + maximum_l_candidates];
+
   Yd1Idx = new int[maximum_Y_candidates];
   Yd2Idx = new int[maximum_Y_candidates];
   Bd1Idx = new int[maximum_B_candidates];
@@ -160,6 +167,12 @@ void BDtaunuReader::SetBranchAddress() {
   tr->SetBranchAddress("YSigBsoftP3MagCM", YSigBsoftP3MagCM);
   tr->SetBranchAddress("YSigBhMass", YSigBhMass);
   tr->SetBranchAddress("YSigBVtxProbh", YSigBVtxProbh);
+  tr->SetBranchAddress("lTrkIdx", lTrkIdx);
+  tr->SetBranchAddress("hTrkIdx", hTrkIdx);
+  tr->SetBranchAddress("eSelectorsMap", eSelectorsMap);
+  tr->SetBranchAddress("muSelectorsMap", muSelectorsMap);
+  tr->SetBranchAddress("KSelectorsMap", KSelectorsMap);
+  tr->SetBranchAddress("piSelectorsMap", piSelectorsMap);
   tr->SetBranchAddress("Yd1Idx", Yd1Idx);
   tr->SetBranchAddress("Yd2Idx", Yd2Idx);
   tr->SetBranchAddress("Bd1Idx", Bd1Idx);
@@ -218,6 +231,10 @@ void BDtaunuReader::FillUpsilonList() {
         bflavor, tag_dstar_mode, tag_d_mode,
         sig_dstar_mode, sig_d_mode, sig_tau_mode);
 
+    // Get PID info of the candidate. 
+    int l_ePidMap, l_muPidMap;
+    ComputeCandidatePid(cand_idx, l_ePidMap, l_muPidMap);
+
     // Construct an UpsilonCandidate object and fill in its features.
     UpsilonCandidate cand(eventId, cand_idx, 
         YBPairEextra50[cand_idx], YBPairMmissPrime2[cand_idx], 
@@ -234,7 +251,8 @@ void BDtaunuReader::FillUpsilonList() {
         bflavor,
         tag_dstar_mode, tag_d_mode, 
         sig_dstar_mode, sig_d_mode, 
-        sig_tau_mode);
+        sig_tau_mode, 
+        l_ePidMap, l_muPidMap); 
 
     // Add it to the UpsilonList. 
     upsilon_candidates.add_candidate(cand);
@@ -319,6 +337,24 @@ void BDtaunuReader::ComputeCandidateDecay(
     
 }
 
+void BDtaunuReader::ComputeCandidatePid(
+    int cand_idx, 
+    int &l_ePidMap, int &l_muPidMap) { 
+  
+    int tagBIdx = Yd1Idx[cand_idx];
+    int lIdx = Bd2Idx[tagBIdx];
+    int ltrkIdx = lTrkIdx[lIdx];
+
+    assert(
+      abs(Bd2Lund[tagBIdx]) == abs(lundIdMap["e+"]) ||
+      abs(Bd2Lund[tagBIdx]) == abs(lundIdMap["mu+"])
+    );
+
+    l_ePidMap = eSelectorsMap[ltrkIdx];
+    l_muPidMap = muSelectorsMap[ltrkIdx];
+
+}
+
 
 BDtaunuReader::~BDtaunuReader() {
   delete[] YBPairMmissPrime2;
@@ -341,6 +377,12 @@ BDtaunuReader::~BDtaunuReader() {
   delete[] YSigBsoftP3MagCM;
   delete[] YSigBhMass;
   delete[] YSigBVtxProbh;
+  delete[] lTrkIdx;
+  delete[] hTrkIdx;
+  delete[] eSelectorsMap;
+  delete[] muSelectorsMap;
+  delete[] KSelectorsMap;
+  delete[] piSelectorsMap;
   delete[] Yd1Idx;
   delete[] Yd2Idx;
   delete[] Bd1Idx;
