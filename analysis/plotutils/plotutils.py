@@ -142,7 +142,7 @@ def ApplySelectionCuts(x, selection_dict):
 
 def StackByCategory(arr, varname, catname, wgtname=None,
                     cat_groups=None, cat_labels=None, cat_exclude=[],
-                    cut_dict=None,
+                    cut_dict=None, title=None,
                     ax=None, xlim=None, **kwargs):
     """Make a stacked histogram grouped by a specific category.
 
@@ -209,6 +209,9 @@ def StackByCategory(arr, varname, catname, wgtname=None,
     ax.set_xlabel(varname)
     ax.set_ylabel('Stacked Counts')
 
+    if title:
+        ax.set_title(title)
+
     return counts, bins, patches
 
 
@@ -253,7 +256,7 @@ def NormByCategory(arr, varname, catname,
 
 def KdeByCategory(arr, varname, catname,
                   cat_groups=None, cat_labels=None, cat_exclude=[],
-                  cut_dict=None,
+                  cut_dict=None, title=None,
                   legend_loc=1, legend_size=12,
                   ax=None, xlim=None):
     """Estimate and plot probability densities grouped by category.
@@ -315,6 +318,9 @@ def KdeByCategory(arr, varname, catname,
     ax.legend(loc=legend_loc, prop={'size': legend_size})
     ax.set_xlabel(varname)
     ax.set_ylabel('Probability Density')
+
+    if title:
+        ax.set_title(title)
 
     return
 
@@ -426,7 +432,7 @@ def KdeOverHist(arr, varname, catname, cat_idx, cat_dict=None,
 
     # Plot format
     if cat_dict:
-        ax.set_title('{0} category'.format(cat_dict[cat_idx]))
+        ax.set_title('{0}'.format(cat_dict[cat_idx]))
     else:
         ax.set_title('{0} category'.format(cat_idx))
 
