@@ -8,7 +8,7 @@ LDFLAGS += -L/usr/local/lib -lsqlite3
 OLD_GENERIC_EVENTID_PATHNAME = $(shell pwd)/old_generic_ml_assignment.txt
 CXXFLAGS += -D__OLD_GENERIC_EVENTID_PATHNAME='"$(OLD_GENERIC_EVENTID_PATHNAME)"'
 
-target_list = merge_ntp assign_sigmc_ml assign_generic_ml
+target_list = merge_ntp #assign_sigmc_ml assign_generic_ml
 library_list = mtrand.o 
                
 

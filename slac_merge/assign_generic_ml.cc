@@ -15,12 +15,6 @@
 
 using namespace std;
 
-string to_string(int a) {
-  stringstream ss;
-  ss << a;
-  return ss.str();
-}
-
 // read old ml assignments into a map
 void get_old_assignments(map<string, string> &ml_assignment) {
   ifstream f(__OLD_GENERIC_EVENTID_PATHNAME);

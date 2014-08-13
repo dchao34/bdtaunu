@@ -12,12 +12,6 @@
 
 using namespace std;
 
-string to_string(int a) {
-  stringstream ss;
-  ss << a;
-  return ss.str();
-}
-
 // usage message
 void print_usage(char **argv) {
   cout << endl;
