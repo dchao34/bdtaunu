@@ -3,59 +3,37 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 #include <map>
+#include <algorithm>
+#include <functional>
 #include <cmath>
 #include <cassert>
 
-#include "utilities/helpers.h"
 #include "bdtaunu_definitions.h"
 #include "RootReader.h"
 #include "BDtaunuReader.h"
+#include "RecoIndexer.h"
+#include "UpsilonCandidate.h"
+#include "RecoGraphVisitors.h"
+#include "utilities/helpers.h"
+
+#include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/breadth_first_search.hpp>
+
+using namespace boost;
 
 // The maximum number of candidates allowed in an event. This should
 // be consistent with the number set in BtaTupleMaker. 
 const int BDtaunuReader::maximum_Y_candidates = 800;
 const int BDtaunuReader::maximum_B_candidates = 400;
 const int BDtaunuReader::maximum_D_candidates = 200;
-const int BDtaunuReader::maximum_tau_candidates = 100;
+const int BDtaunuReader::maximum_C_candidates = 100;
 const int BDtaunuReader::maximum_h_candidates = 100;
 const int BDtaunuReader::maximum_l_candidates = 100;
 const int BDtaunuReader::maximum_gamma_candidates = 100;
 
-// map<string, int> that associates particle name to its lundId. For
-// example, "B0" : 511.
-std::map<std::string, int> BDtaunuReader::lundIdMap = BDtaunuReader::build_lund_map();
-
-// Reads in __PDT_FILE_PATHNAME which contains one particle type on
-// each line in the format: "particle name" lundId, and puts the
-// information in lundIdMap.
-std::map<std::string, int> BDtaunuReader::build_lund_map() {
-  std::map<std::string, int> m;
-
-  std::ifstream pdt_file;
-  pdt_file.open(__PDT_FILE_PATHNAME);
-
-  // Scan each line from the first character until the first space for
-  // the particle name. The remainder of the line is the lundId. 
-  std::string line, lundId_string, particle_name;
-  while (std::getline(pdt_file, line)) {
-    for (std::string::size_type i = 0; i != line.size(); ++i) {
-      if (std::isspace(line[i])) {
-        lundId_string = line.substr(i + 1);
-        particle_name = line.substr(0, i);
-        m[particle_name] = to_int(lundId_string);
-        break;
-      }
-    }
-  }
-
-  pdt_file.close();
-
-  assert(!m.empty());
-  assert(m["B0"] == 511);
-
-  return m;
-}
+std::map<std::string, int> BDtaunuReader::lundIdMap = bdtaunu::NameToLundMap();
 
 BDtaunuReader::BDtaunuReader() : RootReader() {
   Initialize();
@@ -104,27 +82,63 @@ void BDtaunuReader::Initialize() {
   KSelectorsMap = new int[maximum_h_candidates + maximum_l_candidates];
   piSelectorsMap = new int[maximum_h_candidates + maximum_l_candidates];
 
+  YLund = new int[maximum_Y_candidates];
+  BLund = new int[maximum_B_candidates];
+  DLund = new int[maximum_D_candidates];
+  CLund = new int[maximum_C_candidates];
+  hLund = new int[maximum_h_candidates];
+  lLund = new int[maximum_l_candidates];
+  gammaLund = new int[maximum_gamma_candidates];
+
   Yd1Idx = new int[maximum_Y_candidates];
   Yd2Idx = new int[maximum_Y_candidates];
   Bd1Idx = new int[maximum_B_candidates];
   Bd2Idx = new int[maximum_B_candidates];
+  Bd3Idx = new int[maximum_B_candidates];
+  Bd4Idx = new int[maximum_B_candidates];
   Dd1Idx = new int[maximum_D_candidates];
   Dd2Idx = new int[maximum_D_candidates];
   Dd3Idx = new int[maximum_D_candidates];
   Dd4Idx = new int[maximum_D_candidates];
   Dd5Idx = new int[maximum_D_candidates];
-  taud1Idx = new int[maximum_tau_candidates];
-
+  Cd1Idx = new int[maximum_C_candidates];
+  Cd2Idx = new int[maximum_C_candidates];
+  hd1Idx = new int[maximum_h_candidates];
+  hd2Idx = new int[maximum_h_candidates];
+  ld1Idx = new int[maximum_l_candidates];
+  ld2Idx = new int[maximum_l_candidates];
+  ld3Idx = new int[maximum_l_candidates];
   Yd1Lund = new int[maximum_Y_candidates];
   Yd2Lund = new int[maximum_Y_candidates];
   Bd1Lund = new int[maximum_B_candidates];
   Bd2Lund = new int[maximum_B_candidates];
+  Bd3Lund = new int[maximum_B_candidates];
+  Bd4Lund = new int[maximum_B_candidates];
   Dd1Lund = new int[maximum_D_candidates];
   Dd2Lund = new int[maximum_D_candidates];
   Dd3Lund = new int[maximum_D_candidates];
   Dd4Lund = new int[maximum_D_candidates];
   Dd5Lund = new int[maximum_D_candidates];
-  taud1Lund = new int[maximum_tau_candidates];
+  Cd1Lund = new int[maximum_C_candidates];
+  Cd2Lund = new int[maximum_C_candidates];
+  hd1Lund = new int[maximum_h_candidates];
+  hd2Lund = new int[maximum_h_candidates];
+  ld1Lund = new int[maximum_l_candidates];
+  ld2Lund = new int[maximum_l_candidates];
+  ld3Lund = new int[maximum_l_candidates];
+
+  YdauIdx = { Yd1Idx, Yd2Idx };
+  YdauLund = { Yd1Lund, Yd2Lund };
+  BdauIdx = { Bd1Idx, Bd2Idx, Bd3Idx, Bd4Idx };
+  BdauLund = { Bd1Lund, Bd2Lund, Bd3Lund, Bd4Lund };
+  DdauIdx = { Dd1Idx, Dd2Idx, Dd3Idx, Dd4Idx, Dd5Idx };
+  DdauLund = { Dd1Lund, Dd2Lund, Dd3Lund, Dd4Lund, Dd5Lund };
+  CdauIdx = { Cd1Idx, Cd2Idx };
+  CdauLund = { Cd1Lund, Cd2Lund };
+  hdauIdx = { hd1Idx, hd2Idx };
+  hdauLund = { hd1Lund, hd2Lund };
+  ldauIdx = { ld1Idx, ld2Idx, ld3Idx };
+  ldauLund = { ld1Lund, ld2Lund, ld3Lund };
 
   // Specify the variables where each ntuple branch should be read into. 
   SetBranchAddress();
@@ -134,19 +148,14 @@ void BDtaunuReader::Initialize() {
 }
 
 void BDtaunuReader::SetBranchAddress() {
+
   tr->SetBranchAddress("platform", &platform);
   tr->SetBranchAddress("partition", &partition);
   tr->SetBranchAddress("upperID", &upperID);
   tr->SetBranchAddress("lowerID", &lowerID);
   tr->SetBranchAddress("nTRK", &nTrk);
-  tr->SetBranchAddress("nY", &nY);
-  tr->SetBranchAddress("nB", &nB);
-  tr->SetBranchAddress("nD", &nD);
-  tr->SetBranchAddress("ntau", &ntau);
-  tr->SetBranchAddress("nh", &nh);
-  tr->SetBranchAddress("nl", &nl);
-  tr->SetBranchAddress("ngamma", &ngamma);
   tr->SetBranchAddress("R2All", &R2All);
+
   tr->SetBranchAddress("YBPairMmissPrime2", YBPairMmissPrime2);
   tr->SetBranchAddress("YBPairEextra50", YBPairEextra50);
   tr->SetBranchAddress("YTagBlP3MagCM", YTagBlP3MagCM);
@@ -167,32 +176,64 @@ void BDtaunuReader::SetBranchAddress() {
   tr->SetBranchAddress("YSigBsoftP3MagCM", YSigBsoftP3MagCM);
   tr->SetBranchAddress("YSigBhMass", YSigBhMass);
   tr->SetBranchAddress("YSigBVtxProbh", YSigBVtxProbh);
+
   tr->SetBranchAddress("lTrkIdx", lTrkIdx);
   tr->SetBranchAddress("hTrkIdx", hTrkIdx);
   tr->SetBranchAddress("eSelectorsMap", eSelectorsMap);
   tr->SetBranchAddress("muSelectorsMap", muSelectorsMap);
   tr->SetBranchAddress("KSelectorsMap", KSelectorsMap);
   tr->SetBranchAddress("piSelectorsMap", piSelectorsMap);
+
+  tr->SetBranchAddress("nY", &nY);
+  tr->SetBranchAddress("nB", &nB);
+  tr->SetBranchAddress("nD", &nD);
+  tr->SetBranchAddress("nC", &nC);
+  tr->SetBranchAddress("nh", &nh);
+  tr->SetBranchAddress("nl", &nl);
+  tr->SetBranchAddress("ngamma", &ngamma); 
+  tr->SetBranchAddress("YLund", YLund);
+  tr->SetBranchAddress("BLund", BLund);
+  tr->SetBranchAddress("DLund", DLund);
+  tr->SetBranchAddress("CLund", CLund);
+  tr->SetBranchAddress("hLund", hLund);
+  tr->SetBranchAddress("lLund", lLund);
+  tr->SetBranchAddress("gammaLund", gammaLund);
   tr->SetBranchAddress("Yd1Idx", Yd1Idx);
   tr->SetBranchAddress("Yd2Idx", Yd2Idx);
   tr->SetBranchAddress("Bd1Idx", Bd1Idx);
   tr->SetBranchAddress("Bd2Idx", Bd2Idx);
+  tr->SetBranchAddress("Bd3Idx", Bd3Idx);
+  tr->SetBranchAddress("Bd4Idx", Bd4Idx);
   tr->SetBranchAddress("Dd1Idx", Dd1Idx);
   tr->SetBranchAddress("Dd2Idx", Dd2Idx);
   tr->SetBranchAddress("Dd3Idx", Dd3Idx);
   tr->SetBranchAddress("Dd4Idx", Dd4Idx);
   tr->SetBranchAddress("Dd5Idx", Dd5Idx);
-  tr->SetBranchAddress("taud1Idx", taud1Idx);
+  tr->SetBranchAddress("Cd1Idx", Cd1Idx);
+  tr->SetBranchAddress("Cd2Idx", Cd2Idx);
+  tr->SetBranchAddress("hd1Idx", hd1Idx);
+  tr->SetBranchAddress("hd2Idx", hd2Idx);
+  tr->SetBranchAddress("ld1Idx", ld1Idx);
+  tr->SetBranchAddress("ld2Idx", ld2Idx);
+  tr->SetBranchAddress("ld3Idx", ld3Idx);
   tr->SetBranchAddress("Yd1Lund", Yd1Lund);
   tr->SetBranchAddress("Yd2Lund", Yd2Lund);
   tr->SetBranchAddress("Bd1Lund", Bd1Lund);
   tr->SetBranchAddress("Bd2Lund", Bd2Lund);
+  tr->SetBranchAddress("Bd3Lund", Bd3Lund);
+  tr->SetBranchAddress("Bd4Lund", Bd4Lund);
   tr->SetBranchAddress("Dd1Lund", Dd1Lund);
   tr->SetBranchAddress("Dd2Lund", Dd2Lund);
   tr->SetBranchAddress("Dd3Lund", Dd3Lund);
   tr->SetBranchAddress("Dd4Lund", Dd4Lund);
   tr->SetBranchAddress("Dd5Lund", Dd5Lund);
-  tr->SetBranchAddress("taud1Lund", taud1Lund);
+  tr->SetBranchAddress("Cd1Lund", Cd1Lund);
+  tr->SetBranchAddress("Cd2Lund", Cd2Lund);
+  tr->SetBranchAddress("hd1Lund", hd1Lund);
+  tr->SetBranchAddress("hd2Lund", hd2Lund);
+  tr->SetBranchAddress("ld1Lund", ld1Lund);
+  tr->SetBranchAddress("ld2Lund", ld2Lund);
+  tr->SetBranchAddress("ld3Lund", ld3Lund);
 
 }
 
@@ -200,163 +241,26 @@ void BDtaunuReader::ClearColumnValues() {
   platform = -999;
   partition = -999;
   upperID = -999;
-  upperID = -999;
+  lowerID = -999;
   nTrk = -999;
+  R2All = -999;
   nY = -999;
   nB = -999;
   nD = -999;
-  ntau = -999;
+  nC = -999;
   nh = -999;
   nl = -999;
   ngamma = -999;
-  R2All = -999;
-  eventId = std::string();
-  upsilon_candidates = UpsilonList();
+
+  eventId.clear();
+  upsilon_candidates.clear();
+  reco_indexer.clear();
+  reco_vertex_map.clear();
+  g.clear();
 }
-
-// This function takes the decay tree information read from the ntuple
-// (which are read into the arrays new'd in Initialize()), and creates
-// the UpsilonList of the event. It constructs an UpsilonCandidate
-// object for each candidate and fills it with correctly computed
-// higher level features.
-void BDtaunuReader::FillUpsilonList() {
-
-  for (int cand_idx = 0; cand_idx < nY; cand_idx++) {
-
-    // Compute reconstructed decay tree information. 
-    int bflavor;
-    int tag_dstar_mode, tag_d_mode;
-    int sig_dstar_mode, sig_d_mode, sig_tau_mode;
-    ComputeCandidateDecay(cand_idx, 
-        bflavor, tag_dstar_mode, tag_d_mode,
-        sig_dstar_mode, sig_d_mode, sig_tau_mode);
-
-    // Get PID info of the candidate. 
-    int l_ePidMap, l_muPidMap;
-    ComputeCandidatePid(cand_idx, l_ePidMap, l_muPidMap);
-
-    // Construct an UpsilonCandidate object and fill in its features.
-    UpsilonCandidate cand(eventId, cand_idx, 
-        YBPairEextra50[cand_idx], YBPairMmissPrime2[cand_idx], 
-        YTagBlP3MagCM[cand_idx], YSigBhP3MagCM[cand_idx], 
-        YTagBCosBY[cand_idx], YSigBCosBY[cand_idx], 
-        YTagBCosThetaDlCM[cand_idx], YSigBCosThetaDtauCM[cand_idx], 
-        YSigBVtxProbB[cand_idx], 
-        YBPairCosThetaT[cand_idx], 
-        YTagBDMass[cand_idx], YTagBDstarDeltaM[cand_idx], 
-        YTagBCosThetaDSoftCM[cand_idx], YTagBsoftP3MagCM[cand_idx],
-        YSigBDMass[cand_idx], YSigBDstarDeltaM[cand_idx], 
-        YSigBCosThetaDSoftCM[cand_idx], YSigBsoftP3MagCM[cand_idx],
-        YSigBhMass[cand_idx], YSigBVtxProbh[cand_idx], 
-        bflavor,
-        tag_dstar_mode, tag_d_mode, 
-        sig_dstar_mode, sig_d_mode, 
-        sig_tau_mode, 
-        l_ePidMap, l_muPidMap); 
-
-    // Add it to the UpsilonList. 
-    upsilon_candidates.add_candidate(cand);
-  }
-}
-
-void BDtaunuReader::ComputeCandidateDecay(
-    int cand_idx,
-    int &bflavor, int &tag_dstar_mode, int &tag_d_mode, 
-    int &sig_dstar_mode, int &sig_d_mode, int &sig_tau_mode) {
-
-    // B flavor of the this Y(4S) candidate.
-    assert(
-      abs(Yd2Lund[cand_idx]) == abs(lundIdMap["B0"]) ||
-      abs(Yd2Lund[cand_idx]) == abs(lundIdMap["B+"])
-    );
-    bflavor = DetermineBFlavor(Yd2Lund[cand_idx]);
-  
-    // Determine whether the tag B has a D* decay, and determine the
-    // modes in which the D* and D decay. 
-    int tagBIdx = Yd1Idx[cand_idx];
-    assert(
-      abs(Bd1Lund[tagBIdx]) == abs(lundIdMap["D+"]) ||
-      abs(Bd1Lund[tagBIdx]) == abs(lundIdMap["D0"]) ||
-      abs(Bd1Lund[tagBIdx]) == abs(lundIdMap["D*0"]) ||
-      abs(Bd1Lund[tagBIdx]) == abs(lundIdMap["D*+"])
-    );
-
-    if (abs(Bd1Lund[tagBIdx]) == abs(lundIdMap["D+"]) ||
-        abs(Bd1Lund[tagBIdx]) == abs(lundIdMap["D0"])) {
-      int DIdx = Bd1Idx[tagBIdx];
-      
-      tag_dstar_mode = kNoDstar;
-      tag_d_mode = DetermineDMode(Bd1Lund[tagBIdx], Dd1Lund[DIdx], Dd2Lund[DIdx],
-                                  Dd3Lund[DIdx], Dd4Lund[DIdx], Dd5Lund[DIdx]);
-    } else {
-      int DsIdx = Bd1Idx[tagBIdx];
-      int DIdx = Dd1Idx[DsIdx];
-      
-      tag_dstar_mode = DetermineDstarMode(Dd1Lund[DsIdx], Dd2Lund[DsIdx],
-                                          Dd3Lund[DsIdx], Dd4Lund[DsIdx], Dd5Lund[DsIdx]);
-      tag_d_mode = DetermineDMode(Dd1Lund[DsIdx], Dd1Lund[DIdx], Dd2Lund[DIdx],
-                                  Dd3Lund[DIdx], Dd4Lund[DIdx], Dd5Lund[DIdx]);
-    }
-
-    // Determine whether the sig B has a D* decay, and determine the
-    // modes in which the D* and D decay. Also determine which mode
-    // the tau decays in. 
-    int sigBIdx = Yd2Idx[cand_idx];
-    assert(
-      abs(Bd1Lund[sigBIdx]) == abs(lundIdMap["D+"]) ||
-      abs(Bd1Lund[sigBIdx]) == abs(lundIdMap["D0"]) ||
-      abs(Bd1Lund[sigBIdx]) == abs(lundIdMap["D*0"]) ||
-      abs(Bd1Lund[sigBIdx]) == abs(lundIdMap["D*+"])
-    );
-    
-    if (abs(Bd1Lund[sigBIdx]) == abs(lundIdMap["D+"]) ||
-        abs(Bd1Lund[sigBIdx]) == abs(lundIdMap["D0"])) {
-      int DIdx = Bd1Idx[sigBIdx];
-
-      sig_dstar_mode = kNoDstar;
-      sig_d_mode = DetermineDMode(Bd1Lund[sigBIdx], Dd1Lund[DIdx], Dd2Lund[DIdx],
-                                  Dd3Lund[DIdx], Dd4Lund[DIdx], Dd5Lund[DIdx]);
-    } else {
-      int DsIdx = Bd1Idx[sigBIdx];
-      int DIdx = Dd1Idx[DsIdx];
-
-      sig_dstar_mode = DetermineDstarMode(Dd1Lund[DsIdx], Dd2Lund[DsIdx],
-                                          Dd3Lund[DsIdx], Dd4Lund[DsIdx], Dd5Lund[DsIdx]);
-      sig_d_mode = DetermineDMode(Dd1Lund[DsIdx], Dd1Lund[DIdx], Dd2Lund[DIdx],
-                                  Dd3Lund[DIdx], Dd4Lund[DIdx], Dd5Lund[DIdx]);
-    }
-    
-    int tauIdx = Bd2Idx[sigBIdx];
-    assert(abs(Bd2Lund[sigBIdx]) == abs(lundIdMap["tau+"]));
-    assert(
-      abs(taud1Lund[tauIdx]) == abs(lundIdMap["pi+"]) ||
-      abs(taud1Lund[tauIdx]) == abs(lundIdMap["rho+"])
-    );
-
-    sig_tau_mode = DetermineTauMode(taud1Lund[tauIdx]);
-    
-}
-
-void BDtaunuReader::ComputeCandidatePid(
-    int cand_idx, 
-    int &l_ePidMap, int &l_muPidMap) { 
-  
-    int tagBIdx = Yd1Idx[cand_idx];
-    int lIdx = Bd2Idx[tagBIdx];
-    int ltrkIdx = lTrkIdx[lIdx];
-
-    assert(
-      abs(Bd2Lund[tagBIdx]) == abs(lundIdMap["e+"]) ||
-      abs(Bd2Lund[tagBIdx]) == abs(lundIdMap["mu+"])
-    );
-
-    l_ePidMap = eSelectorsMap[ltrkIdx];
-    l_muPidMap = muSelectorsMap[ltrkIdx];
-
-}
-
 
 BDtaunuReader::~BDtaunuReader() {
+
   delete[] YBPairMmissPrime2;
   delete[] YBPairEextra50;
   delete[] YTagBlP3MagCM;
@@ -377,173 +281,59 @@ BDtaunuReader::~BDtaunuReader() {
   delete[] YSigBsoftP3MagCM;
   delete[] YSigBhMass;
   delete[] YSigBVtxProbh;
+
   delete[] lTrkIdx;
   delete[] hTrkIdx;
   delete[] eSelectorsMap;
   delete[] muSelectorsMap;
   delete[] KSelectorsMap;
   delete[] piSelectorsMap;
+
+  delete[] YLund;
+  delete[] BLund;
+  delete[] DLund;
+  delete[] CLund;
+  delete[] hLund;
+  delete[] lLund;
+  delete[] gammaLund;
+
   delete[] Yd1Idx;
   delete[] Yd2Idx;
   delete[] Bd1Idx;
   delete[] Bd2Idx;
+  delete[] Bd3Idx;
+  delete[] Bd4Idx;
   delete[] Dd1Idx;
   delete[] Dd2Idx;
   delete[] Dd3Idx;
   delete[] Dd4Idx;
   delete[] Dd5Idx;
-  delete[] taud1Idx;
+  delete[] Cd1Idx;
+  delete[] Cd2Idx;
+  delete[] hd1Idx;
+  delete[] hd2Idx;
+  delete[] ld1Idx;
+  delete[] ld2Idx;
+  delete[] ld3Idx;
   delete[] Yd1Lund;
   delete[] Yd2Lund;
   delete[] Bd1Lund;
   delete[] Bd2Lund;
+  delete[] Bd3Lund;
+  delete[] Bd4Lund;
   delete[] Dd1Lund;
   delete[] Dd2Lund;
   delete[] Dd3Lund;
   delete[] Dd4Lund;
   delete[] Dd5Lund;
-  delete[] taud1Lund;
+  delete[] Cd1Lund;
+  delete[] Cd2Lund;
+  delete[] hd1Lund;
+  delete[] hd2Lund;
+  delete[] ld1Lund;
+  delete[] ld2Lund;
+  delete[] ld3Lund;
 
-}
-
-int BDtaunuReader::DetermineBFlavor(int lundId) {
-  if (abs(lundId) == abs(lundIdMap["B0"])) {
-    return kB0;
-  } else if (abs(lundId) == abs(lundIdMap["B+"])) {
-    return kBc;
-  } else {
-    return kUndefinedBFlavor;
-  }
-}
-
-int BDtaunuReader::DetermineDstarMode(
-    int Dd1_lundId, int Dd2_lundId, 
-    int Dd3_lundId, int Dd4_lundId, int Dd5_lundId) {
-
-  int dau_abslund[] = { abs(Dd1_lundId), abs(Dd2_lundId), 
-                        abs(Dd3_lundId), abs(Dd4_lundId), 
-                        abs(Dd5_lundId) };
-
-  // Count the daughter particle types
-  int n_daughters, n_D0, n_Dc, n_pi, n_pi0, n_gamma;
-  n_daughters = n_D0 = n_Dc = n_pi = n_pi0 = n_gamma = 0;
-  for (int i = 0; i < 5; i++) {
-    if (dau_abslund[i] == 0) {
-      break;
-    } else {
-      n_daughters += 1;
-      if (dau_abslund[i] == abs(lundIdMap["D0"])) {
-        n_D0 += 1;
-      } else if (dau_abslund[i] == abs(lundIdMap["D+"])) {
-        n_Dc += 1;
-      } else if (dau_abslund[i] == abs(lundIdMap["pi+"])) {
-        n_pi += 1;
-      } else if (dau_abslund[i] == abs(lundIdMap["pi0"])) {
-        n_pi0 += 1;
-      } else if (dau_abslund[i] == abs(lundIdMap["gamma"])) {
-        n_gamma += 1;
-      } else {
-        return kUndefinedDstarMode;
-      }
-    }
-  }
-
-  // Determine the decay mode based on the daughter counts. 
-  if (n_daughters == 2 && n_D0 == 1 && n_pi0 == 1) {
-    return kDstar0_D0pi0;
-  } else if (n_daughters == 2 && n_D0 == 1 && n_gamma == 1) {
-    return kDstar0_D0gamma;
-  } else if (n_daughters == 2 && n_D0 == 1 && n_pi == 1) {
-    return kDstarc_D0pi;
-  } else if (n_daughters == 2 && n_Dc == 1 && n_pi0 == 1) {
-    return kDstarc_Dcpi0;
-  } else if (n_daughters == 2 && n_Dc == 1 && n_gamma == 1) {
-    return kDstarc_Dcgamma;
-  } else {
-    return kUndefinedDstarMode;
-  }
-}
-
-int BDtaunuReader::DetermineDMode(
-    int D_lundId, int Dd1_lundId, int Dd2_lundId, 
-    int Dd3_lundId, int Dd4_lundId, int Dd5_lundId) {
-
-  int dau_abslund[] = { abs(Dd1_lundId), abs(Dd2_lundId), 
-                        abs(Dd3_lundId), abs(Dd4_lundId), 
-                        abs(Dd5_lundId) };
-
-  // Count the daughter particle types
-  int n_daughters, n_K, n_Ks, n_pi, n_pi0;
-  n_daughters = n_K = n_Ks = n_pi = n_pi0 = 0;
-  for (int i = 0; i < 5; i++) {
-    if (dau_abslund[i] == 0) {
-      break;
-    } else {
-      n_daughters += 1;
-      if (dau_abslund[i] == abs(lundIdMap["K+"])) {
-        n_K += 1;
-      } else if (dau_abslund[i] == abs(lundIdMap["K_S0"])) {
-        n_Ks += 1;
-      } else if (dau_abslund[i] == abs(lundIdMap["pi+"])) {
-        n_pi += 1;
-      } else if (dau_abslund[i] == abs(lundIdMap["pi0"])) {
-        n_pi0 += 1;
-      } else {
-        return kUndefinedDMode;
-      }
-    }
-  }
-
-  // Determine the decay mode based on the daughter counts. 
-  if (abs(D_lundId) == abs(lundIdMap["D+"])) {
-    if (n_daughters == 3 && n_K == 1 && n_pi == 2) {
-      return kDc_Kpipi;
-    } else if (n_daughters == 4 && n_K == 1 && n_pi == 2 && n_pi0 == 1) {
-      return kDc_Kpipipi0;
-    } else if (n_daughters == 2 && n_K == 1 && n_Ks == 1) {
-      return kDc_KsK;
-    } else if (n_daughters == 2 && n_Ks == 1 && n_pi == 1) {
-      return kDc_Kspi;
-    } else if (n_daughters == 3 && n_Ks == 1 && n_pi == 1 && n_pi0 == 1) {
-      return kDc_Kspipi0;
-    } else if (n_daughters == 4 && n_Ks == 1 && n_pi == 3) {
-      return kDc_Kspipipi;
-    } else if (n_daughters == 3 && n_K == 2 && n_pi == 1) {
-      return kDc_KKpi;
-    } else {
-      return kUndefinedDMode;
-    }
-  } else {
-    if (n_daughters == 2 && n_K == 1 && n_pi == 1) {
-      return kD0_Kpi;
-    } else if (n_daughters == 3 && n_K == 1 && n_pi == 1 && n_pi0 == 1) {
-      return kD0_Kpipi0;
-    } else if (n_daughters == 4 && n_K == 1 && n_pi == 3) {
-      return kD0_Kpipipi;
-    } else if (n_daughters == 5 && n_K == 1 && n_pi == 3 && n_pi0 == 1) {
-      return kD0_Kpipipipi0;
-    } else if (n_daughters == 3 && n_Ks == 1 && n_pi == 2) {
-      return kD0_Kspipi;
-    } else if (n_daughters == 4 && n_Ks == 1 && n_pi == 2 && n_pi0 == 1) {
-      return kD0_Kspipipi0;
-    } else if (n_daughters == 2 && n_Ks == 1 && n_pi0 == 1) {
-      return kD0_Kspi0;
-    } else if (n_daughters == 2 && n_K == 2) {
-      return kD0_KK;
-    } else {
-      return kUndefinedDMode;
-    }
-  }
-}
-
-int BDtaunuReader::DetermineTauMode(int tau_d1lundId) {
-  if (abs(tau_d1lundId) == abs(lundIdMap["pi+"])) {
-    return ktau_pi;
-  } else if (abs(tau_d1lundId) == abs(lundIdMap["rho+"])) {
-    return ktau_rho;
-  } else {
-    return kUndefinedTauMode;
-  }
 }
 
 // Determine whether the maximum number of allowed candidates 
@@ -554,7 +344,7 @@ bool BDtaunuReader::IsMaxCandidateExceeded() const {
         (nY < maximum_Y_candidates) &&
         (nB < maximum_B_candidates) &&
         (nD < maximum_D_candidates) &&
-        (ntau < maximum_tau_candidates) &&
+        (nC < maximum_C_candidates) &&
         (nh < maximum_h_candidates) &&
         (nl < maximum_l_candidates) &&
         (ngamma < maximum_gamma_candidates) 
@@ -577,18 +367,128 @@ int BDtaunuReader::next_record() {
   int next_record_idx = RootReader::next_record();
 
   // Compute higher level information that is not directly avaible. 
-  if (next_record_idx > -1) {
-    eventId = to_string(platform) + ":" 
-              + to_string(partition) + ":" 
-              + to_string(upperID) + "/" 
-              + to_string(lowerID);
+  if ((next_record_idx > -1) && (!IsMaxCandidateExceeded())) {
+
+    eventId = std::to_string(platform) + ":" 
+              + std::to_string(partition) + ":" 
+              + std::to_string(upperID) + "/" 
+              + std::to_string(lowerID);
+
+    reco_indexer.set({nY, nB, nD, nC, nh, nl, ngamma});
+
+    ConstructRecoGraph();
 
     // Construct the Y(4S) candidate list for this event. 
     // Maximum number of candidates must not be exceeded.
-    if (!IsMaxCandidateExceeded()) { 
-      FillUpsilonList();
-    }
+    FillUpsilonList();
   }
 
   return next_record_idx;
+}
+
+void BDtaunuReader::ConstructRecoGraph() {
+  AddCandidatesToGraph(nY, YLund, YdauIdx, YdauLund);
+  AddCandidatesToGraph(nB, BLund, BdauIdx, BdauLund);
+  AddCandidatesToGraph(nD, DLund, DdauIdx, DdauLund);
+  AddCandidatesToGraph(nC, CLund, CdauIdx, CdauLund);
+  AddCandidatesToGraph(nh, hLund, hdauIdx, hdauLund);
+  AddCandidatesToGraph(nl, lLund, ldauIdx, ldauLund);
+}
+
+void BDtaunuReader::AddCandidatesToGraph(
+    int nCand,
+    int *CandLund,
+    std::vector<int*> &CandDauIdx,
+    std::vector<int*> &CandDauLund) {
+
+  property_map<RecoGraph, vertex_reco_index_t>::type reco_index = get(vertex_reco_index, g);
+  property_map<RecoGraph, vertex_block_index_t>::type block_index = get(vertex_block_index, g);
+  property_map<RecoGraph, vertex_lund_id_t>::type lund_id = get(vertex_lund_id, g);
+
+  Vertex u, v;
+  std::map<int, Vertex>::iterator pos;
+  bool inserted;
+
+  for (int i = 0; i < nCand; i++) {
+
+    int u_idx = reco_indexer(CandLund[i], i);
+    boost::tie(pos, inserted) = reco_vertex_map.insert(std::make_pair(u_idx, Vertex()));
+    if (inserted) {
+      u = add_vertex(g);
+      reco_index[u] = u_idx;
+      block_index[u] = i;
+      lund_id[u] = CandLund[i];
+      reco_vertex_map[u_idx] = u;
+    } else {
+      u = reco_vertex_map[u_idx];
+    }
+
+    for (std::vector<int*>::size_type j = 0; j < CandDauIdx.size(); j++) {
+      if (CandDauIdx[j][i] == -1) {
+        break;
+      } else {
+
+        int v_idx = reco_indexer(CandDauLund[j][i], CandDauIdx[j][i]);
+        boost::tie(pos, inserted) = reco_vertex_map.insert(std::make_pair(v_idx, Vertex()));
+        if (inserted) {
+          v = add_vertex(g);
+          reco_index[v] = v_idx;
+          block_index[v] = CandDauIdx[j][i];
+          lund_id[v] = CandDauLund[j][i];
+          reco_vertex_map[v_idx] = v;
+        } else {
+          v = reco_vertex_map[v_idx];
+        }
+
+        add_edge(u, v, g);
+      }
+    }
+  }
+}
+
+
+// This function takes the decay tree information read from the ntuple
+// (which are read into the arrays new'd in Initialize()), and creates
+// the UpsilonList of the event. It constructs an UpsilonCandidate
+// object for each candidate and fills it with correctly computed
+// higher level features.
+void BDtaunuReader::FillUpsilonList() {
+
+  auto lund_map = get(vertex_lund_id, g);
+  std::vector<YDecayProperties> upsilon_decays;
+  depth_first_search(g, visitor(reco_graph_dfs_visitor(lund_map, upsilon_decays)));
+
+  auto block_idx_map = get(vertex_block_index, g);
+  auto reco_idx_map = get(vertex_reco_index, g);
+  for (auto y : upsilon_decays) {
+    int cand_idx = get(block_idx_map, y.Y);
+    int reco_idx = get(reco_idx_map, y.Y);
+    int l_ePidMap = eSelectorsMap[lTrkIdx[get(block_idx_map, y.l)]];
+    int l_muPidMap = muSelectorsMap[lTrkIdx[get(block_idx_map, y.l)]];
+
+    UpsilonCandidate ups(eventId, cand_idx, reco_idx, 
+        YBPairEextra50[cand_idx], YBPairMmissPrime2[cand_idx], 
+        YTagBlP3MagCM[cand_idx], YSigBhP3MagCM[cand_idx], 
+        YTagBCosBY[cand_idx], YSigBCosBY[cand_idx], 
+        YTagBCosThetaDlCM[cand_idx], YSigBCosThetaDtauCM[cand_idx], 
+        YSigBVtxProbB[cand_idx], 
+        YBPairCosThetaT[cand_idx], 
+        YTagBDMass[cand_idx], YTagBDstarDeltaM[cand_idx], 
+        YTagBCosThetaDSoftCM[cand_idx], YTagBsoftP3MagCM[cand_idx],
+        YSigBDMass[cand_idx], YSigBDstarDeltaM[cand_idx], 
+        YSigBCosThetaDSoftCM[cand_idx], YSigBsoftP3MagCM[cand_idx],
+        YSigBhMass[cand_idx], YSigBVtxProbh[cand_idx], 
+        y.bflavor,
+        y.tag_dstar_mode, y.tag_d_mode, 
+        y.sig_dstar_mode, y.sig_d_mode, 
+        y.tau_mode, 
+        l_ePidMap, l_muPidMap); 
+    upsilon_candidates.push_back(ups);
+  }
+}
+
+BDtaunuReader::RecoGraph BDtaunuReader::get_reco_subgraph(int reco_idx) {
+  RecoGraph subg;
+  breadth_first_search(g, reco_vertex_map[reco_idx], visitor(reco_graph_bfs_visitor(g, subg)));
+  return subg;
 }

@@ -6,14 +6,16 @@
  */
 
 #include <string>
+#include <map>
 
-//! Converts integer to string
-std::string to_string(int a);
+namespace bdtaunu {
 
-//! Converts string to double
-double to_double(const std::string &s);
+//! Builds particle name : lundId map
+std::map<std::string, int> NameToLundMap();
 
-//! Converts string to int
-int to_int(const std::string &s);
+//! Builds lundId : particle name map
+std::map<int, std::string> LundToNameMap();
+
+}
 
 #endif

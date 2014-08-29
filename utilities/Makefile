@@ -11,6 +11,9 @@ OS = $(shell uname)
 OBJECTS = helpers.o DatReader.o
 LIBNAME = libutilities.so
 
+PDT_FILE_PATHNAME = $(shell pwd | sed 's/\/[^/]*$$//')/meta/pdt.dat
+CXXFLAGS += -D__PDT_FILE_PATHNAME='"$(PDT_FILE_PATHNAME)"'
+
 all : CXXFLAGS += -O3
 all : lib
 

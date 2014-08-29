@@ -1,11 +1,14 @@
 CXX ?= g++
-CXXFLAGS = -Wall -fPIC
+CXXFLAGS = -Wall -fPIC -std=c++11
 
 PKG_INCPATH = ../include
 PKG_LIBPATH = ../lib
-INCFLAGS = -I$(PKG_INCPATH) -I/usr/local/include
+INCFLAGS = -I$(PKG_INCPATH) -I/usr/local/include -I$(BOOST_ROOT)
 INCFLAGS += $(shell root-config --cflags)
-LDFLAGS = -L$(PKG_LIBPATH) -lutilities -L/usr/local/lib -lsqlite3
+
+SHARED_LIBARIES = utilities sqlite3
+LDFLAGS = -L$(PKG_LIBPATH) -L/usr/local/lib
+LDFLAGS += $(addprefix -l, $(SHARED_LIBARIES))
 LDFLAGS += $(shell root-config --libs)
 
 PDT_FILE_PATHNAME = $(shell pwd | sed 's/\/[^/]*$$//')/meta/pdt.dat
@@ -13,20 +16,29 @@ CXXFLAGS += -D__PDT_FILE_PATHNAME='"$(PDT_FILE_PATHNAME)"'
 
 OS = $(shell uname)
 
-OBJECTS = RootReader.o BDtaunuReader.o BDtaunuMcReader.o BDtaunuSigMcReader.o \
-          UpsilonCandidate.o UpsilonList.o \
-          SQLiteTableBuilder.o EventSQLiteTableBuilder.o McEventSQLiteTableBuilder.o \
-					CandidateSQLiteTableBuilder.o McCandidateSQLiteTableBuilder.o \
-					EventStatusSQLiteTableBuilder.o OptimalCandidateSQLiteTableBuilder.o
+OBJECTS = RecoIndexer.o \
+          RootReader.o BDtaunuReader.o \
+          BDtaunuMcReader.o \
+          UpsilonCandidate.o UpsilonList.o
 
 LIBNAME = libcreatedb.so
 
+HEADER_ONLY = RecoGraphVisitors.h
+
+BINARIES = test test1 #test_bgl
+
 all : CXXFLAGS += -O3
-all : lib
+all : lib $(BINARIES)
 
 debug : CXX += -DDEBUG -g
 debug : CXXFLAGS += -O0
 debug : lib
+
+$(BINARIES) : % : %.o lib
+	$(CXX) $(LDFLAGS) $(patsubst lib%,-l%,$(basename $(LIBNAME))) -Wl,-rpath,$(PKG_LIBPATH) -o $@ $<
+
+$(addsuffix .o, $(BINARIES)) : %.o : %.cc $(HEADER_ONLY)
+	$(CXX) $(CXXFLAGS) $(INCFLAGS) -c $< -o $@
 
 lib: $(OBJECTS)
 	if [ "$(OS)" = "Darwin" ]; then \
@@ -40,4 +52,5 @@ $(OBJECTS) : %.o : %.cc %.h
 	$(CXX) $(CXXFLAGS) $(INCFLAGS) -c $< -o $(PKG_LIBPATH)/$@
 
 clean:
-	rm -f *~ $(PKG_LIBPATH)/$(LIBNAME) $(addprefix $(PKG_LIBPATH)/, $(OBJECTS))
+	rm -f *~ $(BINARIES) $(addsuffix .o, $(BINARIES)) \
+		$(PKG_LIBPATH)/$(LIBNAME) $(addprefix $(PKG_LIBPATH)/, $(OBJECTS))

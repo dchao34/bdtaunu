@@ -9,6 +9,7 @@ class UpsilonCandidate {
   private:
     std::string eventId;
     int event_candidate_index;
+    int reco_index;
     float eextra50, mmiss_prime2;
     float tag_lp3, sig_hp3;
     float tag_cosBY, sig_cosBY;
@@ -55,6 +56,27 @@ class UpsilonCandidate {
     //! Constructs candidate with specified attributes. 
     UpsilonCandidate(
         std::string& eventId, int event_candidate_index, 
+        float eextra50, float mmiss_prime2, 
+        float tag_lp3, float sig_hp3, 
+        float tag_cosBY, float sig_cosBY, 
+        float tag_cosThetaDl, float sig_cosThetaDtau, 
+        float sig_vtxB, 
+        float cosThetaT, 
+        float tag_Dmass, float tag_deltaM, 
+        float tag_cosThetaDSoft, float tag_softP3MagCM,
+        float sig_Dmass, float sig_deltaM, 
+        float sig_cosThetaDSoft, float sig_softP3MagCM, 
+        float sig_hmass, float sig_vtxh, 
+        int bflavor, 
+        int tag_dstar_mode, int tag_d_mode,
+        int sig_dstar_mode, int sig_d_mode,
+        int sig_tau_mode,
+        int l_ePidMap, int l_muPidMap); 
+
+    //! Constructs candidate with specified attributes. 
+    UpsilonCandidate(
+        std::string& eventId, int event_candidate_index, 
+        int reco_index, 
         float eextra50, float mmiss_prime2, 
         float tag_lp3, float sig_hp3, 
         float tag_cosBY, float sig_cosBY, 
@@ -220,6 +242,8 @@ class UpsilonCandidate {
      * http://www.slac.stanford.edu/BFROOT/www/Physics/Tools/Pid/Selectors/r24c/selectors.html
      */
     int get_l_muPidMap() const { return l_muPidMap; }
+
+    int get_reco_index() const { return reco_index; }
 };
 
 #endif

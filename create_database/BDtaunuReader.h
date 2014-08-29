@@ -4,10 +4,27 @@
 #include <TTree.h>
 
 #include <string>
+#include <vector>
 #include <map>
 
 #include "RootReader.h"
-#include "UpsilonList.h"
+#include "UpsilonCandidate.h"
+#include "RecoIndexer.h"
+
+#include <boost/graph/adjacency_list.hpp>
+
+namespace boost {
+  enum vertex_reco_index_t { vertex_reco_index };
+  enum vertex_block_index_t { vertex_block_index };
+  enum vertex_lund_id_t { vertex_lund_id };
+
+  BOOST_INSTALL_PROPERTY(vertex, reco_index);
+  BOOST_INSTALL_PROPERTY(vertex, block_index);
+  BOOST_INSTALL_PROPERTY(vertex, lund_id);
+}
+
+template <typename T> class RecoGraphDfsVisitor;
+class RecoGraphBfsVisitor;
 
 //! Reads ntuples produced by BtaTupleMaker and computes data related to detector response. 
 /*! This class is responsible for assembling all data that can be
@@ -27,17 +44,32 @@
  * subclass. */
 class BDtaunuReader : public RootReader {
 
+  typedef boost::adjacency_list<
+    boost::vecS, boost::vecS, boost::directedS, 
+    boost::property<boost::vertex_reco_index_t, int,
+    boost::property<boost::vertex_block_index_t, int,
+    boost::property<boost::vertex_lund_id_t, int>>>, 
+    boost::property<boost::edge_index_t, int>
+  > RecoGraph;
+
+  typedef typename boost::graph_traits<RecoGraph>::vertex_descriptor Vertex;
+
+  struct YDecayProperties;
+  template <typename T> friend class RecoGraphDfsVisitor;
+  template <typename T> friend RecoGraphDfsVisitor<T> reco_graph_dfs_visitor(T, std::vector<YDecayProperties>&);
+  friend class RecoGraphBfsVisitor;
+  friend RecoGraphBfsVisitor reco_graph_bfs_visitor(const RecoGraph&, RecoGraph&);
+
   protected: 
-    static std::map<std::string, int> build_lund_map();
+    static std::map<std::string, int> lundIdMap;
 
     static const int maximum_Y_candidates;
     static const int maximum_B_candidates;
     static const int maximum_D_candidates;
-    static const int maximum_tau_candidates;
+    static const int maximum_C_candidates;
     static const int maximum_h_candidates;
     static const int maximum_l_candidates;
     static const int maximum_gamma_candidates;
-    static std::map<std::string, int> lundIdMap;
 
   private: 
     int platform, partition, upperID, lowerID;
@@ -59,38 +91,51 @@ class BDtaunuReader : public RootReader {
     int *lTrkIdx, *hTrkIdx;
     int *eSelectorsMap, *muSelectorsMap, *KSelectorsMap, *piSelectorsMap;
 
+    struct YDecayProperties {
+      Vertex Y, l, tau_pi, tau_pi0;
+      int bflavor;
+      int tag_d_mode, sig_d_mode;
+      int tag_dstar_mode, sig_dstar_mode;
+      int tau_mode;
+    };
+
   protected: 
-    int nY, nB, nD; 
-    int ntau, nh, nl, ngamma;
+    int nY, nB, nD, nC, nh, nl, ngamma; 
+    int *YLund, *BLund, *DLund, *CLund, *hLund, *lLund, *gammaLund;
     int *Yd1Idx, *Yd2Idx;
-    int *Bd1Idx, *Bd2Idx;
+    int *Bd1Idx, *Bd2Idx, *Bd3Idx, *Bd4Idx;
     int *Dd1Idx, *Dd2Idx, *Dd3Idx, *Dd4Idx, *Dd5Idx;
-    int *taud1Idx;
+    int *Cd1Idx, *Cd2Idx;
+    int *hd1Idx, *hd2Idx;
+    int *ld1Idx, *ld2Idx, *ld3Idx;
     int *Yd1Lund, *Yd2Lund;
-    int *Bd1Lund, *Bd2Lund;
+    int *Bd1Lund, *Bd2Lund, *Bd3Lund, *Bd4Lund;
     int *Dd1Lund, *Dd2Lund, *Dd3Lund, *Dd4Lund, *Dd5Lund;
-    int *taud1Lund;
+    int *Cd1Lund, *Cd2Lund;
+    int *hd1Lund, *hd2Lund;
+    int *ld1Lund, *ld2Lund, *ld3Lund;
+
+    std::vector<int*> YdauIdx, YdauLund;
+    std::vector<int*> BdauIdx, BdauLund;
+    std::vector<int*> DdauIdx, DdauLund;
+    std::vector<int*> CdauIdx, CdauLund;
+    std::vector<int*> hdauIdx, hdauLund;
+    std::vector<int*> ldauIdx, ldauLund;
 
   private: 
     std::string eventId;
-    UpsilonList upsilon_candidates;
+    std::vector<UpsilonCandidate> upsilon_candidates;
+    RecoIndexer reco_indexer;
+    std::map<int, Vertex> reco_vertex_map;
+    RecoGraph g;
+
+    void ConstructRecoGraph();
+    void AddCandidatesToGraph(
+        int nCand, int *CandLund,
+        std::vector<int*> &CandDauIdx,
+        std::vector<int*> &CandDauLund);
 
     void FillUpsilonList();
-
-    void ComputeCandidateDecay(
-        int ups_cand_idx,
-        int &Bflavor, int &tag_Dmode, int &tag_Dstarmode,
-        int &sig_Dmode, int &sig_Dstarmode, int &sig_taumode);
-    int DetermineBFlavor(int lundId);
-    int DetermineDstarMode(int Dd1_lundId, int Dd2_lundId, 
-                           int Dd3_lundId, int Dd4_lundId, int Dd5_lundId); 
-    int DetermineDMode(int D_lundId, int Dd1_lundId, int Dd2_lundId, 
-                       int Dd3_lundId, int Dd4_lundId, int Dd5_lundId); 
-    int DetermineTauMode(int taud1_lundId);
-
-    void ComputeCandidatePid(
-        int cand_idx, 
-        int &l_ePidMap, int &l_muPidMap); 
 
   protected: 
 
@@ -133,7 +178,10 @@ class BDtaunuReader : public RootReader {
     float get_R2All() const { return R2All; }
 
     //! Return list of \f$\Upsilon(4S)\f$ candidates in this event. 
-    const UpsilonList & get_candidate_list() const { return upsilon_candidates; }
+    const std::vector<UpsilonCandidate> &get_candidate_list() const { return upsilon_candidates; }
+
+    RecoGraph get_reco_graph() const { return g; }
+    RecoGraph get_reco_subgraph(int reco_index);
 
 };
 

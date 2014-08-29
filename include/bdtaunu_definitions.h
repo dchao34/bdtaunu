@@ -8,6 +8,24 @@
  *  throughout the analysis package.
  */
 
+namespace bdtaunu {
+
+const int UpsilonLund = 70553;
+const int B0Lund = 511;
+const int BcLund = 521;
+const int D0Lund = 421;
+const int DcLund = 411;
+const int Dstar0Lund = 423;
+const int DstarcLund = 413;
+const int KSLund = 310;
+const int rhoLund = 213;
+const int pi0Lund = 111;
+const int KLund = 321;
+const int piLund = 211;
+const int eLund = 11;
+const int muLund = 13;
+const int gammaLund = 22;
+
 //! B meson flavors.
 enum BFlavor {
   kB0 = 1,                 /*!< \f$ B^0 \f$ */
@@ -234,5 +252,7 @@ enum McEventTypeA {
   //! Undefined MC event type. Indicates error. 
   kUndefinedMcEventTypeA = -1,
 };
+
+}
 
 #endif
