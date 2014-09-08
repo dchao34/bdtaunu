@@ -19,13 +19,16 @@ OS = $(shell uname)
 OBJECTS = RecoIndexer.o \
           RootReader.o BDtaunuReader.o \
           BDtaunuMcReader.o \
-          UpsilonCandidate.o UpsilonList.o
+          UpsilonCandidate.o \
+          SQLiteTableBuilder.o EventSQLiteTableBuilder.o McEventSQLiteTableBuilder.o \
+					CandidateSQLiteTableBuilder.o McCandidateSQLiteTableBuilder.o \
+					EventStatusSQLiteTableBuilder.o OptimalCandidateSQLiteTableBuilder.o
 
 LIBNAME = libcreatedb.so
 
 HEADER_ONLY = RecoGraphVisitors.h
 
-BINARIES = test test1 #test_bgl
+BINARIES = test2 #test test1 test_bgl
 
 all : CXXFLAGS += -O3
 all : lib $(BINARIES)

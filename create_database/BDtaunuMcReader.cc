@@ -9,6 +9,11 @@
 #include <cassert>
 #include <algorithm>
 
+using namespace boost;
+
+const double BDtaunuMcReader::min_photon_energy = 0.02;
+const int BDtaunuMcReader::max_mc_length = 100;
+
 // Static methods to initialize the particle lundId arrays that are
 // needed to determine MC B meson types. 
 // Charged leptons. 
@@ -147,17 +152,20 @@ void BDtaunuMcReader::ClearColumnValues() {
   BDtaunuReader::ClearColumnValues();
   mcLen = 0;
 
-  McB1.bflavor = kUndefinedBFlavor;
+  McB1.bflavor = bdtaunu::kUndefinedBFlavor;
   McB1.mc_idx = -1;
-  McB1.b_mctype = kUndefinedBMcType;
-  McB1.tau_mctype = kUndefinedTauMcType;
+  McB1.b_mctype = bdtaunu::kUndefinedBMcType;
+  McB1.tau_mctype = bdtaunu::kUndefinedTauMcType;
   McB1.dtau_max_photon_energy = -1;
 
-  McB2.bflavor = kUndefinedBFlavor;
+  McB2.bflavor = bdtaunu::kUndefinedBFlavor;
   McB2.mc_idx = -1;
-  McB2.b_mctype = kUndefinedBMcType;
-  McB2.tau_mctype = kUndefinedTauMcType;
+  McB2.b_mctype = bdtaunu::kUndefinedBMcType;
+  McB2.tau_mctype = bdtaunu::kUndefinedTauMcType;
   McB2.dtau_max_photon_energy = -1;
+
+  g_mc.clear();
+  mc_vertex_map.clear();
 }
 
 // Find the MC B meson's from the mcLund array of the event. Determine
@@ -175,16 +183,16 @@ void BDtaunuMcReader::FindBMesons() {
       if (McB1.mc_idx == -1) {
         McB1.mc_idx = i;
         if (abs(mcLund[i]) == lundIdMap["B0"]) {
-          McB1.bflavor = kB0;
+          McB1.bflavor = bdtaunu::kB0;
         } else {
-          McB1.bflavor = kBc;
+          McB1.bflavor = bdtaunu::kBc;
         }
       } else {
         McB2.mc_idx = i;
         if (abs(mcLund[i]) == lundIdMap["B0"]) {
-          McB2.bflavor = kB0;
+          McB2.bflavor = bdtaunu::kB0;
         } else {
-          McB2.bflavor = kBc;
+          McB2.bflavor = bdtaunu::kBc;
         }    
       }
     }
@@ -207,7 +215,7 @@ void BDtaunuMcReader::DetermineBMcType(McBMeson &mcB) {
 
   // Return if no MC B mesons are in the event. 
   if (mcB.mc_idx == -1) {
-    mcB.b_mctype = kCont;
+    mcB.b_mctype = bdtaunu::kCont;
     return;
   }
 
@@ -266,66 +274,66 @@ void BDtaunuMcReader::DetermineBMcType(McBMeson &mcB) {
   // definitions. 
   if (n_ell == 1 && n_nu == 1) {
     if (n_d + n_dstar + n_dstarstar == 0) {
-      mcB.b_mctype = kCharmless_SL;
+      mcB.b_mctype = bdtaunu::kCharmless_SL;
     } else if (n_dstarstar > 0) {
-      mcB.b_mctype = kDstarstar_res;
+      mcB.b_mctype = bdtaunu::kDstarstar_res;
     } else {
       assert(n_d + n_dstar == 1);
       if (n_daughters == 3) {
         if (ell_lund == abs(lundIdMap["tau-"])) {
           if (n_d == 1) {
-            mcB.b_mctype = kDtau;
+            mcB.b_mctype = bdtaunu::kDtau;
           } else {
-            mcB.b_mctype = kDstartau;
+            mcB.b_mctype = bdtaunu::kDstartau;
           }
         } else {
           if (n_d == 1) {
-            mcB.b_mctype = kDl;
+            mcB.b_mctype = bdtaunu::kDl;
           } else {
-            mcB.b_mctype = kDstarl;
+            mcB.b_mctype = bdtaunu::kDstarl;
           }
         }
       } else {
-        mcB.b_mctype = kDstarstar_nonres;
+        mcB.b_mctype = bdtaunu::kDstarstar_nonres;
       }
     }
   } else if (n_ell == 0 && n_nu == 0) {
     int nD = n_d + n_dstar + n_dstarstar + n_dstrange;
     if (nD == 0)  {
-      mcB.b_mctype = k0Charm_Had;
+      mcB.b_mctype = bdtaunu::k0Charm_Had;
     } else if (nD == 1) {
-      mcB.b_mctype = k1Charm_Had;
+      mcB.b_mctype = bdtaunu::k1Charm_Had;
     } else if (nD == 2) {
-      mcB.b_mctype = k2Charm_Had;
+      mcB.b_mctype = bdtaunu::k2Charm_Had;
     } else {
-      mcB.b_mctype = kUndefinedBMcType;
+      mcB.b_mctype = bdtaunu::kUndefinedBMcType;
     }
   } else {
-    mcB.b_mctype = kUndefinedBMcType;
+    mcB.b_mctype = bdtaunu::kUndefinedBMcType;
   }
 
   // Determine tau mc type
-  if (mcB.b_mctype == kDtau || mcB.b_mctype == kDstartau) {
-    mcB.tau_mctype = ktau_h_mc;
+  if (mcB.b_mctype == bdtaunu::kDtau || mcB.b_mctype == bdtaunu::kDstartau) {
+    mcB.tau_mctype = bdtaunu::ktau_h_mc;
 
     int begin_dauIdx = dauIdx[ell_mcidx];
     int end_dauIdx = begin_dauIdx + dauLen[ell_mcidx];
     for (int i = begin_dauIdx; i < end_dauIdx; i++) {
       if (abs(mcLund[i]) == abs(lundIdMap["e-"])) {
-        mcB.tau_mctype = ktau_e_mc;
+        mcB.tau_mctype = bdtaunu::ktau_e_mc;
         break;
       } else if (abs(mcLund[i]) == abs(lundIdMap["mu-"])) {
-        mcB.tau_mctype = ktau_mu_mc;
+        mcB.tau_mctype = bdtaunu::ktau_mu_mc;
         break;
       } else if (abs(mcLund[i]) == abs(lundIdMap["K-"])) {
-        mcB.tau_mctype = ktau_k_mc;
+        mcB.tau_mctype = bdtaunu::ktau_k_mc;
         break;
       } else {
         continue;
       }
     }
   } else {
-    mcB.tau_mctype = kUndefinedTauMcType;
+    mcB.tau_mctype = bdtaunu::kUndefinedTauMcType;
   }
 }
 
@@ -348,9 +356,50 @@ int BDtaunuMcReader::next_record() {
   int next_record_idx = BDtaunuReader::next_record();
   if (next_record_idx > -1) {
     if (!IsMaxCandidateExceeded()) {
+      ConstructMcGraph();
       FillMCInformation();
     }
   }
 
   return next_record_idx;
+}
+
+void BDtaunuMcReader::ConstructMcGraph() {
+
+  property_map<McGraph, vertex_mc_index_t>::type mc_index = get(vertex_mc_index, g_mc);
+  property_map<McGraph, vertex_lund_id_t>::type lund_id = get(vertex_lund_id, g_mc);
+
+  Vertex u, v;
+  std::map<int, Vertex>::iterator pos;
+  bool inserted;
+
+  for (int i = 0; i < mcLen; i++) {
+    int u_idx = i;
+    boost::tie(pos, inserted) = mc_vertex_map.insert(std::make_pair(u_idx, Vertex()));
+    if (inserted) {
+      u = add_vertex(g_mc);
+      mc_index[u] = u_idx;
+      lund_id[u] = mcLund[i];
+      mc_vertex_map[u_idx] = u;
+    } else {
+      u = mc_vertex_map[u_idx];
+    }
+
+    int first_dau_idx = dauIdx[i];
+    for (int j = 0; j < dauLen[i]; j++) {
+
+      int v_idx = first_dau_idx + j;
+      boost::tie(pos, inserted) = mc_vertex_map.insert(std::make_pair(v_idx, Vertex()));
+      if (inserted) {
+        v = add_vertex(g_mc);
+        mc_index[v] = v_idx;
+        lund_id[v] = mcLund[v_idx];
+        mc_vertex_map[v_idx] = v;
+      } else {
+        v = mc_vertex_map[v_idx];
+      }
+
+      add_edge(u, v, g_mc);
+    }
+  }
 }

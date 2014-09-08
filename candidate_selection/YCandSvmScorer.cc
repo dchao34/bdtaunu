@@ -46,35 +46,35 @@ YCandSvmScorer::~YCandSvmScorer() {
 
 void YCandSvmScorer::SwitchAdapter(int cand_type) {
   switch (cand_type) {
-    case kDDpi:
+    case bdtaunu::kDDpi:
       curr_extr = ddpi_extr;
       curr_adtr = ddpi_adtr;
       break;
-    case kDDstarpi:
+    case bdtaunu::kDDstarpi:
       curr_extr = ddstarpi_extr;
       curr_adtr = ddstarpi_adtr;
       break;
-    case kDstarDpi:
+    case bdtaunu::kDstarDpi:
       curr_extr = dstardpi_extr;
       curr_adtr = dstardpi_adtr;
       break;
-    case kDstarDstarpi:
+    case bdtaunu::kDstarDstarpi:
       curr_extr = dstardstarpi_extr;
       curr_adtr = dstardstarpi_adtr;
       break;
-    case kDDrho:
+    case bdtaunu::kDDrho:
       curr_extr = ddrho_extr;
       curr_adtr = ddrho_adtr;
       break;
-    case kDDstarrho:
+    case bdtaunu::kDDstarrho:
       curr_extr = ddstarrho_extr;
       curr_adtr = ddstarrho_adtr;
       break;
-    case kDstarDrho:
+    case bdtaunu::kDstarDrho:
       curr_extr = dstardrho_extr;
       curr_adtr = dstardrho_adtr;
       break;
-    case kDstarDstarrho:
+    case bdtaunu::kDstarDstarrho:
       curr_extr = dstardstarrho_extr;
       curr_adtr = dstardstarrho_adtr;
       break;

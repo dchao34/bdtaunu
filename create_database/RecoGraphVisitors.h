@@ -132,7 +132,7 @@ void RecoGraphDfsVisitor<LundMap>::ComputeY(const Vertex &u, const Graph &g) {
       } else {
         auto di = Dmap.find(b.D_dau);
         assert(di != Dmap.end());
-        y.tag_dstar_mode = bdtaunu::kUndefinedDstarMode;
+        y.tag_dstar_mode = bdtaunu::kNoDstar;
         y.tag_d_mode = (di->second).dec_mode;
       }
     } else {
@@ -150,7 +150,7 @@ void RecoGraphDfsVisitor<LundMap>::ComputeY(const Vertex &u, const Graph &g) {
       } else {
         auto di = Dmap.find(b.D_dau);
         assert(di != Dmap.end());
-        y.sig_dstar_mode = bdtaunu::kUndefinedDstarMode;
+        y.sig_dstar_mode = bdtaunu::kNoDstar;
         y.sig_d_mode = (di->second).dec_mode;
       }
     }

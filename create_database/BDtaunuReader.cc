@@ -465,6 +465,8 @@ void BDtaunuReader::FillUpsilonList() {
     int reco_idx = get(reco_idx_map, y.Y);
     int l_ePidMap = eSelectorsMap[lTrkIdx[get(block_idx_map, y.l)]];
     int l_muPidMap = muSelectorsMap[lTrkIdx[get(block_idx_map, y.l)]];
+    int h_ePidMap = eSelectorsMap[hTrkIdx[get(block_idx_map, y.tau_pi)]];
+    int h_muPidMap = muSelectorsMap[hTrkIdx[get(block_idx_map, y.tau_pi)]];
 
     UpsilonCandidate ups(eventId, cand_idx, reco_idx, 
         YBPairEextra50[cand_idx], YBPairMmissPrime2[cand_idx], 
@@ -482,7 +484,8 @@ void BDtaunuReader::FillUpsilonList() {
         y.tag_dstar_mode, y.tag_d_mode, 
         y.sig_dstar_mode, y.sig_d_mode, 
         y.tau_mode, 
-        l_ePidMap, l_muPidMap); 
+        l_ePidMap, l_muPidMap, 
+        h_ePidMap, h_muPidMap); 
     upsilon_candidates.push_back(ups);
   }
 }

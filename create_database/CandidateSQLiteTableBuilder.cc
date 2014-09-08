@@ -45,6 +45,8 @@ CandidateSQLiteTableBuilder::CandidateSQLiteTableBuilder(sqlite3* database) :
   cand_level_feature_colnames.push_back(std::pair<std::string, std::string>("sig_Dstartype", "INTEGER"));
   cand_level_feature_colnames.push_back(std::pair<std::string, std::string>("tag_l_ePid", "INTEGER"));
   cand_level_feature_colnames.push_back(std::pair<std::string, std::string>("tag_l_muPid", "INTEGER"));
+  cand_level_feature_colnames.push_back(std::pair<std::string, std::string>("sig_h_ePid", "INTEGER"));
+  cand_level_feature_colnames.push_back(std::pair<std::string, std::string>("sig_h_muPid", "INTEGER"));
 
   bestcand_colnames.push_back(std::pair<std::string, std::string>("svm_score", "REAL"));
 }
@@ -214,6 +216,10 @@ void CandidateSQLiteTableBuilder::BindColumns() {
   db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@tag_l_ePid"), tag_l_ePid);
   assert(db_status == SQLITE_OK);
   db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@tag_l_muPid"), tag_l_muPid);
+  assert(db_status == SQLITE_OK);
+  db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@sig_h_ePid"), sig_h_ePid);
+  assert(db_status == SQLITE_OK);
+  db_status = sqlite3_bind_int(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@sig_h_muPid"), sig_h_muPid);
   assert(db_status == SQLITE_OK);
   db_status = sqlite3_bind_double(insert_stmt, sqlite3_bind_parameter_index(insert_stmt, "@svm_score"), svm_score);
   assert(db_status == SQLITE_OK);

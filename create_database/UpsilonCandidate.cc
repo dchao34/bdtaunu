@@ -22,7 +22,8 @@ UpsilonCandidate::UpsilonCandidate() :
   tag_dstar_mode(bdtaunu::kUndefinedDstarMode), tag_d_mode(bdtaunu::kUndefinedDMode),
   sig_dstar_mode(bdtaunu::kUndefinedDstarMode), sig_d_mode(bdtaunu::kUndefinedDMode),
   sig_tau_mode(bdtaunu::kUndefinedTauMode), 
-  l_ePidMap(0), l_muPidMap(0) {
+  l_ePidMap(0), l_muPidMap(0),
+  h_ePidMap(0), h_muPidMap(0) {
 }
 
 UpsilonCandidate::UpsilonCandidate(
@@ -59,7 +60,8 @@ UpsilonCandidate::UpsilonCandidate(
   tag_dstar_mode(tag_dstar_mode), tag_d_mode(tag_d_mode),
   sig_dstar_mode(sig_dstar_mode), sig_d_mode(sig_d_mode),
   sig_tau_mode(sig_tau_mode),
-  l_ePidMap(0), l_muPidMap(0) {
+  l_ePidMap(0), l_muPidMap(0),
+  h_ePidMap(0), h_muPidMap(0) {
 }
 
 UpsilonCandidate::UpsilonCandidate(
@@ -97,7 +99,8 @@ UpsilonCandidate::UpsilonCandidate(
   tag_dstar_mode(tag_dstar_mode), tag_d_mode(tag_d_mode),
   sig_dstar_mode(sig_dstar_mode), sig_d_mode(sig_d_mode),
   sig_tau_mode(sig_tau_mode),
-  l_ePidMap(l_ePidMap), l_muPidMap(l_muPidMap) {
+  l_ePidMap(l_ePidMap), l_muPidMap(l_muPidMap),
+  h_ePidMap(0), h_muPidMap(0) {
 }
 
 UpsilonCandidate::UpsilonCandidate(
@@ -118,7 +121,8 @@ UpsilonCandidate::UpsilonCandidate(
     int tag_dstar_mode, int tag_d_mode,
     int sig_dstar_mode, int sig_d_mode,
     int sig_tau_mode, 
-    int l_ePidMap, int l_muPidMap) :
+    int l_ePidMap, int l_muPidMap,
+    int h_ePidMap, int h_muPidMap) :
   eventId(event_id), event_candidate_index(candidate_idx),
   reco_index(reco_idx), 
   eextra50(eextra50), mmiss_prime2(mmiss_prime2),
@@ -136,7 +140,8 @@ UpsilonCandidate::UpsilonCandidate(
   tag_dstar_mode(tag_dstar_mode), tag_d_mode(tag_d_mode),
   sig_dstar_mode(sig_dstar_mode), sig_d_mode(sig_d_mode),
   sig_tau_mode(sig_tau_mode),
-  l_ePidMap(l_ePidMap), l_muPidMap(l_muPidMap) {
+  l_ePidMap(l_ePidMap), l_muPidMap(l_muPidMap),
+  h_ePidMap(h_ePidMap), h_muPidMap(h_muPidMap) {
 }
 
 UpsilonCandidate::UpsilonCandidate(const UpsilonCandidate &cand) {
@@ -175,6 +180,8 @@ void UpsilonCandidate::copy_candidate(const UpsilonCandidate &cand) {
   sig_tau_mode = cand.sig_tau_mode;
   l_ePidMap = cand.l_ePidMap;
   l_muPidMap = cand.l_muPidMap;
+  h_ePidMap = cand.h_ePidMap;
+  h_muPidMap = cand.h_muPidMap;
 }
 
 UpsilonCandidate & UpsilonCandidate::operator=(const UpsilonCandidate &cand) {

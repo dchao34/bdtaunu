@@ -238,7 +238,7 @@ std::string EventFeatureExtractor::get_libsvm_line() const {
 
   std::stringstream libsvm_line;
 
-  libsvm_line << to_string(categorize_event_type());
+  libsvm_line << std::to_string(categorize_event_type());
 
   int feature_counter = 1;
 

@@ -15,7 +15,7 @@ void McEventSQLiteTableBuilder::BuildCachedDataMap(const char *assignment_fname)
     std::string eventId = dat_reader.get_field("eventId");
     std::string ml_sample = dat_reader.get_field("ml_sample");
     std::string division = dat_reader.get_field("division");
-    int truthB_idx = to_int(dat_reader.get_field("truthB_idx"));
+    int truthB_idx = std::stoi(dat_reader.get_field("truthB_idx"));
 
     std::pair<std::string, std::string> sample(ml_sample, division);
     sample_assignment_map[eventId] = sample;

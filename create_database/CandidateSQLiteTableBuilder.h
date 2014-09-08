@@ -55,6 +55,8 @@ class CandidateSQLiteTableBuilder : public SQLiteTableBuilder {
     int sig_Dstartype;
     int tag_l_ePid;
     int tag_l_muPid;
+    int sig_h_ePid;
+    int sig_h_muPid;
 
     double svm_score;
 
@@ -98,6 +100,8 @@ class CandidateSQLiteTableBuilder : public SQLiteTableBuilder {
     void set_sig_Dstartype(int value) { sig_Dstartype = value; }
     void set_tag_l_ePid(int value) { tag_l_ePid = value; }
     void set_tag_l_muPid(int value) { tag_l_muPid = value; }
+    void set_sig_h_ePid(int value) { sig_h_ePid = value; }
+    void set_sig_h_muPid(int value) { sig_h_muPid = value; }
 
     void set_svm_score(double value) { svm_score = value; }
 };

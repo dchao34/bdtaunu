@@ -8,15 +8,41 @@
 #include <string>
 #include <vector>
 
+#include <boost/graph/adjacency_list.hpp>
+
+namespace boost {
+  enum vertex_mc_index_t { vertex_mc_index };
+
+  BOOST_INSTALL_PROPERTY(vertex, mc_index);
+}
+
 
 //! Reads Monte Carlo ntuples and computes truth information. 
 /*! In addition to computing detector response data, this class also
  * computes data related to Monte Carlo truth. */
 class BDtaunuMcReader : public BDtaunuReader {
 
+  typedef boost::adjacency_list<
+  boost::vecS, boost::vecS, boost::directedS,
+  boost::property<boost::vertex_mc_index_t, int,
+  boost::property<boost::vertex_lund_id_t, int>>,
+  boost::property<boost::edge_index_t, int>
+  > McGraph;
+
+  typedef typename boost::graph_traits<McGraph>::vertex_descriptor Vertex;
+
+  McGraph g_mc;
+  std::map<int, Vertex> mc_vertex_map;
+
+  void ConstructMcGraph();
+
+  const static double min_photon_energy;
+  const static int max_mc_length;
+
+  public:
+    McGraph get_mc_graph() const { return g_mc; }
+
   private:
-    const static int min_photon_energy = 0.02;
-    const static int max_mc_length = 100;
     const static std::vector<int> ell;
     const static std::vector<int> nu;
     const static std::vector<int> dmeson;
@@ -47,10 +73,10 @@ class BDtaunuMcReader : public BDtaunuReader {
       int tau_mctype;
       double dtau_max_photon_energy;
       McBMeson() :
-        bflavor(kUndefinedBFlavor), 
+        bflavor(bdtaunu::kUndefinedBFlavor), 
         mc_idx(-1), 
-        b_mctype(kUndefinedBMcType),
-        tau_mctype(kUndefinedTauMcType), 
+        b_mctype(bdtaunu::kUndefinedBMcType),
+        tau_mctype(bdtaunu::kUndefinedTauMcType), 
         dtau_max_photon_energy(-1) {};
     } McB1, McB2;
 
