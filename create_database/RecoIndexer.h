@@ -16,7 +16,7 @@ class RecoIndexer {
     RecoIndexer &operator=(const RecoIndexer &r) = default;
     ~RecoIndexer() {};
 
-    int operator()(int lund, int idx);
+    int operator()(int lund, int idx) const;
 
     int total() const { return nY + nB + nD + nC + nh + nl + ngamma; }
     void clear();

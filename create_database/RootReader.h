@@ -23,7 +23,6 @@ class RootReader {
     int total_records;
 
     void PrepareTreeFile(const char *root_fname, const char *root_trname);
-    virtual void SetBranchAddress() = 0;
 
   public:
 

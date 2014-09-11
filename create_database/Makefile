@@ -16,19 +16,16 @@ CXXFLAGS += -D__PDT_FILE_PATHNAME='"$(PDT_FILE_PATHNAME)"'
 
 OS = $(shell uname)
 
-OBJECTS = RecoIndexer.o \
-          RootReader.o BDtaunuReader.o \
-          BDtaunuMcReader.o \
-          UpsilonCandidate.o \
-          SQLiteTableBuilder.o EventSQLiteTableBuilder.o McEventSQLiteTableBuilder.o \
-					CandidateSQLiteTableBuilder.o McCandidateSQLiteTableBuilder.o \
-					EventStatusSQLiteTableBuilder.o OptimalCandidateSQLiteTableBuilder.o
+OBJECTS = UpsilonCandidate.o \
+					RootReader.o BDtaunuReader.o \
+					RecoIndexer.o \
+					RecoGraphVisitors.o RecoGraphManager.o
 
 LIBNAME = libcreatedb.so
 
-HEADER_ONLY = RecoGraphVisitors.h
+HEADER_ONLY = RecoGraph.h RecoParticles.h BDtaunuGraphWriter.h
 
-BINARIES = test2 #test test1 test_bgl
+BINARIES = test2 test #test1 test_bgl
 
 all : CXXFLAGS += -O3
 all : lib $(BINARIES)

@@ -1,5 +1,3 @@
-#include <TTree.h>
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -11,17 +9,14 @@
 #include <cassert>
 
 #include "bdtaunu_definitions.h"
+#include "utilities/helpers.h"
 #include "RootReader.h"
 #include "BDtaunuReader.h"
-#include "RecoIndexer.h"
 #include "UpsilonCandidate.h"
-#include "RecoGraphVisitors.h"
-#include "utilities/helpers.h"
+#include "RecoGraphManager.h"
 
-#include <boost/graph/depth_first_search.hpp>
-#include <boost/graph/breadth_first_search.hpp>
-
-using namespace boost;
+// Lund to particle name map needed for printing.
+const std::map<int, std::string> BDtaunuReader::lund_to_name = bdtaunu::LundToNameMap();
 
 // The maximum number of candidates allowed in an event. This should
 // be consistent with the number set in BtaTupleMaker. 
@@ -33,25 +28,23 @@ const int BDtaunuReader::maximum_h_candidates = 100;
 const int BDtaunuReader::maximum_l_candidates = 100;
 const int BDtaunuReader::maximum_gamma_candidates = 100;
 
-std::map<std::string, int> BDtaunuReader::lundIdMap = bdtaunu::NameToLundMap();
-
-BDtaunuReader::BDtaunuReader() : RootReader() {
-  Initialize();
-}
-
-BDtaunuReader::BDtaunuReader(const char *root_fname) : RootReader(root_fname) {
-  Initialize();
-}
-
 BDtaunuReader::BDtaunuReader(
     const char *root_fname, 
     const char *root_trname) : RootReader(root_fname, root_trname) {
-  Initialize();
+
+  AllocateBuffer();
+  ClearBuffer();
+
+  reco_graph_manager = RecoGraphManager(this);
+}
+
+BDtaunuReader::~BDtaunuReader() {
+  DeleteBuffer();
 }
 
 
 // All constructors call this function to initialize the class members.
-void BDtaunuReader::Initialize() {
+void BDtaunuReader::AllocateBuffer() {
 
   // Allocate space to read in arrays from ntuples. 
   YBPairMmissPrime2 = new float[maximum_Y_candidates];
@@ -127,28 +120,7 @@ void BDtaunuReader::Initialize() {
   ld2Lund = new int[maximum_l_candidates];
   ld3Lund = new int[maximum_l_candidates];
 
-  YdauIdx = { Yd1Idx, Yd2Idx };
-  YdauLund = { Yd1Lund, Yd2Lund };
-  BdauIdx = { Bd1Idx, Bd2Idx, Bd3Idx, Bd4Idx };
-  BdauLund = { Bd1Lund, Bd2Lund, Bd3Lund, Bd4Lund };
-  DdauIdx = { Dd1Idx, Dd2Idx, Dd3Idx, Dd4Idx, Dd5Idx };
-  DdauLund = { Dd1Lund, Dd2Lund, Dd3Lund, Dd4Lund, Dd5Lund };
-  CdauIdx = { Cd1Idx, Cd2Idx };
-  CdauLund = { Cd1Lund, Cd2Lund };
-  hdauIdx = { hd1Idx, hd2Idx };
-  hdauLund = { hd1Lund, hd2Lund };
-  ldauIdx = { ld1Idx, ld2Idx, ld3Idx };
-  ldauLund = { ld1Lund, ld2Lund, ld3Lund };
-
   // Specify the variables where each ntuple branch should be read into. 
-  SetBranchAddress();
-  
-  // Zero out variables where ntuple data are read into. 
-  ClearColumnValues();
-}
-
-void BDtaunuReader::SetBranchAddress() {
-
   tr->SetBranchAddress("platform", &platform);
   tr->SetBranchAddress("partition", &partition);
   tr->SetBranchAddress("upperID", &upperID);
@@ -237,7 +209,7 @@ void BDtaunuReader::SetBranchAddress() {
 
 }
 
-void BDtaunuReader::ClearColumnValues() {
+void BDtaunuReader::ClearBuffer() {
   platform = -999;
   partition = -999;
   upperID = -999;
@@ -251,15 +223,10 @@ void BDtaunuReader::ClearColumnValues() {
   nh = -999;
   nl = -999;
   ngamma = -999;
-
-  eventId.clear();
   upsilon_candidates.clear();
-  reco_indexer.clear();
-  reco_vertex_map.clear();
-  g.clear();
 }
 
-BDtaunuReader::~BDtaunuReader() {
+void BDtaunuReader::DeleteBuffer() {
 
   delete[] YBPairMmissPrime2;
   delete[] YBPairEextra50;
@@ -336,10 +303,25 @@ BDtaunuReader::~BDtaunuReader() {
 
 }
 
-// Determine whether the maximum number of allowed candidates 
-// have been exceeded. Events that exceed the maximum are not 
-// well behaved and should be skipped.
-bool BDtaunuReader::IsMaxCandidateExceeded() const {
+// Read in the next event in the ntuple. It computes all relevant
+// information as a side effect. 
+int BDtaunuReader::next_record() {
+
+  ClearBuffer();
+
+  // read next event from root ntuple into the buffer
+  int next_record_idx = RootReader::next_record();
+
+  // proceed only when event is not in an error state
+  if ((next_record_idx > -1) && (!is_max_reco_exceeded())) {
+    reco_graph_manager.analyze();
+    FillUpsilonCandidates();
+  }
+
+  return next_record_idx;
+}
+
+bool BDtaunuReader::is_max_reco_exceeded() const {
     if ( 
         (nY < maximum_Y_candidates) &&
         (nB < maximum_B_candidates) &&
@@ -355,143 +337,53 @@ bool BDtaunuReader::IsMaxCandidateExceeded() const {
     }
 }
 
-// Read in the next event in the ntuple. It computes all relevant
-// information as a side effect. 
-int BDtaunuReader::next_record() {
-
-  // Zero out garbage information from the previous event. 
-  ClearColumnValues();
-
-  // Read in the next event in the ntuple. The variables now contain
-  // information from the new event. 
-  int next_record_idx = RootReader::next_record();
-
-  // Compute higher level information that is not directly avaible. 
-  if ((next_record_idx > -1) && (!IsMaxCandidateExceeded())) {
-
-    eventId = std::to_string(platform) + ":" 
-              + std::to_string(partition) + ":" 
-              + std::to_string(upperID) + "/" 
-              + std::to_string(lowerID);
-
-    reco_indexer.set({nY, nB, nD, nC, nh, nl, ngamma});
-
-    ConstructRecoGraph();
-
-    // Construct the Y(4S) candidate list for this event. 
-    // Maximum number of candidates must not be exceeded.
-    FillUpsilonList();
-  }
-
-  return next_record_idx;
+std::string BDtaunuReader::get_eventId() const { 
+  return std::to_string(platform) 
+         + ":" + std::to_string(partition) 
+         + ":" + std::to_string(upperID) 
+         + "/" + std::to_string(lowerID);
 }
 
-void BDtaunuReader::ConstructRecoGraph() {
-  AddCandidatesToGraph(nY, YLund, YdauIdx, YdauLund);
-  AddCandidatesToGraph(nB, BLund, BdauIdx, BdauLund);
-  AddCandidatesToGraph(nD, DLund, DdauIdx, DdauLund);
-  AddCandidatesToGraph(nC, CLund, CdauIdx, CdauLund);
-  AddCandidatesToGraph(nh, hLund, hdauIdx, hdauLund);
-  AddCandidatesToGraph(nl, lLund, ldauIdx, ldauLund);
-}
+void BDtaunuReader::FillUpsilonCandidates() {
 
-void BDtaunuReader::AddCandidatesToGraph(
-    int nCand,
-    int *CandLund,
-    std::vector<int*> &CandDauIdx,
-    std::vector<int*> &CandDauLund) {
+  for (int i = 0; i < nY; i++) {
 
-  property_map<RecoGraph, vertex_reco_index_t>::type reco_index = get(vertex_reco_index, g);
-  property_map<RecoGraph, vertex_block_index_t>::type block_index = get(vertex_block_index, g);
-  property_map<RecoGraph, vertex_lund_id_t>::type lund_id = get(vertex_lund_id, g);
+    UpsilonCandidate ups;
 
-  Vertex u, v;
-  std::map<int, Vertex>::iterator pos;
-  bool inserted;
+    ups.set_eventId(get_eventId());
+    ups.set_block_index(i);
+    ups.set_reco_index(reco_graph_manager.get_reco_index(bdtaunu::UpsilonLund, i));
+    ups.set_bflavor(reco_graph_manager.get_recoY(i)->tagB->flavor);
+    ups.set_eextra50(YBPairEextra50[i]);
+    ups.set_mmiss_prime2(YBPairMmissPrime2[i]);
+    ups.set_cosThetaT(YBPairCosThetaT[i]);
+    ups.set_tag_lp3(YTagBlP3MagCM[i]);
+    ups.set_tag_cosBY(YTagBCosBY[i]);
+    ups.set_tag_cosThetaDl(YTagBCosThetaDlCM[i]);
+    ups.set_tag_Dmass(YTagBDMass[i]);
+    ups.set_tag_deltaM(YTagBDstarDeltaM[i]);
+    ups.set_tag_cosThetaDSoft(YTagBCosThetaDSoftCM[i]);
+    ups.set_tag_softP3MagCM(YTagBsoftP3MagCM[i]);
+    ups.set_tag_d_mode(reco_graph_manager.get_recoY(i)->tagB->D->D_mode);
+    ups.set_tag_dstar_mode(reco_graph_manager.get_recoY(i)->tagB->D->Dstar_mode);
+    ups.set_l_ePidMap(eSelectorsMap[lTrkIdx[reco_graph_manager.get_recoY(i)->tagB->Lepton->l_block_idx]]);
+    ups.set_l_muPidMap(muSelectorsMap[lTrkIdx[reco_graph_manager.get_recoY(i)->tagB->Lepton->l_block_idx]]);
+    ups.set_sig_hp3(YSigBhP3MagCM[i]);
+    ups.set_sig_cosBY(YSigBCosBY[i]);
+    ups.set_sig_cosThetaDtau(YSigBCosThetaDtauCM[i]);
+    ups.set_sig_vtxB(YSigBVtxProbB[i]);
+    ups.set_sig_Dmass(YSigBDMass[i]);
+    ups.set_sig_deltaM(YSigBDstarDeltaM[i]);
+    ups.set_sig_cosThetaDSoft(YSigBCosThetaDSoftCM[i]);
+    ups.set_sig_softP3MagCM(YSigBsoftP3MagCM[i]);
+    ups.set_sig_hmass(YSigBhMass[i]);
+    ups.set_sig_vtxh(YSigBVtxProbh[i]);
+    ups.set_sig_d_mode(reco_graph_manager.get_recoY(i)->sigB->D->D_mode);
+    ups.set_sig_dstar_mode(reco_graph_manager.get_recoY(i)->sigB->D->Dstar_mode);
+    ups.set_sig_tau_mode(reco_graph_manager.get_recoY(i)->sigB->Lepton->tau_mode);
+    ups.set_h_ePidMap(eSelectorsMap[hTrkIdx[reco_graph_manager.get_recoY(i)->sigB->Lepton->pi_block_idx]]);
+    ups.set_h_muPidMap(muSelectorsMap[hTrkIdx[reco_graph_manager.get_recoY(i)->sigB->Lepton->pi_block_idx]]);
 
-  for (int i = 0; i < nCand; i++) {
-
-    int u_idx = reco_indexer(CandLund[i], i);
-    boost::tie(pos, inserted) = reco_vertex_map.insert(std::make_pair(u_idx, Vertex()));
-    if (inserted) {
-      u = add_vertex(g);
-      reco_index[u] = u_idx;
-      block_index[u] = i;
-      lund_id[u] = CandLund[i];
-      reco_vertex_map[u_idx] = u;
-    } else {
-      u = reco_vertex_map[u_idx];
-    }
-
-    for (std::vector<int*>::size_type j = 0; j < CandDauIdx.size(); j++) {
-      if (CandDauIdx[j][i] == -1) {
-        break;
-      } else {
-
-        int v_idx = reco_indexer(CandDauLund[j][i], CandDauIdx[j][i]);
-        boost::tie(pos, inserted) = reco_vertex_map.insert(std::make_pair(v_idx, Vertex()));
-        if (inserted) {
-          v = add_vertex(g);
-          reco_index[v] = v_idx;
-          block_index[v] = CandDauIdx[j][i];
-          lund_id[v] = CandDauLund[j][i];
-          reco_vertex_map[v_idx] = v;
-        } else {
-          v = reco_vertex_map[v_idx];
-        }
-
-        add_edge(u, v, g);
-      }
-    }
-  }
-}
-
-
-// This function takes the decay tree information read from the ntuple
-// (which are read into the arrays new'd in Initialize()), and creates
-// the UpsilonList of the event. It constructs an UpsilonCandidate
-// object for each candidate and fills it with correctly computed
-// higher level features.
-void BDtaunuReader::FillUpsilonList() {
-
-  auto lund_map = get(vertex_lund_id, g);
-  std::vector<YDecayProperties> upsilon_decays;
-  depth_first_search(g, visitor(reco_graph_dfs_visitor(lund_map, upsilon_decays)));
-
-  auto block_idx_map = get(vertex_block_index, g);
-  auto reco_idx_map = get(vertex_reco_index, g);
-  for (auto y : upsilon_decays) {
-    int cand_idx = get(block_idx_map, y.Y);
-    int reco_idx = get(reco_idx_map, y.Y);
-    int l_ePidMap = eSelectorsMap[lTrkIdx[get(block_idx_map, y.l)]];
-    int l_muPidMap = muSelectorsMap[lTrkIdx[get(block_idx_map, y.l)]];
-    int h_ePidMap = eSelectorsMap[hTrkIdx[get(block_idx_map, y.tau_pi)]];
-    int h_muPidMap = muSelectorsMap[hTrkIdx[get(block_idx_map, y.tau_pi)]];
-
-    UpsilonCandidate ups(eventId, cand_idx, reco_idx, 
-        YBPairEextra50[cand_idx], YBPairMmissPrime2[cand_idx], 
-        YTagBlP3MagCM[cand_idx], YSigBhP3MagCM[cand_idx], 
-        YTagBCosBY[cand_idx], YSigBCosBY[cand_idx], 
-        YTagBCosThetaDlCM[cand_idx], YSigBCosThetaDtauCM[cand_idx], 
-        YSigBVtxProbB[cand_idx], 
-        YBPairCosThetaT[cand_idx], 
-        YTagBDMass[cand_idx], YTagBDstarDeltaM[cand_idx], 
-        YTagBCosThetaDSoftCM[cand_idx], YTagBsoftP3MagCM[cand_idx],
-        YSigBDMass[cand_idx], YSigBDstarDeltaM[cand_idx], 
-        YSigBCosThetaDSoftCM[cand_idx], YSigBsoftP3MagCM[cand_idx],
-        YSigBhMass[cand_idx], YSigBVtxProbh[cand_idx], 
-        y.bflavor,
-        y.tag_dstar_mode, y.tag_d_mode, 
-        y.sig_dstar_mode, y.sig_d_mode, 
-        y.tau_mode, 
-        l_ePidMap, l_muPidMap, 
-        h_ePidMap, h_muPidMap); 
     upsilon_candidates.push_back(ups);
   }
-}
-
-BDtaunuReader::RecoGraph BDtaunuReader::get_reco_subgraph(int reco_idx) {
-  RecoGraph subg;
-  breadth_first_search(g, reco_vertex_map[reco_idx], visitor(reco_graph_bfs_visitor(g, subg)));
-  return subg;
 }

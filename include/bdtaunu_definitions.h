@@ -68,6 +68,8 @@ enum DstarMode {
 enum TauMode {
   ktau_pi = 1,               /*!< \f$ \tau^+\rightarrow \pi^+ \f$ */
   ktau_rho = 2,              /*!< \f$ \tau^+\rightarrow \rho^+ \f$ */
+  ktau_e = 3,               /*!< \f$ \tau^+\rightarrow \e^+ \f$ */
+  ktau_mu = 4,               /*!< \f$ \tau^+\rightarrow \mu^+ \f$ */
   kUndefinedTauMode = -1,    /*!< Undefined */
 };
 

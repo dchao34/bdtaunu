@@ -16,7 +16,7 @@ RecoIndexer::RecoIndexer(
     nY(_nY), nB(_nB), nD(_nD), nC(_nC), 
     nh(_nh), nl(_nl), ngamma(_ngamma) {};
 
-int RecoIndexer::operator()(int lund, int idx) {
+int RecoIndexer::operator()(int lund, int idx) const {
 
   int abslund = std::abs(lund);
   switch (abslund) {
