@@ -1,10 +1,10 @@
 #include <cmath>
 #include <cassert>
 
-#include "RecoGraph.h"
+#include "GraphDef.h"
+#include "Particles.h"
 #include "RecoGraphVisitors.h"
 #include "RecoGraphManager.h"
-#include "RecoParticles.h"
 
 using namespace boost;
 using namespace RecoGraph;

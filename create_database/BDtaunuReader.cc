@@ -12,6 +12,7 @@
 #include "utilities/helpers.h"
 #include "RootReader.h"
 #include "BDtaunuReader.h"
+#include "BDtaunuReaderStatus.h"
 #include "UpsilonCandidate.h"
 #include "RecoGraphManager.h"
 
@@ -310,15 +311,20 @@ int BDtaunuReader::next_record() {
   ClearBuffer();
 
   // read next event from root ntuple into the buffer
-  int next_record_idx = RootReader::next_record();
+  int reader_status = RootReader::next_record();
 
   // proceed only when event is not in an error state
-  if ((next_record_idx > -1) && (!is_max_reco_exceeded())) {
-    reco_graph_manager.analyze();
-    FillUpsilonCandidates();
-  }
-
-  return next_record_idx;
+  if (reader_status == bdtaunu::kReadSucceeded) {
+    if (!is_max_reco_exceeded()) {
+      reco_graph_manager.construct_graph();
+      reco_graph_manager.analyze_graph();
+      FillUpsilonCandidates();
+    } else {
+      reader_status = bdtaunu::kMaxRecoCandExceeded;
+    }
+  } 
+  
+  return reader_status;
 }
 
 bool BDtaunuReader::is_max_reco_exceeded() const {

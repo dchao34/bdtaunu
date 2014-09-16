@@ -17,15 +17,17 @@ CXXFLAGS += -D__PDT_FILE_PATHNAME='"$(PDT_FILE_PATHNAME)"'
 OS = $(shell uname)
 
 OBJECTS = UpsilonCandidate.o \
-					RootReader.o BDtaunuReader.o \
-					RecoIndexer.o \
-					RecoGraphVisitors.o RecoGraphManager.o
+					RootReader.o BDtaunuReader.o BDtaunuMcReader.o \
+					RecoIndexer.o RecoGraphVisitors.o RecoGraphManager.o \
+					McGraphManager.o McBTypeCatalogue.o McGraphVisitors.o
 
 LIBNAME = libcreatedb.so
 
-HEADER_ONLY = RecoGraph.h RecoParticles.h BDtaunuGraphWriter.h
+HEADER_ONLY = GraphDef.h Particles.h \
+							BDtaunuGraphWriter.h BDtaunuReaderStatus.h \
+							GraphManager.h Trie.h
 
-BINARIES = test2 test #test1 test_bgl
+BINARIES = test_mcreader1 test_mcreader2 #trie_test mcbtrie_test test_reader1 test_reader2 
 
 all : CXXFLAGS += -O3
 all : lib $(BINARIES)

@@ -21,7 +21,7 @@ class BDtaunuReader : public RootReader {
     BDtaunuReader(const char *root_fname, const char *root_trname = "ntp1");
     BDtaunuReader(const BDtaunuReader&) = delete;
     BDtaunuReader &operator=(const BDtaunuReader&) = delete;
-    ~BDtaunuReader();
+    virtual ~BDtaunuReader();
 
     //! Read in the next event. 
     /*! Returns an integer that indexes the event number. Returns -1
@@ -29,10 +29,7 @@ class BDtaunuReader : public RootReader {
      *
      * Calling this automatically computes all features associated
      * with the event that the analysis is interested in. */
-    int next_record();
-
-    //! Returns true if event exceeds maximum allowable reco particles
-    bool is_max_reco_exceeded() const;
+    virtual int next_record();
 
     // Data Accessors
 
@@ -54,9 +51,10 @@ class BDtaunuReader : public RootReader {
     // Printer
     void print_reco_graph(std::ostream &os) const { reco_graph_manager.print(os); }
 
-  private: 
+  protected:
     static const std::map<int, std::string> lund_to_name;
 
+  private: 
     static const int maximum_Y_candidates;
     static const int maximum_B_candidates;
     static const int maximum_D_candidates;
@@ -107,9 +105,12 @@ class BDtaunuReader : public RootReader {
   private:
 
     // Constructor helpers
-    void AllocateBuffer();
-    void DeleteBuffer();
-    void ClearBuffer();
+    virtual void AllocateBuffer();
+    virtual void DeleteBuffer();
+    virtual void ClearBuffer();
+
+    // Reader status helpers
+    bool is_max_reco_exceeded() const;
 
     // Mutator helpers
     void FillUpsilonCandidates();

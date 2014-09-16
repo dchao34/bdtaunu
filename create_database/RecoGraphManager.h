@@ -5,14 +5,15 @@
 #include <vector>
 #include <map>
 
-#include "RecoGraph.h"
+#include "GraphManager.h"
+#include "GraphDef.h"
+#include "Particles.h"
 #include "RecoIndexer.h"
 #include "RecoGraphVisitors.h"
-#include "RecoParticles.h"
 
 class BDtaunuReader;
 
-class RecoGraphManager {
+class RecoGraphManager : public GraphManager {
 
   friend class RecoGraphDfsVisitor;
 
@@ -23,13 +24,13 @@ class RecoGraphManager {
     RecoGraphManager &operator=(const RecoGraphManager&) = default;
     ~RecoGraphManager() {};
 
-    void analyze();
+    void construct_graph();
+    void analyze_graph();
+    void print(std::ostream &os) const;
     void clear();
 
     int get_reco_index(int lund, int i) const { return reco_indexer(lund, i); }
     const RecoY* get_recoY(int i) const;
-
-    void print(std::ostream &os) const;
 
   private:
     BDtaunuReader *reader;
@@ -38,19 +39,17 @@ class RecoGraphManager {
     // graph construction
     RecoIndexer reco_indexer;
     std::map<int, RecoGraph::Vertex> reco_vertex_map;
+    void ClearGraph();
     void AddCandidates(
         int nCand, int *CandLund,
         std::vector<int*> &CandDauIdx, 
         std::vector<int*> &CandDauLund);
-    void ConstructGraph();
-    void ClearGraph();
 
     // graph analysis
     std::map<RecoGraph::Vertex, RecoY> Y_map;
     std::map<RecoGraph::Vertex, RecoB> B_map;
     std::map<RecoGraph::Vertex, RecoD> D_map;
     std::map<RecoGraph::Vertex, RecoLepton> Lepton_map;
-    void AnalyzeGraph();
     void ClearAnalysis();
 };
 

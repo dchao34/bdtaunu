@@ -3,7 +3,7 @@
 
 #include <boost/graph/depth_first_search.hpp>
 
-#include "RecoGraph.h"
+#include "GraphDef.h"
 
 class RecoGraphManager;
 

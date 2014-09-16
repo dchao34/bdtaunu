@@ -7,9 +7,6 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graphviz.hpp>
 
-#include "BDtaunuMcReader.h"
-#include "utilities/helpers.h"
-
 template <typename GraphT, typename LundMap,
           typename LundPM, typename IdxPM>
 class BDtaunuGraphWriter {

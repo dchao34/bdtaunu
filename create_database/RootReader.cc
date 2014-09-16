@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "RootReader.h"
+#include "BDtaunuReaderStatus.h"
 
 RootReader::RootReader() : 
   tfile(0), tr(0), 
@@ -53,8 +54,8 @@ void RootReader::PrepareTreeFile(const char *root_fname,
 int RootReader::next_record() {
   if (record_index < total_records) {
     tr->GetEntry(record_index++);
-    return record_index;
+    return bdtaunu::kReadSucceeded;
   } else {
-    return -1;
+    return bdtaunu::kEOF;
   }
 }

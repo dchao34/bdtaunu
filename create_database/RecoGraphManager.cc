@@ -6,8 +6,9 @@
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/graphviz.hpp>
 
+#include "GraphDef.h"
+#include "Particles.h"
 #include "BDtaunuReader.h"
-#include "RecoGraph.h"
 #include "RecoGraphManager.h"
 #include "BDtaunuGraphWriter.h"
 
@@ -25,41 +26,13 @@ void RecoGraphManager::clear() {
   ClearAnalysis();
 }
 
-void RecoGraphManager::analyze() {
-  ConstructGraph();
-  AnalyzeGraph();
-  return;
-}
-
-const RecoY* RecoGraphManager::get_recoY(int i) const { 
-
-  std::map<int, RecoGraph::Vertex>::const_iterator reco_vertex_it;
-  reco_vertex_it = reco_vertex_map.find(reco_indexer(bdtaunu::UpsilonLund, i));
-  assert(reco_vertex_it != reco_vertex_map.end());
-
-  std::map<Vertex, RecoY>::const_iterator y_it;
-  y_it = Y_map.find(reco_vertex_it->second);
-  assert(y_it != Y_map.end());
-
-  return &y_it->second;
-}
-
-void RecoGraphManager::print(std::ostream &os) const {
-  boost::write_graphviz(
-      os, g, 
-      make_graph_writer(g, BDtaunuReader::lund_to_name, 
-                        get(vertex_lund_id, g),
-                        get(vertex_reco_index, g)));
-}
-
-
 void RecoGraphManager::ClearGraph() {
   reco_vertex_map.clear();
   reco_indexer.clear();
   g.clear();
 }
 
-void RecoGraphManager::ConstructGraph() {
+void RecoGraphManager::construct_graph() {
 
   ClearGraph();
 
@@ -87,7 +60,9 @@ void RecoGraphManager::ConstructGraph() {
   AddCandidates(reader->nh, reader->hLund, hdauIdx, hdauLund);
   AddCandidates(reader->nl, reader->lLund, ldauIdx, ldauLund);
 
+  return;
 }
+
 
 void RecoGraphManager::ClearAnalysis() {
   Y_map.clear();
@@ -96,13 +71,33 @@ void RecoGraphManager::ClearAnalysis() {
   Lepton_map.clear();
 }
 
-void RecoGraphManager::AnalyzeGraph() {
-
+void RecoGraphManager::analyze_graph() {
   ClearAnalysis();
   depth_first_search(g, visitor(RecoGraphDfsVisitor(this)));
-
   return;
 }
+
+const RecoY* RecoGraphManager::get_recoY(int i) const { 
+
+  std::map<int, RecoGraph::Vertex>::const_iterator reco_vertex_it;
+  reco_vertex_it = reco_vertex_map.find(reco_indexer(bdtaunu::UpsilonLund, i));
+  assert(reco_vertex_it != reco_vertex_map.end());
+
+  std::map<Vertex, RecoY>::const_iterator y_it;
+  y_it = Y_map.find(reco_vertex_it->second);
+  assert(y_it != Y_map.end());
+
+  return &y_it->second;
+}
+
+void RecoGraphManager::print(std::ostream &os) const {
+  boost::write_graphviz(
+      os, g, 
+      make_graph_writer(g, BDtaunuReader::lund_to_name, 
+                        get(vertex_lund_id, g),
+                        get(vertex_reco_index, g)));
+}
+
 
 void RecoGraphManager::AddCandidates(
     int nCand,

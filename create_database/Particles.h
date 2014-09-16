@@ -1,8 +1,8 @@
-#ifndef _RECOPARTICLES_H_
-#define _RECOPARTICLES_H_
+#ifndef _PARTICLES_H_
+#define _PARTICLES_H_
 
 #include "bdtaunu_definitions.h"
-#include "RecoGraph.h"
+#include "GraphDef.h"
 
 struct RecoB;
 struct RecoD;
@@ -16,7 +16,7 @@ struct RecoY {
 
 struct RecoB {
   RecoB() = default;
-  int flavor;
+  int flavor = bdtaunu::kUndefinedBFlavor;
   RecoD *D = nullptr;
   RecoLepton *Lepton = nullptr;
 };
@@ -31,6 +31,21 @@ struct RecoLepton {
   int l_block_idx = -1;
   int pi_block_idx = -1;
   int tau_mode = bdtaunu::kUndefinedTauMode;
+};
+
+struct McB;
+
+struct McY {
+  McY() = default;
+  bool isBBbar = true;
+  McB *B1 = nullptr;
+  McB *B2 = nullptr;
+};
+
+struct McB {
+  McB() = default;
+  int flavor = bdtaunu::kUndefinedBFlavor;
+  int mc_type = bdtaunu::kUndefinedBMcType;
 };
 
 #endif
