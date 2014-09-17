@@ -2,7 +2,7 @@
 #include <cassert>
 #include <vector>
 
-#include "bdtaunu_definitions.h"
+#include "BDtaunuDef.h"
 #include "GraphDef.h"
 #include "Particles.h"
 #include "McGraphVisitors.h"

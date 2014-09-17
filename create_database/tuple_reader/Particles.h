@@ -1,7 +1,7 @@
 #ifndef _PARTICLES_H_
 #define _PARTICLES_H_
 
-#include "bdtaunu_definitions.h"
+#include "BDtaunuDef.h"
 #include "GraphDef.h"
 
 struct RecoB;

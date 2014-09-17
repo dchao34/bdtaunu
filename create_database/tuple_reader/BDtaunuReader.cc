@@ -8,8 +8,8 @@
 #include <cmath>
 #include <cassert>
 
-#include "bdtaunu_definitions.h"
-#include "utilities/helpers.h"
+#include "BDtaunuDef.h"
+#include "BDtaunuHelpers.h"
 #include "RootReader.h"
 #include "BDtaunuReader.h"
 #include "BDtaunuReaderStatus.h"

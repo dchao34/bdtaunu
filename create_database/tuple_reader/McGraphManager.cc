@@ -6,7 +6,7 @@
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/graphviz.hpp>
 
-#include "bdtaunu_definitions.h"
+#include "BDtaunuDef.h"
 #include "GraphDef.h"
 #include "Particles.h"
 #include "BDtaunuMcReader.h"
