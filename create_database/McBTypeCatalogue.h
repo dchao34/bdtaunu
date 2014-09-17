@@ -9,13 +9,13 @@ class McBTypeCatalogue {
 
   public:
     enum class Alphabet { 
-      null = 0, nu_ell, nu_tau, ell, tau, 
-      D, Dstar, Dstarstar, X, I,
+      nu_ell, nu_tau, ell, tau, 
+      D, Dstar, Dstarstar, X, I, null = -1, 
     };
 
     enum class BType { 
-      null = 0, Dtau, Dstartau, Dl, Dstarl, 
-      Dstarstar_res, Dstarstar_nonres, SL, Had, 
+      Dtau = 1, Dstartau, Dl, Dstarl, 
+      Dstarstar_res, Dstarstar_nonres, SL, Had, null = -1,
     };
 
     McBTypeCatalogue() { RegisterDecays(); }

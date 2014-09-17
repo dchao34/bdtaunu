@@ -34,6 +34,7 @@ struct RecoLepton {
 };
 
 struct McB;
+struct McTau;
 
 struct McY {
   McY() = default;
@@ -46,6 +47,12 @@ struct McB {
   McB() = default;
   int flavor = bdtaunu::kUndefinedBFlavor;
   int mc_type = bdtaunu::kUndefinedBMcType;
+  McTau *tau = nullptr;
+};
+
+struct McTau {
+  McTau() = default;
+  int mc_type = bdtaunu::kUndefinedTauMcType;
 };
 
 #endif

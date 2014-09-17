@@ -38,6 +38,8 @@ class BDtaunuMcReader : public BDtaunuReader {
     bool is_continuum() const { return continuum; }
     int get_b1_mctype() const { return b1_mctype; }
     int get_b2_mctype() const { return b2_mctype; }
+    int get_b1_tau_mctype() const { return b1_tau_mctype; }
+    int get_b2_tau_mctype() const { return b2_tau_mctype; }
 
     // Printer
     void print_mc_graph(std::ostream &os) const { mc_graph_manager.print(os); }
@@ -55,6 +57,7 @@ class BDtaunuMcReader : public BDtaunuReader {
 
     bool continuum;
     int b1_mctype, b2_mctype;
+    int b1_tau_mctype, b2_tau_mctype;
 
     // Constructor helpers
     void AllocateBuffer();

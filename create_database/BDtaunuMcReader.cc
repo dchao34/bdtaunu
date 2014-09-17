@@ -54,6 +54,8 @@ void BDtaunuMcReader::ClearBuffer() {
   continuum = false;
   b1_mctype = static_cast<int>(McBTypeCatalogue::BType::null);
   b2_mctype = static_cast<int>(McBTypeCatalogue::BType::null);
+  b1_tau_mctype = bdtaunu::kUndefinedTauMcType;
+  b2_tau_mctype = bdtaunu::kUndefinedTauMcType;
 }
 
 void BDtaunuMcReader::DeleteBuffer() {
@@ -89,9 +91,15 @@ int BDtaunuMcReader::next_record() {
 void BDtaunuMcReader::FillMCInformation() {
   if (mc_graph_manager.get_mcY()) 
     continuum = !(mc_graph_manager.get_mcY()->isBBbar);
-  if (mc_graph_manager.get_mcB1()) 
+  if (mc_graph_manager.get_mcB1()) {
     b1_mctype = mc_graph_manager.get_mcB1()->mc_type;
-  if (mc_graph_manager.get_mcB2()) 
+    if (mc_graph_manager.get_mcB1()->tau) 
+      b1_tau_mctype = mc_graph_manager.get_mcB1()->tau->mc_type;
+  }
+  if (mc_graph_manager.get_mcB2()) {
     b2_mctype = mc_graph_manager.get_mcB2()->mc_type;
+    if (mc_graph_manager.get_mcB2()->tau) 
+      b2_tau_mctype = mc_graph_manager.get_mcB2()->tau->mc_type;
+  }
   return;
 }

@@ -26,6 +26,7 @@ class McGraphDfsVisitor : public boost::default_dfs_visitor {
 
     void AnalyzeY(const McGraph::Vertex &u, const McGraph::Graph &g);
     void AnalyzeB(const McGraph::Vertex &u, const McGraph::Graph &g);
+    void AnalyzeTau(const McGraph::Vertex &u, const McGraph::Graph &g);
 };
 
 #endif

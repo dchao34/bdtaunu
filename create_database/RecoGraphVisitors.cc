@@ -1,10 +1,12 @@
 #include <cmath>
+#include <vector>
 #include <cassert>
 
 #include "GraphDef.h"
 #include "Particles.h"
 #include "RecoGraphVisitors.h"
 #include "RecoGraphManager.h"
+#include "RecoDTypeCatalogue.h"
 
 using namespace boost;
 using namespace RecoGraph;
@@ -14,6 +16,8 @@ RecoGraphDfsVisitor::RecoGraphDfsVisitor(RecoGraphManager *_manager)
   lund_map = get(vertex_lund_id, manager->g);
   block_idx_map = get(vertex_block_index, manager->g);
 }
+
+const RecoDTypeCatalogue RecoGraphDfsVisitor::recoD_catalogue = RecoDTypeCatalogue();
 
 void RecoGraphDfsVisitor::finish_vertex(Vertex u, const Graph &g) {
   int lund = std::abs(get(lund_map, u));
@@ -49,129 +53,45 @@ void RecoGraphDfsVisitor::AnalyzeD(const Vertex &u, const Graph &g) {
 
   RecoD recoD;
 
-  int n_daughters, n_K, n_Ks, n_pi, n_pi0;
-  n_daughters = n_K = n_Ks = n_pi = n_pi0 = 0;
+  std::vector<int> lund_list;
+  lund_list.push_back(get(lund_map, u));
 
   AdjacencyIterator ai, ai_end;
   for (tie(ai, ai_end) = adjacent_vertices(u, g); ai != ai_end; ++ai) {
-    n_daughters += 1;
-    int lund = abs(get(lund_map, *ai));
-    switch (lund) {
-      case bdtaunu::KLund:
-        n_K += 1;
-        break;
-      case bdtaunu::KSLund:
-        n_Ks += 1;
-        break;
-      case bdtaunu::piLund:
-        n_pi += 1;
-        break;
-      case bdtaunu::pi0Lund:
-        n_pi0 += 1;
-        break;
-      default:
-        assert(false);
-        return;
-    }
+    lund_list.push_back(get(lund_map, *ai));
   }
-
-  int mode;
-  if (std::abs(get(lund_map, u)) == bdtaunu::DcLund) {
-    if (n_daughters == 3 && n_K == 1 && n_pi == 2) {
-      mode = bdtaunu::kDc_Kpipi;
-    } else if (n_daughters == 4 && n_K == 1 && n_pi == 2 && n_pi0 == 1) {
-      mode = bdtaunu::kDc_Kpipipi0;
-    } else if (n_daughters == 2 && n_K == 1 && n_Ks == 1) {
-      mode = bdtaunu::kDc_KsK;
-    } else if (n_daughters == 2 && n_Ks == 1 && n_pi == 1) {
-      mode = bdtaunu::kDc_Kspi;
-    } else if (n_daughters == 3 && n_Ks == 1 && n_pi == 1 && n_pi0 == 1) {
-      mode = bdtaunu::kDc_Kspipi0;
-    } else if (n_daughters == 4 && n_Ks == 1 && n_pi == 3) {
-      mode = bdtaunu::kDc_Kspipipi;
-    } else if (n_daughters == 3 && n_K == 2 && n_pi == 1) {
-      mode = bdtaunu::kDc_KKpi;
-    } else {
-      mode = bdtaunu::kUndefinedDMode;
-    }
-  } else {
-    if (n_daughters == 2 && n_K == 1 && n_pi == 1) {
-      mode = bdtaunu::kD0_Kpi;
-    } else if (n_daughters == 3 && n_K == 1 && n_pi == 1 && n_pi0 == 1) {
-      mode = bdtaunu::kD0_Kpipi0;
-    } else if (n_daughters == 4 && n_K == 1 && n_pi == 3) {
-      mode = bdtaunu::kD0_Kpipipi;
-    } else if (n_daughters == 5 && n_K == 1 && n_pi == 3 && n_pi0 == 1) {
-      mode = bdtaunu::kD0_Kpipipipi0;
-    } else if (n_daughters == 3 && n_Ks == 1 && n_pi == 2) {
-      mode = bdtaunu::kD0_Kspipi;
-    } else if (n_daughters == 4 && n_Ks == 1 && n_pi == 2 && n_pi0 == 1) {
-      mode = bdtaunu::kD0_Kspipipi0;
-    } else if (n_daughters == 2 && n_Ks == 1 && n_pi0 == 1) {
-      mode = bdtaunu::kD0_Kspi0;
-    } else if (n_daughters == 2 && n_K == 2) {
-      mode = bdtaunu::kD0_KK;
-    } else {
-      mode = bdtaunu::kUndefinedDMode;
-    }
-  }
-
-  recoD.D_mode = mode;
+  recoD.D_mode = static_cast<int>(recoD_catalogue.search_d_catalogue(lund_list));
 
   (manager->D_map).insert(std::make_pair(u, recoD));
+
 }
 
 void RecoGraphDfsVisitor::AnalyzeDstar(const Vertex &u, const Graph &g) {
 
   RecoD recoD;
 
-  int n_daughters, n_D0, n_Dc, n_pi, n_pi0, n_gamma;
-  n_daughters = n_D0 = n_Dc = n_pi = n_pi0 = n_gamma = 0;
+  std::vector<int> lund_list;
+  lund_list.push_back(get(lund_map, u));
 
   AdjacencyIterator ai, ai_end;
   for (tie(ai, ai_end) = adjacent_vertices(u, g); ai != ai_end; ++ai) {
-    n_daughters += 1;
-    int lund = abs(get(lund_map, *ai));
-    switch (lund) {
+
+    int lund = get(lund_map, *ai);
+    switch (abs(lund)) {
       case bdtaunu::D0Lund:
-        n_D0 += 1;
-        recoD.D_mode = (manager->D_map)[*ai].D_mode;
-        break;
       case bdtaunu::DcLund:
-        n_Dc += 1;
         recoD.D_mode = (manager->D_map)[*ai].D_mode;
-        break;
       case bdtaunu::piLund:
-        n_pi += 1;
-        break;
       case bdtaunu::pi0Lund:
-        n_pi0 += 1;
-        break;
       case bdtaunu::gammaLund:
-        n_gamma += 1;
+        lund_list.push_back(get(lund_map, *ai));
         break;
       default:
         assert(false);
         return;
     }
   }
-
-  int mode;
-  if (n_daughters == 2 && n_D0 == 1 && n_pi0 == 1) {
-    mode = bdtaunu::kDstar0_D0pi0;
-  } else if (n_daughters == 2 && n_D0 == 1 && n_gamma == 1) {
-    mode = bdtaunu::kDstar0_D0gamma;
-  } else if (n_daughters == 2 && n_D0 == 1 && n_pi == 1) {
-    mode = bdtaunu::kDstarc_D0pi;
-  } else if (n_daughters == 2 && n_Dc == 1 && n_pi0 == 1) {
-    mode = bdtaunu::kDstarc_Dcpi0;
-  } else if (n_daughters == 2 && n_Dc == 1 && n_gamma == 1) {
-    mode = bdtaunu::kDstarc_Dcgamma;
-  } else {
-    mode = bdtaunu::kUndefinedDstarMode;
-  }
-
-  recoD.Dstar_mode = mode;
+  recoD.Dstar_mode = static_cast<int>(recoD_catalogue.search_dstar_catalogue(lund_list));
 
   (manager->D_map).insert(std::make_pair(u, recoD));
 

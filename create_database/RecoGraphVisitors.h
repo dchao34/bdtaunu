@@ -4,6 +4,7 @@
 #include <boost/graph/depth_first_search.hpp>
 
 #include "GraphDef.h"
+#include "RecoDTypeCatalogue.h"
 
 class RecoGraphManager;
 
@@ -15,6 +16,9 @@ class RecoGraphDfsVisitor : public boost::default_dfs_visitor {
     ~RecoGraphDfsVisitor() {};
 
     void finish_vertex(RecoGraph::Vertex u, const RecoGraph::Graph &g);
+
+  private:
+    static const RecoDTypeCatalogue recoD_catalogue;
 
   private:
     RecoGraphManager *manager = nullptr;

@@ -91,6 +91,7 @@ void McGraphManager::construct_graph() {
 void McGraphManager::ClearAnalysis() {
   Y_map.clear();
   B_map.clear();
+  Tau_map.clear();
 }
 
 void McGraphManager::analyze_graph() {

@@ -24,6 +24,7 @@ const int KLund = 321;
 const int piLund = 211;
 const int eLund = 11;
 const int muLund = 13;
+const int tauLund = 15;
 const int gammaLund = 22;
 const int protonLund = 2212;
 const int neutronLund = 2112;

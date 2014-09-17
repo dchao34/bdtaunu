@@ -19,6 +19,7 @@ OS = $(shell uname)
 OBJECTS = UpsilonCandidate.o \
 					RootReader.o BDtaunuReader.o BDtaunuMcReader.o \
 					RecoIndexer.o RecoGraphVisitors.o RecoGraphManager.o \
+					RecoDTypeCatalogue.o \
 					McGraphManager.o McBTypeCatalogue.o McGraphVisitors.o
 
 LIBNAME = libcreatedb.so
@@ -27,7 +28,7 @@ HEADER_ONLY = GraphDef.h Particles.h \
 							BDtaunuGraphWriter.h BDtaunuReaderStatus.h \
 							GraphManager.h Trie.h
 
-BINARIES = test_mcreader1 test_mcreader2 #trie_test mcbtrie_test test_reader1 test_reader2 
+BINARIES = test_mcreader1 test_mcreader2
 
 all : CXXFLAGS += -O3
 all : lib $(BINARIES)

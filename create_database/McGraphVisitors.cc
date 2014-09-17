@@ -2,6 +2,7 @@
 #include <cassert>
 #include <vector>
 
+#include "bdtaunu_definitions.h"
 #include "GraphDef.h"
 #include "Particles.h"
 #include "McGraphVisitors.h"
@@ -27,6 +28,9 @@ void McGraphDfsVisitor::finish_vertex(Vertex u, const Graph &g) {
     case bdtaunu::B0Lund:
     case bdtaunu::BcLund:
       AnalyzeB(u, g);
+      break;
+    case bdtaunu::tauLund:
+      AnalyzeTau(u, g);
       break;
     default:
       return;
@@ -72,9 +76,36 @@ void McGraphDfsVisitor::AnalyzeB(const Vertex &u, const Graph &g) {
   std::vector<int> daulund_list;
   AdjacencyIterator ai, ai_end;
   for (tie(ai, ai_end) = adjacent_vertices(u, g); ai != ai_end; ++ai) {
-    daulund_list.push_back(get(lund_map, *ai));
+    int lund = get(lund_map, *ai);
+    switch (abs(lund)) {
+      case bdtaunu::tauLund:
+        mcB.tau = &(manager->Tau_map)[*ai];
+      default:
+        daulund_list.push_back(lund);
+    }
   }
   mcB.mc_type = static_cast<int>(mcB_catalogue.search_catalogue(daulund_list));
 
   (manager->B_map).insert(std::make_pair(u, mcB));
+}
+
+void McGraphDfsVisitor::AnalyzeTau(const Vertex &u, const Graph &g) {
+
+  McTau mcTau;
+
+  AdjacencyIterator ai, ai_end;
+  for (tie(ai, ai_end) = adjacent_vertices(u, g); ai != ai_end; ++ai) {
+    int lund = abs(get(lund_map, *ai));
+    if (lund == bdtaunu::eLund) {
+      mcTau.mc_type = bdtaunu::ktau_e_mc;
+      break;
+    } else if (lund == bdtaunu::muLund) {
+      mcTau.mc_type = bdtaunu::ktau_mu_mc;
+      break;
+    } else {
+      mcTau.mc_type = bdtaunu::ktau_h_mc;
+    }
+  }
+
+  (manager->Tau_map).insert(std::make_pair(u, mcTau));
 }

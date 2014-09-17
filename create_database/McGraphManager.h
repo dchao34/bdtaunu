@@ -47,6 +47,7 @@ class McGraphManager : public GraphManager {
     // graph analysis
     std::map<McGraph::Vertex, McY> Y_map;
     std::map<McGraph::Vertex, McB> B_map;
+    std::map<McGraph::Vertex, McTau> Tau_map;
     void ClearAnalysis();
 
 };
