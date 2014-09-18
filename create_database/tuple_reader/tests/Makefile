@@ -21,6 +21,10 @@ TUPLE_READER_LIB_PATH = ../lib
 INCFLAGS += -I $(TUPLE_READER_INC_PATH)
 LDFLAGS += -L $(TUPLE_READER_LIB_PATH) $(TUPLE_READER_LIBNAME)
 
+# custom cpp utilities
+CUSTOM_CPP_UTIL_ROOT = /Users/dchao/bdtaunu/v4/custom_cpp_utilities
+INCFLAGS += -I$(CUSTOM_CPP_UTIL_ROOT)
+
 # cern root
 INCFLAGS += $(shell root-config --cflags)
 LDFLAGS += $(shell root-config --libs)

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Trie.h"
+#include <custom_cpp_utilities/trie.h>
 
 class McBTypeCatalogue {
 
@@ -27,7 +27,7 @@ class McBTypeCatalogue {
     void RegisterDecays();
     Alphabet LundToAlphabet(int lund) const;
 
-    bdtaunu::Trie<Alphabet, BType, Alphabet::null, BType::null> trie;
+    custom_cpp_utilities::trie<Alphabet, BType, Alphabet::null, BType::null> catalogue;
 
 };
 

@@ -29,6 +29,10 @@ INCFLAGS += -I$(BOOST_ROOT)
 INCFLAGS += $(shell root-config --cflags)
 LDFLAGS += $(shell root-config --libs)
 
+# custom cpp utilities
+CUSTOM_CPP_UTIL_ROOT = /Users/dchao/bdtaunu/v4/custom_cpp_utilities
+INCFLAGS += -I$(CUSTOM_CPP_UTIL_ROOT)
+
 # particle data file
 PDT_FILE_PATHNAME = $(shell pwd | sed 's/\/[^/]*$$//')/tuple_reader/meta/pdt.dat
 CXXFLAGS += -D__PDT_FILE_PATHNAME='"$(PDT_FILE_PATHNAME)"'

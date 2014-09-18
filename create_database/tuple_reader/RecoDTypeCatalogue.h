@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Trie.h"
+#include <custom_cpp_utilities/trie.h>
 
 class RecoDTypeCatalogue {
 
@@ -51,8 +51,8 @@ class RecoDTypeCatalogue {
     void RegisterDecays();
     Alphabet LundToAlphabet(int lund) const;
 
-    bdtaunu::Trie<Alphabet, DType, Alphabet::null, DType::null> d_trie;
-    bdtaunu::Trie<Alphabet, DstarType, Alphabet::null, DstarType::null> dstar_trie;
+    custom_cpp_utilities::trie<Alphabet, DType, Alphabet::null, DType::null> d_catalogue;
+    custom_cpp_utilities::trie<Alphabet, DstarType, Alphabet::null, DstarType::null> dstar_catalogue;
 
 };
 

@@ -1,5 +1,6 @@
 #include <vector>
 #include <algorithm>
+#include <cstdlib>
 
 #include "McBTypeCatalogue.h"
 
@@ -22,176 +23,176 @@ McBTypeCatalogue::search_catalogue(std::vector<int> lund_list) const {
   if (hasX) word.push_back(Alphabet::X);
   word.push_back(Alphabet::null);
 
-  return trie.search_word(word);
+  return catalogue.find(word);
 }
 
 void McBTypeCatalogue::RegisterDecays() {
 
   // nu_tau branch
-  trie.add_word({
+  catalogue.insert({
       Alphabet::nu_tau, Alphabet::tau, 
       Alphabet::null
     }, BType::SL);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::nu_tau, Alphabet::tau, Alphabet::D,
       Alphabet::null
     }, BType::Dtau);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::nu_tau, Alphabet::tau, Alphabet::Dstar,
       Alphabet::null
     }, BType::Dstartau);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::nu_tau, Alphabet::tau, Alphabet::Dstarstar,
       Alphabet::null
     }, BType::Dstarstar_res);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::nu_tau, Alphabet::tau, Alphabet::X,
       Alphabet::null
     }, BType::SL);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::nu_tau, Alphabet::tau, 
       Alphabet::D, Alphabet::X,
       Alphabet::null
     }, BType::Dstarstar_nonres);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::nu_tau, Alphabet::tau, 
       Alphabet::Dstar, Alphabet::X,
       Alphabet::null
     }, BType::Dstarstar_nonres);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::nu_tau, Alphabet::tau, 
       Alphabet::Dstarstar, Alphabet::X,
       Alphabet::null
     }, BType::Dstarstar_res);
 
   // nu_ell branch
-  trie.add_word({
+  catalogue.insert({
       Alphabet::nu_ell, Alphabet::ell, 
       Alphabet::null
     }, BType::SL);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::nu_ell, Alphabet::ell, Alphabet::D,
       Alphabet::null
     }, BType::Dl);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::nu_ell, Alphabet::ell, Alphabet::Dstar,
       Alphabet::null
     }, BType::Dstarl);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::nu_ell, Alphabet::ell, Alphabet::Dstarstar,
       Alphabet::null
     }, BType::Dstarstar_res);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::nu_ell, Alphabet::ell, Alphabet::X,
       Alphabet::null
     }, BType::SL);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::nu_ell, Alphabet::ell, 
       Alphabet::D, Alphabet::X,
       Alphabet::null
     }, BType::Dstarstar_nonres);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::nu_ell, Alphabet::ell, 
       Alphabet::Dstar, Alphabet::X,
       Alphabet::null
     }, BType::Dstarstar_nonres);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::nu_ell, Alphabet::ell, 
       Alphabet::Dstarstar, Alphabet::X,
       Alphabet::null
     }, BType::Dstarstar_res);
 
   // hadron branch
-  trie.add_word({
+  catalogue.insert({
       Alphabet::X,
       Alphabet::null
     }, BType::Had);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::D, Alphabet::X, 
       Alphabet::null
     }, BType::Had);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::Dstar, Alphabet::X, 
       Alphabet::null
     }, BType::Had);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::Dstarstar, Alphabet::X, 
       Alphabet::null
     }, BType::Had);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::D, Alphabet::D, 
       Alphabet::null
     }, BType::Had);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::D, Alphabet::Dstar, 
       Alphabet::null
     }, BType::Had);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::D, Alphabet::Dstarstar, 
       Alphabet::null
     }, BType::Had);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::Dstar, Alphabet::Dstar, 
       Alphabet::null
     }, BType::Had);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::Dstar, Alphabet::Dstarstar, 
       Alphabet::null
     }, BType::Had);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::Dstarstar, Alphabet::Dstarstar, 
       Alphabet::null
     }, BType::Had);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::D, Alphabet::D, Alphabet::X,
       Alphabet::null
     }, BType::Had);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::D, Alphabet::Dstar, Alphabet::X,
       Alphabet::null
     }, BType::Had);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::D, Alphabet::Dstarstar, Alphabet::X,
       Alphabet::null
     }, BType::Had);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::Dstar, Alphabet::Dstar, Alphabet::X,
       Alphabet::null
     }, BType::Had);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::Dstar, Alphabet::Dstarstar, Alphabet::X,
       Alphabet::null
     }, BType::Had);
 
-  trie.add_word({
+  catalogue.insert({
       Alphabet::Dstarstar, Alphabet::Dstarstar, Alphabet::X,
       Alphabet::null
     }, BType::Had);
@@ -199,7 +200,7 @@ void McBTypeCatalogue::RegisterDecays() {
 }
 
 McBTypeCatalogue::Alphabet McBTypeCatalogue::LundToAlphabet(int lund) const {
-  switch (abs(lund)) {
+  switch (std::abs(lund)) {
     case 12: // nu_e
     case 14: // nu_mu
       return Alphabet::nu_ell;
