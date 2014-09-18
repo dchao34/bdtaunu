@@ -13,9 +13,6 @@ LIBNAME = libTupleReader.so
 PKG_LIBPATH = lib
 
 # package Contents
-HEADER_ONLY = BDtaunuDef.h GraphDef.h Particles.h \
-							BDtaunuGraphWriter.h BDtaunuReaderStatus.h \
-							GraphManager.h Trie.h
 SOURCES = BDtaunuHelpers.cc UpsilonCandidate.cc \
 					RootReader.cc BDtaunuReader.cc BDtaunuMcReader.cc \
 					RecoIndexer.cc RecoGraphVisitors.cc RecoGraphManager.cc \
@@ -39,7 +36,10 @@ CXXFLAGS += -D__PDT_FILE_PATHNAME='"$(PDT_FILE_PATHNAME)"'
 # Build Rules
 # -----------
 
+.PHONY: all debug lib clean distclean
+
 OBJECTS = $(addprefix $(PKG_LIBPATH)/, $(patsubst %.cc, %.o, $(SOURCES)))
+DEPENDENCIES = $(addprefix $(PKG_LIBPATH)/, $(patsubst %.cc, %.d, $(SOURCES)))
 
 all : CXXFLAGS += -O3
 all : lib
@@ -58,8 +58,17 @@ $(PKG_LIBPATH)/$(LIBNAME) : $(OBJECTS)
 	fi; \
 	$(CXX) $${SHARED_LIB_FLAG} $(OBJECTS) $(LDFLAGS) -o $@
 
-$(OBJECTS) : $(PKG_LIBPATH)/%.o : %.cc %.h $(HEADER_ONLY)
+$(OBJECTS) : $(PKG_LIBPATH)/%.o : %.cc %.h $(PKG_LIBPATH)/%.d
 	$(CXX) $(CXXFLAGS) $(INCFLAGS) -c $< -o $@
+
+$(DEPENDENCIES) : $(PKG_LIBPATH)/%.d : %.cc %.h Makefile
+	$(CXX) $(CXXFLAGS) $(INCFLAGS) -MM -MT $(PKG_LIBPATH)/$*.o -c $< -o $@
 
 clean:
 	rm -f *~ $(PKG_LIBPATH)/$(LIBNAME) $(OBJECTS)
+
+distclean:
+	rm -f *~ $(PKG_LIBPATH)/$(LIBNAME) $(OBJECTS) $(DEPENDENCIES)
+
+-include $(DEPENDENCIES)
+
