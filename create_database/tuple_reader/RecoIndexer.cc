@@ -16,6 +16,13 @@ RecoIndexer::RecoIndexer(
     nY(_nY), nB(_nB), nD(_nD), nC(_nC), 
     nh(_nh), nl(_nl), ngamma(_ngamma) {};
 
+// The reco indexing is as follows:
+// Y candidates: 0, ..., nY - 1. The ith Y candidate is assigned index i. 
+// B candidates: nY, ..., nY + nB - 1. The ith B candidate is assigned index nY + i.
+// D candidates: ... continue pattern.
+// C candidates: ... continue pattern.
+// h candidates: ... continue pattern.
+// gamma candidates: ... continue pattern.
 int RecoIndexer::operator()(int lund, int idx) const {
 
   int abslund = std::abs(lund);

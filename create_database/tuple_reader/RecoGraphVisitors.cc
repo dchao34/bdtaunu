@@ -19,6 +19,8 @@ RecoGraphDfsVisitor::RecoGraphDfsVisitor(RecoGraphManager *_manager)
 
 const RecoDTypeCatalogue RecoGraphDfsVisitor::recoD_catalogue = RecoDTypeCatalogue();
 
+// Determine whether to analyze a reco particle 
+// when its vertex is colored black. 
 void RecoGraphDfsVisitor::finish_vertex(Vertex u, const Graph &g) {
   int lund = std::abs(get(lund_map, u));
   switch (lund) {
@@ -49,10 +51,14 @@ void RecoGraphDfsVisitor::finish_vertex(Vertex u, const Graph &g) {
   return;
 }
 
+// Analyze D meson. The quantities computed are:
+// 1. D reconstruction mode. See RecoDTypeCatalogue.h for the definitions.
 void RecoGraphDfsVisitor::AnalyzeD(const Vertex &u, const Graph &g) {
 
   RecoD recoD;
 
+  // Compute D reconstruction mode. Scan all of its daughters and 
+  // look up the mode in recoD_catalogue. 
   std::vector<int> lund_list;
   lund_list.push_back(get(lund_map, u));
 
@@ -62,14 +68,22 @@ void RecoGraphDfsVisitor::AnalyzeD(const Vertex &u, const Graph &g) {
   }
   recoD.D_mode = static_cast<int>(recoD_catalogue.search_d_catalogue(lund_list));
 
+  // Insert results into supervisor's cache. 
   (manager->D_map).insert(std::make_pair(u, recoD));
 
 }
 
+// Analyze Dstar meson. The quantities computed are:
+// 1. Dstar reconstruction mode. See RecoDTypeCatalogue.h for the definitions.
+// 2. Daughter D meson's reconstructed mode.
 void RecoGraphDfsVisitor::AnalyzeDstar(const Vertex &u, const Graph &g) {
 
   RecoD recoD;
 
+  // Scan all daughters and do the following:
+  // 1. Look up Dstar mode in recoD_catalogue. 
+  // 2. Look up daughter D's mode that is already stored in 
+  // the supervising class' cache.
   std::vector<int> lund_list;
   lund_list.push_back(get(lund_map, u));
 
@@ -93,14 +107,23 @@ void RecoGraphDfsVisitor::AnalyzeDstar(const Vertex &u, const Graph &g) {
   }
   recoD.Dstar_mode = static_cast<int>(recoD_catalogue.search_dstar_catalogue(lund_list));
 
+  // Insert results into supervisor's cache. 
   (manager->D_map).insert(std::make_pair(u, recoD));
 
 }
 
+// Analyze "Leptons". These are either actual leptons are placeholder 
+// hadron for the tau of the B decay. See Particles.h for more info.
+// The quantities computed are:
+// 1. The tau decay mode. For actual leptons, this is what the 
+// tau mode would have been if it were actually from a tau decay. 
+// 2. The corresponding block index of the lepton or hadron. This is 
+// used to access PID information later. 
 void RecoGraphDfsVisitor::AnalyzeLepton(const Vertex &u, const Graph &g) {
 
   RecoLepton recoLepton;
 
+  // Scan all daughters
   AdjacencyIterator ai, ai_end;
   int lund = abs(get(lund_map, u));
   switch (lund) {
@@ -122,6 +145,7 @@ void RecoGraphDfsVisitor::AnalyzeLepton(const Vertex &u, const Graph &g) {
       recoLepton.tau_mode = bdtaunu::ktau_pi;
       break;
 
+    // when a rho is encountered, scan its daughters to find the pion.
     case bdtaunu::rhoLund:
       recoLepton.l_block_idx = -1;
       for (tie(ai, ai_end) = adjacent_vertices(u, g); ai != ai_end; ++ai) {
@@ -142,6 +166,10 @@ void RecoGraphDfsVisitor::AnalyzeLepton(const Vertex &u, const Graph &g) {
 }
 
 
+// Analyze B mesons. Computed quantities are:
+// 1. B flavor. 
+// 2. Pointer to the corresponding D and Lepton daughter stored in
+// the cache of the supervisor class (See BDtaunuReader.h). 
 void RecoGraphDfsVisitor::AnalyzeB(const Vertex &u, const Graph &g) {
 
   RecoB recoB;
@@ -180,6 +208,10 @@ void RecoGraphDfsVisitor::AnalyzeB(const Vertex &u, const Graph &g) {
 
 
 
+// Analyze Y(4S) candidates. Computed quantities are:
+// 1. B flavor. 
+// 2. Pointer to the corresponding D and Lepton daughter stored in
+// the cache of the supervisor class (See BDtaunuReader.h). 
 void RecoGraphDfsVisitor::AnalyzeY(const Vertex &u, const Graph &g) {
 
   RecoY recoY;

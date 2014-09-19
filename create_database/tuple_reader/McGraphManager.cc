@@ -33,22 +33,30 @@ McGraphManager::McGraphManager() : reader(nullptr) {
 McGraphManager::McGraphManager(BDtaunuMcReader *_reader) : reader(_reader) { 
 }
 
+// Clear all cache.
 void McGraphManager::clear() {
   ClearGraph();
   ClearAnalysis();
 }
 
+// Clear graph cache. 
 void McGraphManager::ClearGraph() {
   mc_vertex_map.clear();
   g.clear();
 }
 
+// Construct BGL graph from BDtaunuMcReader's buffer.
 void McGraphManager::construct_graph() {
 
   ClearGraph();
 
   assert(reader != nullptr);
 
+  // Each vertex has the following information attached:
+  // 
+  // 1. vertex_mc_index: The MC index of the particle. 
+  //
+  // 2. vertex_lund_id: Lund ID of the MC particle. 
   McIndexPropertyMap mc_index = get(vertex_mc_index, g);
   LundIdPropertyMap lund_id = get(vertex_lund_id, g);
 
@@ -58,6 +66,12 @@ void McGraphManager::construct_graph() {
 
   for (int i = 0; i < reader->mcLen; i++) {
 
+    // Attempt to insert this particle into graph. If not already
+    // inserted, add a new vertex and return a handler to it. Otherwise, 
+    // just get the handler to its vertex. 
+    //
+    // mc_vertex_map keeps track of which particle has been inserted. 
+    // The key is the MC index.
     int u_idx = i;
     tie(pos, inserted) = mc_vertex_map.insert(std::make_pair(u_idx, Vertex()));
     if (inserted) {
@@ -69,6 +83,9 @@ void McGraphManager::construct_graph() {
       u = mc_vertex_map[u_idx];
     }
 
+    // Examine all daughters of this particle and insert any daughter
+    // that has not already been inserted. An edge is also inserted between 
+    // the particle and all its daughters.
     int first_dau_idx = (reader->dauIdx)[i];
     for (int j = 0; j < (reader->dauLen)[i]; j++) {
 
@@ -88,14 +105,19 @@ void McGraphManager::construct_graph() {
   }
 }
 
+// Clear graph analysis cache. 
 void McGraphManager::ClearAnalysis() {
   Y_map.clear();
   B_map.clear();
   Tau_map.clear();
 }
 
+// Traverses BGL graph to compute analysis statistics.
 void McGraphManager::analyze_graph() {
+
   ClearAnalysis();
+
+  // See McGraphDfsVisitor.h for more information. 
   depth_first_search(g, visitor(McGraphDfsVisitor(this)));
   assert(Y_map.size() == 0 || Y_map.size() == 1);
   assert(B_map.size() == 0 || B_map.size() == 2);
@@ -126,6 +148,7 @@ const McB* McGraphManager::get_mcB2() const {
   }
 }
 
+// Print graphviz file. See BDtaunuGraphWriter.h.
 void McGraphManager::print(std::ostream &os) const {
   boost::write_graphviz(
       os, g, 

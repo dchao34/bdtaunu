@@ -12,33 +12,37 @@
  * It supports single pass iteration of events in the TTree. */
 class RootReader {
 
-  private:
-    TFile *tfile;
-
-  protected: 
-    TTree *tr;
-
-  private: 
-    int record_index;
-    int total_records;
-
-    void PrepareTreeFile(const char *root_fname, const char *root_trname);
-
   public:
 
-    //! Undefined default constructions. 
-    RootReader();
-    
-    //! Constructor with specified root file name and TTree name
-    //assumed to be "ntp1". 
-    RootReader(const char *root_fname);
+    //! Reader status codes
+    enum class Status {
+      kReadSucceeded = 0,
+      kEOF = 1,
+      kMaxRecoCandExceeded = 2,
+      kMaxMcParticlesExceeded = 3,
+    };
+
+    //! Default constructor. 
+    RootReader() = default;
 
     //! Constructor with specified root file name and TTree name. 
-    RootReader(const char *root_fname, const char *root_trname);
+    RootReader(const char *root_fname, const char *root_trname = "ntp1");
     virtual ~RootReader();
 
     //! Read in the next event from the TTree. 
-    virtual int next_record();
+    virtual Status next_record();
+
+  private:
+    TFile *tfile = nullptr;
+
+  protected: 
+    TTree *tr = nullptr;
+
+  private: 
+    int record_index = 0;
+    int total_records = 0;
+
+    void PrepareTreeFile(const char *root_fname, const char *root_trname);
 };
 
 #endif

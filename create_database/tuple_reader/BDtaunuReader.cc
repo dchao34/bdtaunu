@@ -12,7 +12,6 @@
 #include "BDtaunuHelpers.h"
 #include "RootReader.h"
 #include "BDtaunuReader.h"
-#include "BDtaunuReaderStatus.h"
 #include "UpsilonCandidate.h"
 #include "RecoGraphManager.h"
 
@@ -29,13 +28,13 @@ const int BDtaunuReader::maximum_h_candidates = 100;
 const int BDtaunuReader::maximum_l_candidates = 100;
 const int BDtaunuReader::maximum_gamma_candidates = 100;
 
+// The constructor just needs to allocate and initialize the buffer 
+// and the reco graph manager.
 BDtaunuReader::BDtaunuReader(
     const char *root_fname, 
     const char *root_trname) : RootReader(root_fname, root_trname) {
-
   AllocateBuffer();
   ClearBuffer();
-
   reco_graph_manager = RecoGraphManager(this);
 }
 
@@ -44,7 +43,7 @@ BDtaunuReader::~BDtaunuReader() {
 }
 
 
-// All constructors call this function to initialize the class members.
+// Initializes the input buffer.
 void BDtaunuReader::AllocateBuffer() {
 
   // Allocate space to read in arrays from ntuples. 
@@ -210,6 +209,7 @@ void BDtaunuReader::AllocateBuffer() {
 
 }
 
+// Zeros out buffer elements
 void BDtaunuReader::ClearBuffer() {
   platform = -999;
   partition = -999;
@@ -227,6 +227,7 @@ void BDtaunuReader::ClearBuffer() {
   upsilon_candidates.clear();
 }
 
+// Free the buffer. Used for destructor. 
 void BDtaunuReader::DeleteBuffer() {
 
   delete[] YBPairMmissPrime2;
@@ -304,23 +305,32 @@ void BDtaunuReader::DeleteBuffer() {
 
 }
 
-// Read in the next event in the ntuple. It computes all relevant
-// information as a side effect. 
-int BDtaunuReader::next_record() {
+// Read in the next event in the ntuple and update the buffer
+// with the new information.
+RootReader::Status BDtaunuReader::next_record() {
 
   ClearBuffer();
 
-  // read next event from root ntuple into the buffer
-  int reader_status = RootReader::next_record();
+  // Read next event into the buffer. Implicitly uses 
+  // TTree::GetEntry() method.
+  RootReader::Status reader_status = RootReader::next_record();
 
-  // proceed only when event is not in an error state
-  if (reader_status == bdtaunu::kReadSucceeded) {
-    if (!is_max_reco_exceeded()) {
+  // Derive additional reco information from the ntuple. 
+  if (reader_status == RootReader::Status::kReadSucceeded) {
+
+    // This check is necessary since BtaTupleMaker does not save 
+    // this kind of event correctly. Our solution is to skip this
+    // kind of event altogether. 
+    if (is_max_reco_exceeded()) {
+      reader_status = RootReader::Status::kMaxRecoCandExceeded;
+    } else {
+
+      // Outsource graph operations to graph manager
       reco_graph_manager.construct_graph();
       reco_graph_manager.analyze_graph();
-      FillUpsilonCandidates();
-    } else {
-      reader_status = bdtaunu::kMaxRecoCandExceeded;
+
+      // Make derived information ready for access
+      FillRecoInfo();
     }
   } 
   
@@ -350,8 +360,9 @@ std::string BDtaunuReader::get_eventId() const {
          + "/" + std::to_string(lowerID);
 }
 
-void BDtaunuReader::FillUpsilonCandidates() {
+void BDtaunuReader::FillRecoInfo() {
 
+  // Derived information about Upsilon candidates. 
   for (int i = 0; i < nY; i++) {
 
     UpsilonCandidate ups;

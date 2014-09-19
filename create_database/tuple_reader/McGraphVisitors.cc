@@ -19,6 +19,8 @@ McGraphDfsVisitor::McGraphDfsVisitor(McGraphManager *_manager)
 
 const McBTypeCatalogue McGraphDfsVisitor::mcB_catalogue = McBTypeCatalogue();
 
+// Determine whether to analyze a MC particle 
+// when its vertex is colored black. 
 void McGraphDfsVisitor::finish_vertex(Vertex u, const Graph &g) {
   int lund = std::abs(get(lund_map, u));
   switch (lund) {
@@ -39,6 +41,8 @@ void McGraphDfsVisitor::finish_vertex(Vertex u, const Graph &g) {
 }
 
 
+// Analyze Y(4S). The quantities computed are:
+// 1. Pointers to the daughter B mesons.
 void McGraphDfsVisitor::AnalyzeY(const Vertex &u, const Graph &g) {
 
   McY mcY;
@@ -63,6 +67,10 @@ void McGraphDfsVisitor::AnalyzeY(const Vertex &u, const Graph &g) {
   (manager->Y_map).insert(std::make_pair(u, mcY));
 }
 
+// Analyze B meson. The quantities computed are:
+// 1. B flavor. 
+// 2. Pointer to daughter tau. 
+// 3. MC type. See Particles.h.
 void McGraphDfsVisitor::AnalyzeB(const Vertex &u, const Graph &g) {
 
   McB mcB;
@@ -89,6 +97,8 @@ void McGraphDfsVisitor::AnalyzeB(const Vertex &u, const Graph &g) {
   (manager->B_map).insert(std::make_pair(u, mcB));
 }
 
+// Analyze tau. The quantities computed are:
+// 1. MC type. See Particles.h.
 void McGraphDfsVisitor::AnalyzeTau(const Vertex &u, const Graph &g) {
 
   McTau mcTau;

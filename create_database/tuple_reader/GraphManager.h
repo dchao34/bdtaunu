@@ -3,6 +3,7 @@
 
 #include <iostream>
 
+//! Abstract base class for GraphManagers.
 class GraphManager {
 
   public:

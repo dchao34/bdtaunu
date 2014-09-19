@@ -10,9 +10,24 @@
 #include "BDtaunuReader.h"
 #include "McGraphManager.h"
 
-//! Reads Monte Carlo ntuples and computes truth information. 
-/*! In addition to computing detector response data, this class also
- * computes data related to Monte Carlo truth. */
+/** 
+ * @brief 
+ * Much like its parent class BDtaunuReader, this class reads 
+ * BtaTupleMaker Monte Carlo ntuples generated from the 
+ * BToDTauNuSemiLepHadUser package at SLAC.
+ *
+ *
+ * @detail
+ * In addition to the operations that BDtaunuReader performs, this
+ * class also reads and derives Monte Carlo information. The mechanism and
+ * usage is the same as BDtaunuReader.
+ *
+ * Usage Example
+ * -------------
+ *
+ * See BDtaunuReader. 
+ *
+ */
 class BDtaunuMcReader : public BDtaunuReader {
 
   friend class McGraphManager;
@@ -27,15 +42,13 @@ class BDtaunuMcReader : public BDtaunuReader {
     ~BDtaunuMcReader();
 
     //! Read in the next event. 
-    /*! Returns an integer that indexes the event number. Returns -1
-     * when all events have been read. 
-     *
-     * Calling this automatically computes all features associated
-     * with the event. */
-    virtual int next_record();
+    virtual RootReader::Status next_record();
 
     // Data Accessors
+
+    //! Flag whether the MC truth is Continuum. 
     bool is_continuum() const { return continuum; }
+
     int get_b1_mctype() const { return b1_mctype; }
     int get_b2_mctype() const { return b2_mctype; }
     int get_b1_tau_mctype() const { return b1_tau_mctype; }
@@ -68,7 +81,7 @@ class BDtaunuMcReader : public BDtaunuReader {
     bool is_max_mc_exceeded() { return (mcLen > max_mc_length) ? true : false; }
 
     // Mutator helpers
-    void FillMCInformation();
+    void FillMcInfo();
 
     // MC graph helpers
     McGraphManager mc_graph_manager;

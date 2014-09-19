@@ -1,7 +1,6 @@
 #include <iostream> 
 #include <chrono>
 
-#include "BDtaunuReaderStatus.h"
 #include "BDtaunuMcReader.h"
 
 using namespace std;
@@ -13,7 +12,7 @@ int main() {
 
   BDtaunuMcReader reader("/Users/dchao/bdtaunu/v4/data/root/signal/aug_12_2014/A/sp11444r1.root");
   int nevents = 0;
-  while (reader.next_record() != bdtaunu::kEOF) {
+  while (reader.next_record() != RootReader::Status::kEOF) {
     nevents += 1;
   }
   end = std::chrono::system_clock::now();

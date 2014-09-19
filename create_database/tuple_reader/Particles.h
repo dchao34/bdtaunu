@@ -4,6 +4,11 @@
 #include "BDtaunuDef.h"
 #include "GraphDef.h"
 
+/** @file Particles.h 
+ * Information of specific types of particles that are computed
+ * during graph traversal (see RecoGraphManager.h or McGraphManager.h).
+ */
+
 struct RecoB;
 struct RecoD;
 struct RecoLepton;

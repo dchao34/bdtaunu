@@ -9,7 +9,7 @@ CXXFLAGS += -fPIC
 # Contents
 # --------
 
-BINARIES = mc_reader1
+BINARIES = mc_reader1 mc_reader2
 
 # Dependencies
 # ------------
@@ -45,4 +45,4 @@ $(BINARIES) : % : %.cc
 	$(CXX) $(CXXFLAGS) $(INCFLAGS) $(LDFLAGS) -Wl,-rpath,$(TUPLE_READER_LIB_PATH) -o $@ $<
 
 clean:
-	rm -f *~ *.o `find . -perm +100 -type f`
+	rm -f *~ *.o *.gv *.pdf `find . -perm +100 -type f`

@@ -3,21 +3,11 @@
 #include <iostream>
 
 #include "RootReader.h"
-#include "BDtaunuReaderStatus.h"
-
-RootReader::RootReader() : 
-  tfile(0), tr(0), 
-  record_index(0), total_records(0) {
-}
 
 RootReader::RootReader(
-    const char *root_fname) : tfile(0), tr(0) {
-  PrepareTreeFile(root_fname, "ntp1");
-}
-
-RootReader::RootReader(
-    const char *root_fname, 
-    const char *root_trname) : tfile(0), tr(0) {
+  const char *root_fname, 
+  const char *root_trname) : 
+  tfile(nullptr), tr(nullptr), record_index(0) {
   PrepareTreeFile(root_fname, root_trname);
 }
 
@@ -51,11 +41,11 @@ void RootReader::PrepareTreeFile(const char *root_fname,
 }
 
 // Read in the next event from the TTree. 
-int RootReader::next_record() {
+RootReader::Status RootReader::next_record() {
   if (record_index < total_records) {
     tr->GetEntry(record_index++);
-    return bdtaunu::kReadSucceeded;
+    return Status::kReadSucceeded;
   } else {
-    return bdtaunu::kEOF;
+    return Status::kEOF;
   }
 }

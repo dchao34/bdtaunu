@@ -10,28 +10,61 @@
 #include "UpsilonCandidate.h"
 #include "RecoGraphManager.h"
 
+
+/** 
+ * @brief 
+ * This class is responsible for reading in BtaTupleMaker ntuples
+ * generated from the `BToDTauNuSemiLepHadUser` package at SLAC. 
+ *
+ *
+ * @detail
+ * This class manages a buffer. For each event, it reads in all information 
+ * related to reconstruction into this buffer and computes information needed 
+ * for the analysis. 
+ *
+ * Usage Example
+ * -------------
+ *
+ *     // Open the root file and the TTree (defaults to tree "ntp1").
+ *     BDtaunuReader reader("sp1235r1.root");
+ *
+ *     // Loop over each event. 
+ *     while (reader.next_record() != RootReader::Status::kEOF) {
+ *       // Do stuff... 
+ *       // reader.get_nTrk(); etc.
+ *     }
+ *
+ */
 class BDtaunuReader : public RootReader {
 
+  // Manages reco particle graph and all information computed from it. 
   friend class RecoGraphManager;
 
   public: 
 
     // Constructors
+
+    //! No default constructor.
     BDtaunuReader() = delete;
+
+    //! Open root file root_fname and read the TTree root_trname.
     BDtaunuReader(const char *root_fname, const char *root_trname = "ntp1");
+
+    //! No copy constructor.
     BDtaunuReader(const BDtaunuReader&) = delete;
+
+    //! No copy assignment.
     BDtaunuReader &operator=(const BDtaunuReader&) = delete;
     virtual ~BDtaunuReader();
 
     //! Read in the next event. 
-    /*! Returns an integer that indexes the event number. Returns -1
-     * when all events have been read. 
-     *
+    /*! Reader in next event and returns RootReader::Status.
      * Calling this automatically computes all features associated
      * with the event that the analysis is interested in. */
-    virtual int next_record();
+    virtual RootReader::Status next_record();
 
-    // Data Accessors
+
+    // Accessors
 
     //! Babar event Id. 
     std::string get_eventId() const;
@@ -48,7 +81,7 @@ class BDtaunuReader : public RootReader {
     //! Return list of \f$\Upsilon(4S)\f$ candidates in this event.
     const std::vector<UpsilonCandidate> &get_upsilon_candidates() const { return upsilon_candidates; }
 
-    // Printer
+    //! Prints graphviz file of the reco graph to ostream.
     void print_reco_graph(std::ostream &os) const { reco_graph_manager.print(os); }
 
   protected:
@@ -64,7 +97,8 @@ class BDtaunuReader : public RootReader {
     static const int maximum_gamma_candidates;
 
   private: 
-    // read from root tuples
+
+    // Buffer elements 
     int platform, partition, upperID, lowerID;
     int nTrk;
     float R2All;
@@ -99,7 +133,7 @@ class BDtaunuReader : public RootReader {
     int *hd1Lund, *hd2Lund;
     int *ld1Lund, *ld2Lund, *ld3Lund;
 
-    // computed from root tuples
+    // Data derived from information present in the buffer elements
     std::vector<UpsilonCandidate> upsilon_candidates;
 
   private:
@@ -113,9 +147,10 @@ class BDtaunuReader : public RootReader {
     bool is_max_reco_exceeded() const;
 
     // Mutator helpers
-    void FillUpsilonCandidates();
+    void FillRecoInfo();
 
-    // Reco graph helpers
+    // Reco graph manager. 
+    // Responsible for all reco graph related computations.
     RecoGraphManager reco_graph_manager;
 
 };
