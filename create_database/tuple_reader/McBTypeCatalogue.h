@@ -14,8 +14,16 @@ class McBTypeCatalogue {
     };
 
     enum class BType { 
-      Dtau = 1, Dstartau, Dl, Dstarl, 
-      Dstarstar_res, Dstarstar_nonres, SL, Had, null = -1,
+      NoB = 0,
+      Dtau = 1,
+      Dstartau,
+      Dl,
+      Dstarl, 
+      Dstarstar_res,
+      Dstarstar_nonres,
+      SL,
+      Had,
+      null = -1,
     };
 
     McBTypeCatalogue() { RegisterDecays(); }

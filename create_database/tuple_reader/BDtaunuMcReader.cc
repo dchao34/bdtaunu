@@ -55,9 +55,9 @@ void BDtaunuMcReader::AllocateBuffer() {
 // Zeros out buffer elements
 void BDtaunuMcReader::ClearBuffer() {
   mcLen = -999;
-  continuum = false;
-  b1_mctype = static_cast<int>(McBTypeCatalogue::BType::null);
-  b2_mctype = static_cast<int>(McBTypeCatalogue::BType::null);
+  continuum = true;
+  b1_mctype = static_cast<int>(McBTypeCatalogue::BType::NoB);
+  b2_mctype = static_cast<int>(McBTypeCatalogue::BType::NoB);
   b1_tau_mctype = bdtaunu::kUndefinedTauMcType;
   b2_tau_mctype = bdtaunu::kUndefinedTauMcType;
 }

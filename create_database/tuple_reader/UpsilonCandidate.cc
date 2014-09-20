@@ -2,6 +2,7 @@
 #include <cassert> 
 
 #include "BDtaunuDef.h"
+#include "RecoDTypeCatalogue.h"
 #include "UpsilonCandidate.h"
 
 UpsilonCandidate::UpsilonCandidate() :
@@ -19,8 +20,8 @@ UpsilonCandidate::UpsilonCandidate() :
   tag_deltaM(-999),
   tag_cosThetaDSoft(-999),
   tag_softP3MagCM(-999),
-  tag_d_mode(bdtaunu::kUndefinedDMode),
-  tag_dstar_mode(bdtaunu::kUndefinedDstarMode),
+  tag_d_mode(static_cast<int>(RecoDTypeCatalogue::DType::null)),
+  tag_dstar_mode(static_cast<int>(RecoDTypeCatalogue::DstarType::null)),
   l_ePidMap(0),
   l_muPidMap(0),
   sig_hp3(-999),
@@ -33,8 +34,8 @@ UpsilonCandidate::UpsilonCandidate() :
   sig_softP3MagCM(-999),
   sig_hmass(-999),
   sig_vtxh(-999),
-  sig_d_mode(bdtaunu::kUndefinedDMode),
-  sig_dstar_mode(bdtaunu::kUndefinedDstarMode),
+  sig_d_mode(static_cast<int>(RecoDTypeCatalogue::DType::null)),
+  sig_dstar_mode(static_cast<int>(RecoDTypeCatalogue::DstarType::null)),
   sig_tau_mode(bdtaunu::kUndefinedTauMode),
   h_ePidMap(0),
   h_muPidMap(0) {}
@@ -158,15 +159,15 @@ void UpsilonCandidate::copy_candidate(const UpsilonCandidate &cand) {
 int UpsilonCandidate::get_cand_type() const {
 
   assert(sig_tau_mode != bdtaunu::kUndefinedTauMode);
-  assert(tag_dstar_mode != bdtaunu::kUndefinedDstarMode);
-  assert(sig_dstar_mode != bdtaunu::kUndefinedDstarMode);
+  assert(tag_dstar_mode != static_cast<int>(RecoDTypeCatalogue::DstarType::null));
+  assert(sig_dstar_mode != static_cast<int>(RecoDTypeCatalogue::DstarType::null));
 
   int cand_type = 0;
   if (sig_tau_mode == bdtaunu::ktau_rho)
     cand_type += (1 << 2);
-  if (tag_dstar_mode != bdtaunu::kNoDstar)
+  if (tag_dstar_mode != static_cast<int>(RecoDTypeCatalogue::DstarType::NoDstar))
     cand_type += (1 << 1);
-  if (sig_dstar_mode != bdtaunu::kNoDstar)
+  if (sig_dstar_mode != static_cast<int>(RecoDTypeCatalogue::DstarType::NoDstar))
     cand_type += 1;
 
   return cand_type;
@@ -178,12 +179,12 @@ int UpsilonCandidate::get_cand_type() const {
 int UpsilonCandidate::get_sample_type() const {
 
   assert(bflavor != bdtaunu::kUndefinedBFlavor);
-  assert(sig_dstar_mode != bdtaunu::kUndefinedDstarMode);
+  assert(sig_dstar_mode != static_cast<int>(RecoDTypeCatalogue::DstarType::null));
 
   int sample_type = 0;
   if (bflavor == bdtaunu::kB0) 
     sample_type += (1 << 1);
-  if (sig_dstar_mode != bdtaunu::kNoDstar) 
+  if (sig_dstar_mode != static_cast<int>(RecoDTypeCatalogue::DstarType::NoDstar))
     sample_type += 1;
 
   return sample_type;

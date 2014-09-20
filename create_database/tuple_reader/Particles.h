@@ -3,6 +3,8 @@
 
 #include "BDtaunuDef.h"
 #include "GraphDef.h"
+#include "RecoDTypeCatalogue.h"
+#include "McBTypeCatalogue.h"
 
 /** @file Particles.h 
  * Information of specific types of particles that are computed
@@ -28,8 +30,8 @@ struct RecoB {
 
 struct RecoD {
   RecoD() = default;
-  int D_mode = bdtaunu::kUndefinedDMode;
-  int Dstar_mode = bdtaunu::kUndefinedDstarMode;
+  int D_mode = static_cast<int>(RecoDTypeCatalogue::DType::null);
+  int Dstar_mode = static_cast<int>(RecoDTypeCatalogue::DstarType::NoDstar);
 };
 
 struct RecoLepton {
@@ -51,7 +53,7 @@ struct McY {
 struct McB {
   McB() = default;
   int flavor = bdtaunu::kUndefinedBFlavor;
-  int mc_type = bdtaunu::kUndefinedBMcType;
+  int mc_type = static_cast<int>(McBTypeCatalogue::BType::null);
   McTau *tau = nullptr;
 };
 
