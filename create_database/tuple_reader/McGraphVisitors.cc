@@ -4,7 +4,6 @@
 
 #include "BDtaunuDef.h"
 #include "GraphDef.h"
-#include "Particles.h"
 #include "McGraphVisitors.h"
 #include "McGraphManager.h"
 
@@ -70,7 +69,7 @@ void McGraphDfsVisitor::AnalyzeY(const Vertex &u, const Graph &g) {
 // Analyze B meson. The quantities computed are:
 // 1. B flavor. 
 // 2. Pointer to daughter tau. 
-// 3. MC type. See Particles.h.
+// 3. MC type. See GraphDef.h.
 void McGraphDfsVisitor::AnalyzeB(const Vertex &u, const Graph &g) {
 
   McB mcB;
@@ -98,7 +97,7 @@ void McGraphDfsVisitor::AnalyzeB(const Vertex &u, const Graph &g) {
 }
 
 // Analyze tau. The quantities computed are:
-// 1. MC type. See Particles.h.
+// 1. MC type. See GraphDef.h.
 void McGraphDfsVisitor::AnalyzeTau(const Vertex &u, const Graph &g) {
 
   McTau mcTau;

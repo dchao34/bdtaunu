@@ -24,7 +24,7 @@ class RecoGraphManager;
  * #Purpose
  *
  * This class computes analysis information associated with particular
- * types of reconstructed particles. See Particles.h for the quantities 
+ * types of reconstructed particles. See GraphDef.h for the quantities 
  * computed. 
  *
  * Since most quantities about a reconstructed particle can only be 

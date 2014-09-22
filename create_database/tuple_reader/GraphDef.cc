@@ -1,16 +1,16 @@
-#include "RecoIndexer.h"
 #include "BDtaunuDef.h"
+#include "GraphDef.h"
 
 #include <cmath>
 #include <cstdlib>
 #include <cassert>
 #include <initializer_list>
 
-RecoIndexer::RecoIndexer() : 
+RecoGraph::RecoIndexer::RecoIndexer() : 
   nY(0), nB(0), nD(0), nC(0), 
   nh(0), nl(0), ngamma(0) {};
 
-RecoIndexer::RecoIndexer(
+RecoGraph::RecoIndexer::RecoIndexer(
     int _nY, int _nB, int _nD, 
     int _nC, int _nh, int _nl, int _ngamma) : 
     nY(_nY), nB(_nB), nD(_nD), nC(_nC), 
@@ -23,7 +23,7 @@ RecoIndexer::RecoIndexer(
 // C candidates: ... continue pattern.
 // h candidates: ... continue pattern.
 // gamma candidates: ... continue pattern.
-int RecoIndexer::operator()(int lund, int idx) const {
+int RecoGraph::RecoIndexer::operator()(int lund, int idx) const {
 
   int abslund = std::abs(lund);
   switch (abslund) {
@@ -54,7 +54,7 @@ int RecoIndexer::operator()(int lund, int idx) const {
   return -1;
 }
 
-void RecoIndexer::clear() {
+void RecoGraph::RecoIndexer::clear() {
   nY = 0;
   nB = 0;
   nD = 0;
@@ -64,7 +64,7 @@ void RecoIndexer::clear() {
   ngamma = 0;
 }
 
-void RecoIndexer::set(std::initializer_list<int> l) {
+void RecoGraph::RecoIndexer::set(std::initializer_list<int> l) {
 
   assert(l.size() == 7);
 

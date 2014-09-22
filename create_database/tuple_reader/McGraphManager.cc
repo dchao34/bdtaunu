@@ -8,7 +8,6 @@
 
 #include "BDtaunuDef.h"
 #include "GraphDef.h"
-#include "Particles.h"
 #include "BDtaunuMcReader.h"
 #include "McGraphManager.h"
 #include "BDtaunuGraphWriter.h"

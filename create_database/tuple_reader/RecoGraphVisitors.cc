@@ -3,7 +3,6 @@
 #include <cassert>
 
 #include "GraphDef.h"
-#include "Particles.h"
 #include "RecoGraphVisitors.h"
 #include "RecoGraphManager.h"
 
@@ -113,7 +112,7 @@ void RecoGraphDfsVisitor::AnalyzeDstar(const Vertex &u, const Graph &g) {
 }
 
 // Analyze "Leptons". These are either actual leptons are placeholder 
-// hadron for the tau of the B decay. See Particles.h for more info.
+// hadron for the tau of the B decay. See GraphDef.h for more info.
 // The quantities computed are:
 // 1. The tau decay mode. For actual leptons, this is what the 
 // tau mode would have been if it were actually from a tau decay. 

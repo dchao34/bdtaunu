@@ -13,10 +13,10 @@ LIBNAME = libTupleReader.so
 PKG_LIBPATH = lib
 
 # package Contents
-SOURCES = BDtaunuDef.cc \
+SOURCES = BDtaunuDef.cc GraphDef.cc \
           BDtaunuHelpers.cc UpsilonCandidate.cc \
 					RootReader.cc BDtaunuReader.cc BDtaunuMcReader.cc \
-					RecoIndexer.cc RecoGraphVisitors.cc RecoGraphManager.cc \
+					RecoGraphVisitors.cc RecoGraphManager.cc \
 					McGraphManager.cc McGraphVisitors.cc
 
 # Dependencies

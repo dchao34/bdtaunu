@@ -5,10 +5,8 @@
 #include <vector>
 #include <map>
 
-#include "GraphManager.h"
 #include "GraphDef.h"
-#include "Particles.h"
-#include "RecoIndexer.h"
+#include "GraphManager.h"
 #include "RecoGraphVisitors.h"
 
 class BDtaunuReader;
@@ -101,7 +99,7 @@ class BDtaunuReader;
  * #### Graph analysis
  * We use BGL's generic algorithms and visitor classes to analyze the graph. 
  * Since we are often interested in specific reco particles, we cache `map`s
- * of specific particles and its satellite data (see Particles.h); the contents of the 
+ * of specific particles and its satellite data (see GraphDef.h); the contents of the 
  * `map`s can be reported to the supervising class for analysis. 
  *
  */
@@ -137,8 +135,8 @@ class RecoGraphManager : public GraphManager {
     //! Get the unique reco particle index. See RecoIndexer.h.
     int get_reco_index(int lund, int i) const { return reco_indexer(lund, i); }
 
-    //! Access information about the `i`th Y candidate. See Particles.h.
-    const RecoY* get_recoY(int i) const;
+    //! Access information about the `i`th Y candidate. See GraphDef.h.
+    const RecoGraph::RecoY* get_recoY(int i) const;
 
   private:
 
@@ -149,7 +147,7 @@ class RecoGraphManager : public GraphManager {
     RecoGraph::Graph g;
 
     // Graph construction
-    RecoIndexer reco_indexer;
+    RecoGraph::RecoIndexer reco_indexer;
     std::map<int, RecoGraph::Vertex> reco_vertex_map;
     void ClearGraph();
     void AddCandidates(
@@ -158,10 +156,10 @@ class RecoGraphManager : public GraphManager {
         std::vector<int*> &CandDauLund);
 
     // Graph analysis
-    std::map<RecoGraph::Vertex, RecoY> Y_map;
-    std::map<RecoGraph::Vertex, RecoB> B_map;
-    std::map<RecoGraph::Vertex, RecoD> D_map;
-    std::map<RecoGraph::Vertex, RecoLepton> Lepton_map;
+    std::map<RecoGraph::Vertex, RecoGraph::RecoY> Y_map;
+    std::map<RecoGraph::Vertex, RecoGraph::RecoB> B_map;
+    std::map<RecoGraph::Vertex, RecoGraph::RecoD> D_map;
+    std::map<RecoGraph::Vertex, RecoGraph::RecoLepton> Lepton_map;
     void ClearAnalysis();
 };
 

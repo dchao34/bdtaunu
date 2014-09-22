@@ -7,7 +7,6 @@
 #include <boost/graph/graphviz.hpp>
 
 #include "GraphDef.h"
-#include "Particles.h"
 #include "BDtaunuReader.h"
 #include "RecoGraphManager.h"
 #include "BDtaunuGraphWriter.h"
@@ -127,7 +126,7 @@ void RecoGraphManager::AddCandidates(
   // Each vertex has the following information attached:
   // 
   // 1. vertex_reco_index: The unique reco particle index assigned by 
-  // reco_indxer (See RecoIndexer.h). This tracks which 
+  // reco_indexer (See GraphDef.h). This tracks which 
   // vertex a particlar reco particle is associated with. 
   //
   // 2. vertex_block_index: This is the index of where this reco particle 
