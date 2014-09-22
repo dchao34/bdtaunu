@@ -1,6 +1,9 @@
 #ifndef __BDTAUNUDEF_H__
 #define __BDTAUNUDEF_H__
 
+#include <vector>
+#include <custom_cpp_utilities/trie.h>
+
 /*! \file bdtaunu_definitions.h
  *  \brief Constants defined for this analysis.
  *
@@ -30,19 +33,136 @@ const int protonLund = 2212;
 const int neutronLund = 2112;
 
 //! B meson flavors.
-enum BFlavor {
-  kB0 = 1,                 /*!< \f$ B^0 \f$ */
-  kBc = 2,                 /*!< \f$ B^\pm \f$ */
-  kUndefinedBFlavor = -1,  /*!< Undefined */
+enum class BFlavor {
+  NoB = 0,                /*!< No \f$B\f$ meson. */
+  B0 = 1,                 /*!< \f$ B^0 \f$ */
+  Bc = 2,                 /*!< \f$ B^\pm \f$ */
+  null = -1,  /*!< Undefined */
+};
+
+class RecoDTypeCatalogue {
+
+  public:
+    enum class DType { 
+      Dc_Kpipi = 1,          /*!< \f$ D^+\rightarrow K^-\pi^+\pi^- \f$ */
+      Dc_Kpipipi0 = 2,       /*!< \f$ D^+\rightarrow K^-\pi^+\pi^-\pi^0 \f$ */
+      Dc_KsK = 3,            /*!< \f$ D^+\rightarrow K_s K^+ \f$ */
+      Dc_Kspi = 4,           /*!< \f$ D^+\rightarrow K_s\pi^+ \f$ */
+      Dc_Kspipi0 = 5,        /*!< \f$ D^+\rightarrow K_s\pi^+\pi^0 \f$ */
+      Dc_Kspipipi = 6,       /*!< \f$ D^+\rightarrow K_s\pi^+\pi^-\pi^+ \f$ */
+      Dc_KKpi = 7,           /*!< \f$ D^+\rightarrow K^+K^-\pi^+ \f$ */
+      D0_Kpi = 8,            /*!< \f$ D^0\rightarrow K^-\pi^+ \f$ */
+      D0_Kpipi0 = 9,         /*!< \f$ D^0\rightarrow K^-\pi^+\pi^0 \f$ */
+      D0_Kpipipi = 10,       /*!< \f$ D^0\rightarrow K^-\pi^+\pi^+\pi^- \f$ */
+      D0_Kpipipipi0 = 11,    /*!< \f$ D^0\rightarrow K^-\pi^+\pi^+\pi^-\pi^0 \f$ */
+      D0_Kspipi = 12,        /*!< \f$ D^0\rightarrow K_s\pi^+\pi^- \f$ */
+      D0_Kspipipi0 = 13,     /*!< \f$ D^0\rightarrow K_s\pi^+\pi^-\pi^0 \f$ */
+      D0_Kspi0 = 14,         /*!< \f$ D^0\rightarrow K_s\pi^0 \f$ */
+      D0_KK = 15,            /*!< \f$ D^0\rightarrow K^+K^- \f$ */
+      null = -1,             /*!< Undefined */
+    };
+
+    enum class DstarType {
+      NoDstar = 0,                  /*!< No \f$ D^* \f$ in \f$ B \f$ decay */
+      Dstar0_D0pi0 = 1,             /*!< \f$ D^{*0}\rightarrow D^0\pi^0 \f$ */
+      Dstar0_D0gamma = 2,           /*!< \f$ D^{*0}\rightarrow D^0\gamma \f$ */
+      Dstarc_D0pi = 3,              /*!< \f$ D^{*+}\rightarrow D^0\pi^+ \f$ */
+      Dstarc_Dcpi0 = 4,             /*!< \f$ D^{*+}\rightarrow D^+\pi^0 \f$ */
+      Dstarc_Dcgamma = 5,           /*!< \f$ D^{*+}\rightarrow D^+\gamma \f$ */
+      null = -1,                    /*!< Undefined */
+    };
+
+
+    DType search_d_catalogue(std::vector<int>) const;
+    DstarType search_dstar_catalogue(std::vector<int>) const;
+
+    RecoDTypeCatalogue() { RegisterDecays(); }
+    ~RecoDTypeCatalogue() {};
+
+  private:
+    enum class Alphabet { 
+      Dstarc, Dstar0, Dc, D0, K, Ks, pi, pi0, gamma, null = -1,
+    };
+
+    void RegisterDecays();
+    Alphabet LundToAlphabet(int lund) const;
+
+    custom_cpp_utilities::trie<Alphabet, DType, Alphabet::null, DType::null> d_catalogue;
+    custom_cpp_utilities::trie<Alphabet, DstarType, Alphabet::null, DstarType::null> dstar_catalogue;
+
 };
 
 //! Reconstructed tau decay modes.
-enum TauMode {
-  ktau_pi = 1,               /*!< \f$ \tau^+\rightarrow \pi^+ \f$ */
-  ktau_rho = 2,              /*!< \f$ \tau^+\rightarrow \rho^+ \f$ */
-  ktau_e = 3,               /*!< \f$ \tau^+\rightarrow \e^+ \f$ */
-  ktau_mu = 4,               /*!< \f$ \tau^+\rightarrow \mu^+ \f$ */
-  kUndefinedTauMode = -1,    /*!< Undefined */
+enum class TauType {
+  NoTau = 0,               /*!< \f$ \tau^+\rightarrow \pi^+ \f$ */
+  tau_pi = 1,              /*!< \f$ \tau^+\rightarrow \pi^+ \f$ */
+  tau_rho = 2,             /*!< \f$ \tau^+\rightarrow \rho^+ \f$ */
+  tau_e = 3,               /*!< \f$ \tau^+\rightarrow \e^+ \f$ */
+  tau_mu = 4,              /*!< \f$ \tau^+\rightarrow \mu^+ \f$ */
+  null = -1,               /*!< Undefined */
+};
+
+
+class McBTypeCatalogue {
+
+  public:
+    enum class BMcType { 
+      NoB = 0,
+      Dtau = 1,
+      Dstartau,
+      Dl,
+      Dstarl, 
+      Dstarstar_res,
+      Dstarstar_nonres,
+      SL,
+      Had,
+      null = -1,
+    };
+
+    BMcType search_catalogue(std::vector<int>) const;
+
+    McBTypeCatalogue() { RegisterDecays(); }
+    ~McBTypeCatalogue() {};
+
+  private:
+    enum class Alphabet { 
+      nu_ell, nu_tau, ell, tau, 
+      D, Dstar, Dstarstar, X, I, null = -1, 
+    };
+
+    void RegisterDecays();
+    Alphabet LundToAlphabet(int lund) const;
+
+    custom_cpp_utilities::trie<Alphabet, BMcType, Alphabet::null, BMcType::null> catalogue;
+
+};
+
+
+
+//! Truth \f$\tau\f$ MC Types. See Details. 
+/*! Truth \f$\tau\f$ MC Types for truth \f$B\f$'s decaying as 
+ * \f$B\rightarrow D^{(*)}\tau\nu_\tau\f$. Any other \f$B\f$ decay types
+ * will have this value undefined. */
+enum class TauMcType {
+
+  //! Truth \f$\tau\f$ decays as \f$\tau\rightarrow e+\nu_e+X\f$.
+  NoTau = 0, 
+
+  //! Truth \f$\tau\f$ decays as \f$\tau\rightarrow e+\nu_e+X\f$.
+  tau_e = 1, 
+
+  //! Truth \f$\tau\f$ decays as \f$\tau\rightarrow \mu+\nu_\mu+X\f$.
+  tau_mu = 2, 
+
+  //! Truth \f$\tau\f$ decays as \f$\tau\rightarrow K+X\f$.
+  tau_k = 3, 
+
+  //! Truth \f$\tau\f$ decays as \f$\tau\rightarrow X\f$.
+  /*! \f$X\f$ is any sequence of particles not involving \f$e, \mu, K\f$. */
+  tau_h = 4, 
+
+  //! Undefined \f$\tau\f$ MC type.
+  null = -1, 
 };
 
 //! Candidate types.
@@ -76,29 +196,6 @@ enum SampleType {
   kB0D = 2,                     /*!< \f$ B^d \rightarrow D \f$ */
   kB0Dstar = 3,                 /*!< \f$ B^d \rightarrow D^* \f$ */
   kUndefinedSampleType = -1,    /*!< Undefined */
-};
-
-//! Truth \f$\tau\f$ MC Types. See Details. 
-/*! Truth \f$\tau\f$ MC Types for truth \f$B\f$'s decaying as 
- * \f$B\rightarrow D^{(*)}\tau\nu_\tau\f$. Any other \f$B\f$ decay types
- * will have this value undefined. */
-enum TauMcType {
-
-  //! Truth \f$\tau\f$ decays as \f$\tau\rightarrow e+\nu_e+X\f$.
-  ktau_e_mc = 0, 
-
-  //! Truth \f$\tau\f$ decays as \f$\tau\rightarrow \mu+\nu_\mu+X\f$.
-  ktau_mu_mc = 1, 
-
-  //! Truth \f$\tau\f$ decays as \f$\tau\rightarrow K+X\f$.
-  ktau_k_mc = 2, 
-
-  //! Truth \f$\tau\f$ decays as \f$\tau\rightarrow X\f$.
-  /*! \f$X\f$ is any sequence of particles not involving \f$e, \mu, K\f$. */
-  ktau_h_mc = 3, 
-
-  //! Undefined \f$\tau\f$ MC type.
-  kUndefinedTauMcType = -1, 
 };
 
 

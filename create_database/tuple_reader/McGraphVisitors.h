@@ -13,8 +13,8 @@
 
 #include <boost/graph/depth_first_search.hpp>
 
+#include "BDtaunuDef.h"
 #include "GraphDef.h"
-#include "McBTypeCatalogue.h"
 
 class McGraphManager;
 
@@ -54,7 +54,7 @@ class McGraphDfsVisitor : public boost::default_dfs_visitor {
     void finish_vertex(McGraph::Vertex u, const McGraph::Graph &g);
 
   private:
-    static const McBTypeCatalogue mcB_catalogue;
+    static const bdtaunu::McBTypeCatalogue mcB_catalogue;
 
   private:
     McGraphManager *manager = nullptr;

@@ -12,8 +12,8 @@
  */
 #include <boost/graph/depth_first_search.hpp>
 
+#include "BDtaunuDef.h"
 #include "GraphDef.h"
-#include "RecoDTypeCatalogue.h"
 
 class RecoGraphManager;
 
@@ -54,7 +54,7 @@ class RecoGraphDfsVisitor : public boost::default_dfs_visitor {
     void finish_vertex(RecoGraph::Vertex u, const RecoGraph::Graph &g);
 
   private:
-    static const RecoDTypeCatalogue recoD_catalogue;
+    static const bdtaunu::RecoDTypeCatalogue recoD_catalogue;
 
   private:
     RecoGraphManager *manager = nullptr;

@@ -2,14 +2,15 @@
 #include <cassert> 
 
 #include "BDtaunuDef.h"
-#include "RecoDTypeCatalogue.h"
 #include "UpsilonCandidate.h"
+
+using namespace bdtaunu;
 
 UpsilonCandidate::UpsilonCandidate() :
   eventId(""),
   block_index(-999),
   reco_index(-1),
-  bflavor(bdtaunu::kUndefinedBFlavor),
+  bflavor(static_cast<int>(BFlavor::null)),
   eextra50(-999),
   mmiss_prime2(-999),
   cosThetaT(-999),
@@ -36,7 +37,7 @@ UpsilonCandidate::UpsilonCandidate() :
   sig_vtxh(-999),
   sig_d_mode(static_cast<int>(RecoDTypeCatalogue::DType::null)),
   sig_dstar_mode(static_cast<int>(RecoDTypeCatalogue::DstarType::null)),
-  sig_tau_mode(bdtaunu::kUndefinedTauMode),
+  sig_tau_mode(static_cast<int>(TauType::null)),
   h_ePidMap(0),
   h_muPidMap(0) {}
 
@@ -158,12 +159,12 @@ void UpsilonCandidate::copy_candidate(const UpsilonCandidate &cand) {
 // Examine the D, D*, and tau modes to determine the candidate type. 
 int UpsilonCandidate::get_cand_type() const {
 
-  assert(sig_tau_mode != bdtaunu::kUndefinedTauMode);
+  assert(sig_tau_mode != static_cast<int>(TauType::null));
   assert(tag_dstar_mode != static_cast<int>(RecoDTypeCatalogue::DstarType::null));
   assert(sig_dstar_mode != static_cast<int>(RecoDTypeCatalogue::DstarType::null));
 
   int cand_type = 0;
-  if (sig_tau_mode == bdtaunu::ktau_rho)
+  if (sig_tau_mode == static_cast<int>(TauType::tau_rho))
     cand_type += (1 << 2);
   if (tag_dstar_mode != static_cast<int>(RecoDTypeCatalogue::DstarType::NoDstar))
     cand_type += (1 << 1);
@@ -178,11 +179,11 @@ int UpsilonCandidate::get_cand_type() const {
 // sample type. 
 int UpsilonCandidate::get_sample_type() const {
 
-  assert(bflavor != bdtaunu::kUndefinedBFlavor);
+  assert(bflavor != static_cast<int>(BFlavor::null));
   assert(sig_dstar_mode != static_cast<int>(RecoDTypeCatalogue::DstarType::null));
 
   int sample_type = 0;
-  if (bflavor == bdtaunu::kB0) 
+  if (bflavor == static_cast<int>(BFlavor::B0))
     sample_type += (1 << 1);
   if (sig_dstar_mode != static_cast<int>(RecoDTypeCatalogue::DstarType::NoDstar))
     sample_type += 1;

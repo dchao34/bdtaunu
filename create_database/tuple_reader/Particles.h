@@ -3,8 +3,6 @@
 
 #include "BDtaunuDef.h"
 #include "GraphDef.h"
-#include "RecoDTypeCatalogue.h"
-#include "McBTypeCatalogue.h"
 
 /** @file Particles.h 
  * Information of specific types of particles that are computed
@@ -23,21 +21,21 @@ struct RecoY {
 
 struct RecoB {
   RecoB() = default;
-  int flavor = bdtaunu::kUndefinedBFlavor;
+  int flavor = static_cast<int>(bdtaunu::BFlavor::null);
   RecoD *D = nullptr;
   RecoLepton *Lepton = nullptr;
 };
 
 struct RecoD {
   RecoD() = default;
-  int D_mode = static_cast<int>(RecoDTypeCatalogue::DType::null);
-  int Dstar_mode = static_cast<int>(RecoDTypeCatalogue::DstarType::NoDstar);
+  int D_mode = static_cast<int>(bdtaunu::RecoDTypeCatalogue::DType::null);
+  int Dstar_mode = static_cast<int>(bdtaunu::RecoDTypeCatalogue::DstarType::NoDstar);
 };
 
 struct RecoLepton {
   int l_block_idx = -1;
   int pi_block_idx = -1;
-  int tau_mode = bdtaunu::kUndefinedTauMode;
+  int tau_mode = static_cast<int>(bdtaunu::TauType::null);
 };
 
 struct McB;
@@ -52,14 +50,14 @@ struct McY {
 
 struct McB {
   McB() = default;
-  int flavor = bdtaunu::kUndefinedBFlavor;
-  int mc_type = static_cast<int>(McBTypeCatalogue::BType::null);
+  int flavor = static_cast<int>(bdtaunu::BFlavor::null);
+  int mc_type = static_cast<int>(bdtaunu::McBTypeCatalogue::BMcType::null);
   McTau *tau = nullptr;
 };
 
 struct McTau {
   McTau() = default;
-  int mc_type = bdtaunu::kUndefinedTauMcType;
+  int mc_type = static_cast<int>(bdtaunu::TauMcType::null);
 };
 
 #endif

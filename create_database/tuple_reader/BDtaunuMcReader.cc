@@ -8,9 +8,9 @@
 #include "BDtaunuReader.h"
 #include "BDtaunuMcReader.h"
 #include "McGraphManager.h"
-#include "McBTypeCatalogue.h"
 
 using namespace boost;
+using namespace bdtaunu;
 
 const int BDtaunuMcReader::max_mc_length = 100;
 
@@ -56,10 +56,10 @@ void BDtaunuMcReader::AllocateBuffer() {
 void BDtaunuMcReader::ClearBuffer() {
   mcLen = -999;
   continuum = true;
-  b1_mctype = static_cast<int>(McBTypeCatalogue::BType::NoB);
-  b2_mctype = static_cast<int>(McBTypeCatalogue::BType::NoB);
-  b1_tau_mctype = bdtaunu::kUndefinedTauMcType;
-  b2_tau_mctype = bdtaunu::kUndefinedTauMcType;
+  b1_mctype = static_cast<int>(McBTypeCatalogue::BMcType::NoB);
+  b2_mctype = static_cast<int>(McBTypeCatalogue::BMcType::NoB);
+  b1_tau_mctype = static_cast<int>(TauMcType::null);
+  b2_tau_mctype = static_cast<int>(TauMcType::null);
 }
 
 // Free the buffer. Used for destructor. 

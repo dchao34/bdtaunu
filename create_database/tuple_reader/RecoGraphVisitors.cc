@@ -6,10 +6,10 @@
 #include "Particles.h"
 #include "RecoGraphVisitors.h"
 #include "RecoGraphManager.h"
-#include "RecoDTypeCatalogue.h"
 
 using namespace boost;
 using namespace RecoGraph;
+using namespace bdtaunu;
 
 RecoGraphDfsVisitor::RecoGraphDfsVisitor(RecoGraphManager *_manager) 
   : manager(_manager) {
@@ -131,18 +131,18 @@ void RecoGraphDfsVisitor::AnalyzeLepton(const Vertex &u, const Graph &g) {
     case bdtaunu::eLund:
       recoLepton.l_block_idx = block_idx_map[u];
       recoLepton.pi_block_idx = -1;
-      recoLepton.tau_mode = bdtaunu::ktau_e;
+      recoLepton.tau_mode = static_cast<int>(bdtaunu::TauType::tau_e);
 
     case bdtaunu::muLund:
       recoLepton.l_block_idx = block_idx_map[u];
       recoLepton.pi_block_idx = -1;
-      recoLepton.tau_mode = bdtaunu::ktau_mu;
+      recoLepton.tau_mode = static_cast<int>(bdtaunu::TauType::tau_mu);
       break;
 
     case bdtaunu::piLund:
       recoLepton.l_block_idx = -1;
       recoLepton.pi_block_idx = block_idx_map[u];
-      recoLepton.tau_mode = bdtaunu::ktau_pi;
+      recoLepton.tau_mode = static_cast<int>(bdtaunu::TauType::tau_pi);
       break;
 
     // when a rho is encountered, scan its daughters to find the pion.
@@ -154,7 +154,7 @@ void RecoGraphDfsVisitor::AnalyzeLepton(const Vertex &u, const Graph &g) {
           break;
         }
       }
-      recoLepton.tau_mode = bdtaunu::ktau_rho;
+      recoLepton.tau_mode = static_cast<int>(bdtaunu::TauType::tau_rho);
       break;
 
     default:
@@ -175,9 +175,9 @@ void RecoGraphDfsVisitor::AnalyzeB(const Vertex &u, const Graph &g) {
   RecoB recoB;
 
   if (abs(get(lund_map, u)) == bdtaunu::B0Lund) {
-    recoB.flavor = bdtaunu::kB0;
+    recoB.flavor = static_cast<int>(bdtaunu::BFlavor::B0);
   } else {
-    recoB.flavor = bdtaunu::kBc;
+    recoB.flavor = static_cast<int>(bdtaunu::BFlavor::Bc);
   }
 
   AdjacencyIterator ai, ai_end;

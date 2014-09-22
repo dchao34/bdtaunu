@@ -7,9 +7,9 @@
 #include "Particles.h"
 #include "McGraphVisitors.h"
 #include "McGraphManager.h"
-#include "McBTypeCatalogue.h"
 
 using namespace boost;
+using namespace bdtaunu;
 using namespace McGraph;
 
 McGraphDfsVisitor::McGraphDfsVisitor(McGraphManager *_manager) 
@@ -24,14 +24,14 @@ const McBTypeCatalogue McGraphDfsVisitor::mcB_catalogue = McBTypeCatalogue();
 void McGraphDfsVisitor::finish_vertex(Vertex u, const Graph &g) {
   int lund = std::abs(get(lund_map, u));
   switch (lund) {
-    case bdtaunu::UpsilonLund:
+    case UpsilonLund:
       AnalyzeY(u, g);
       break;
-    case bdtaunu::B0Lund:
-    case bdtaunu::BcLund:
+    case B0Lund:
+    case BcLund:
       AnalyzeB(u, g);
       break;
-    case bdtaunu::tauLund:
+    case tauLund:
       AnalyzeTau(u, g);
       break;
     default:
@@ -52,8 +52,8 @@ void McGraphDfsVisitor::AnalyzeY(const Vertex &u, const Graph &g) {
 
     int lund = abs(get(lund_map, *ai));
     switch (lund) {
-      case bdtaunu::B0Lund:
-      case bdtaunu::BcLund:
+      case B0Lund:
+      case BcLund:
         (mcY.B1 == nullptr) ? 
           (mcY.B1 = &(manager->B_map)[*ai]) : 
           (mcY.B2 = &(manager->B_map)[*ai]);
@@ -75,10 +75,10 @@ void McGraphDfsVisitor::AnalyzeB(const Vertex &u, const Graph &g) {
 
   McB mcB;
 
-  if (abs(get(lund_map, u)) == bdtaunu::B0Lund) {
-    mcB.flavor = bdtaunu::kB0;
+  if (abs(get(lund_map, u)) == B0Lund) {
+    mcB.flavor = static_cast<int>(BFlavor::B0);
   } else {
-    mcB.flavor = bdtaunu::kBc;
+    mcB.flavor = static_cast<int>(BFlavor::Bc);
   }
 
   std::vector<int> daulund_list;
@@ -86,7 +86,7 @@ void McGraphDfsVisitor::AnalyzeB(const Vertex &u, const Graph &g) {
   for (tie(ai, ai_end) = adjacent_vertices(u, g); ai != ai_end; ++ai) {
     int lund = get(lund_map, *ai);
     switch (abs(lund)) {
-      case bdtaunu::tauLund:
+      case tauLund:
         mcB.tau = &(manager->Tau_map)[*ai];
       default:
         daulund_list.push_back(lund);
@@ -106,14 +106,14 @@ void McGraphDfsVisitor::AnalyzeTau(const Vertex &u, const Graph &g) {
   AdjacencyIterator ai, ai_end;
   for (tie(ai, ai_end) = adjacent_vertices(u, g); ai != ai_end; ++ai) {
     int lund = abs(get(lund_map, *ai));
-    if (lund == bdtaunu::eLund) {
-      mcTau.mc_type = bdtaunu::ktau_e_mc;
+    if (lund == eLund) {
+      mcTau.mc_type = static_cast<int>(TauMcType::tau_e);
       break;
-    } else if (lund == bdtaunu::muLund) {
-      mcTau.mc_type = bdtaunu::ktau_mu_mc;
+    } else if (lund == muLund) {
+      mcTau.mc_type = static_cast<int>(TauMcType::tau_mu);
       break;
     } else {
-      mcTau.mc_type = bdtaunu::ktau_h_mc;
+      mcTau.mc_type = static_cast<int>(TauMcType::tau_h);
     }
   }
 
