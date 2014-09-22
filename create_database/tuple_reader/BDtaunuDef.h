@@ -4,19 +4,22 @@
 #include <vector>
 #include <custom_cpp_utilities/trie.h>
 
-/*! \file bdtaunu_definitions.h
- *  \brief Constants defined for this analysis.
+/** @file BDtaunuDef.h
+ *  @brief Definitions of relevant quantities to the \f$B\rightarrow D\tau\nu\f$ analysis. 
  *
- *  This file contains any constants and enumerations that are used
- *  throughout the analysis package.
+ *  Several types of quantities are defined in this file:
+ *  * Constants used throughout the analysis. 
+ *  * Particle decay modes. 
+ *
  */
 
 namespace bdtaunu {
 
-const int UpsilonLund = 70553;
-const int B0Lund = 511;
-const int BcLund = 521;
-const int D0Lund = 421;
+// Lund ID of frequently encountered particles.
+const int UpsilonLund = 70553;    
+const int B0Lund = 511;          
+const int BcLund = 521;         
+const int D0Lund = 421;        
 const int DcLund = 411;
 const int Dstar0Lund = 423;
 const int DstarcLund = 413;
@@ -32,6 +35,7 @@ const int gammaLund = 22;
 const int protonLund = 2212;
 const int neutronLund = 2112;
 
+
 //! B meson flavors.
 enum class BFlavor {
   NoB = 0,                /*!< No \f$B\f$ meson. */
@@ -40,6 +44,8 @@ enum class BFlavor {
   null = -1,  /*!< Undefined */
 };
 
+
+//! \f$D/D^*\f$ modes that are reconstructed. 
 class RecoDTypeCatalogue {
 
   public:
@@ -73,7 +79,10 @@ class RecoDTypeCatalogue {
     };
 
 
+    //! Given a vector of \f$D\f$ daughters, return its decay mode or null.
     DType search_d_catalogue(std::vector<int>) const;
+
+    //! Given a vector of \f$D^*\f$ daughters, return its decay mode or null.
     DstarType search_dstar_catalogue(std::vector<int>) const;
 
     RecoDTypeCatalogue() { RegisterDecays(); }
@@ -92,7 +101,7 @@ class RecoDTypeCatalogue {
 
 };
 
-//! Reconstructed tau decay modes.
+//! \f$\tau\f$ modes that are reconstructed. 
 enum class TauType {
   NoTau = 0,               /*!< \f$ \tau^+\rightarrow \pi^+ \f$ */
   tau_pi = 1,              /*!< \f$ \tau^+\rightarrow \pi^+ \f$ */
@@ -103,9 +112,12 @@ enum class TauType {
 };
 
 
+//! Monte carlo truth \f$B\f$ meson types. 
 class McBTypeCatalogue {
 
   public:
+
+    //! See BDtaunuDef.cc for definitions. 
     enum class BMcType { 
       NoB = 0,
       Dtau = 1,
@@ -119,6 +131,7 @@ class McBTypeCatalogue {
       null = -1,
     };
 
+    //! Given a vector of \f$B^*\f$ daughters, return its MC type or null.
     BMcType search_catalogue(std::vector<int>) const;
 
     McBTypeCatalogue() { RegisterDecays(); }

@@ -111,13 +111,13 @@ class McGraphManager : public GraphManager {
     void clear();
 
     //! Returns pointer to the MC truth \f$\Upsilon(4S)\f$ if it exists, nullptr otherwise.
-    const McGraph::McY* get_mcY() const;
+    const McGraph::Y* get_mcY() const;
 
     //! Returns pointer to one of the MC truth \f$B\f$ if it exists, nullptr otherwise.
-    const McGraph::McB* get_mcB1() const;
+    const McGraph::B* get_mcB1() const;
 
     //! Returns pointer to the other MC truth \f$B\f$ if it exists, nullptr otherwise.
-    const McGraph::McB* get_mcB2() const;
+    const McGraph::B* get_mcB2() const;
 
   private:
 
@@ -137,9 +137,9 @@ class McGraphManager : public GraphManager {
     void ClearGraph();
 
     // Graph analysis
-    std::map<McGraph::Vertex, McGraph::McY> Y_map;
-    std::map<McGraph::Vertex, McGraph::McB> B_map;
-    std::map<McGraph::Vertex, McGraph::McTau> Tau_map;
+    std::map<McGraph::Vertex, McGraph::Y> Y_map;
+    std::map<McGraph::Vertex, McGraph::B> B_map;
+    std::map<McGraph::Vertex, McGraph::Tau> Tau_map;
     void ClearAnalysis();
 
 };

@@ -92,13 +92,13 @@ void RecoGraphManager::analyze_graph() {
 }
 
 // Access statistics of the ith Y candidate that are computed from graph analysis.
-const RecoY* RecoGraphManager::get_recoY(int i) const { 
+const Y* RecoGraphManager::get_recoY(int i) const { 
 
   std::map<int, RecoGraph::Vertex>::const_iterator reco_vertex_it;
   reco_vertex_it = reco_vertex_map.find(reco_indexer(bdtaunu::UpsilonLund, i));
   assert(reco_vertex_it != reco_vertex_map.end());
 
-  std::map<Vertex, RecoY>::const_iterator y_it;
+  std::map<Vertex, Y>::const_iterator y_it;
   y_it = Y_map.find(reco_vertex_it->second);
   assert(y_it != Y_map.end());
 

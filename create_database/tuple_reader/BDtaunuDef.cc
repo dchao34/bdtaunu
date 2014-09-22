@@ -7,6 +7,9 @@
 
 using namespace bdtaunu;
 
+// RecoDType
+// ---------
+
 RecoDTypeCatalogue::DType 
 RecoDTypeCatalogue::search_d_catalogue(std::vector<int> lund_list) const {
   std::vector<Alphabet> word;
@@ -24,6 +27,7 @@ RecoDTypeCatalogue::search_dstar_catalogue(std::vector<int> lund_list) const {
   word.push_back(Alphabet::null);
   return dstar_catalogue.find(word);
 }
+
 
 void RecoDTypeCatalogue::RegisterDecays() {
 
@@ -167,12 +171,8 @@ RecoDTypeCatalogue::Alphabet RecoDTypeCatalogue::LundToAlphabet(int lund) const 
 }
 
 
-
-
-
-
-
-
+// McBType
+// -------
 
 McBTypeCatalogue::BMcType 
 McBTypeCatalogue::search_catalogue(std::vector<int> lund_list) const {

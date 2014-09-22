@@ -123,7 +123,7 @@ void McGraphManager::analyze_graph() {
   return;
 }
 
-const McY* McGraphManager::get_mcY() const {
+const Y* McGraphManager::get_mcY() const {
   if (Y_map.size()) {
     return &Y_map.begin()->second;
   } else {
@@ -131,7 +131,7 @@ const McY* McGraphManager::get_mcY() const {
   }
 }
 
-const McB* McGraphManager::get_mcB1() const {
+const B* McGraphManager::get_mcB1() const {
   if (B_map.size()) {
     return &B_map.begin()->second;
   } else {
@@ -139,7 +139,7 @@ const McB* McGraphManager::get_mcB1() const {
   }
 }
 
-const McB* McGraphManager::get_mcB2() const {
+const B* McGraphManager::get_mcB2() const {
   if (B_map.size()) {
     return &(++B_map.begin())->second;
   } else {

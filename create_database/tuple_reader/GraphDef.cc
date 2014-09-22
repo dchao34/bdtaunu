@@ -6,6 +6,9 @@
 #include <cassert>
 #include <initializer_list>
 
+// RecoIndexer
+// -----------
+
 RecoGraph::RecoIndexer::RecoIndexer() : 
   nY(0), nB(0), nD(0), nC(0), 
   nh(0), nl(0), ngamma(0) {};

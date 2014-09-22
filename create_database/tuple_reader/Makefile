@@ -14,7 +14,7 @@ PKG_LIBPATH = lib
 
 # package Contents
 SOURCES = BDtaunuDef.cc GraphDef.cc \
-          BDtaunuHelpers.cc UpsilonCandidate.cc \
+          BDtaunuUtils.cc UpsilonCandidate.cc \
 					RootReader.cc BDtaunuReader.cc BDtaunuMcReader.cc \
 					RecoGraphVisitors.cc RecoGraphManager.cc \
 					McGraphManager.cc McGraphVisitors.cc

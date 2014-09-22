@@ -44,7 +44,7 @@ void McGraphDfsVisitor::finish_vertex(Vertex u, const Graph &g) {
 // 1. Pointers to the daughter B mesons.
 void McGraphDfsVisitor::AnalyzeY(const Vertex &u, const Graph &g) {
 
-  McY mcY;
+  Y mcY;
 
   AdjacencyIterator ai, ai_end;
   for (tie(ai, ai_end) = adjacent_vertices(u, g); ai != ai_end; ++ai) {
@@ -72,7 +72,7 @@ void McGraphDfsVisitor::AnalyzeY(const Vertex &u, const Graph &g) {
 // 3. MC type. See GraphDef.h.
 void McGraphDfsVisitor::AnalyzeB(const Vertex &u, const Graph &g) {
 
-  McB mcB;
+  B mcB;
 
   if (abs(get(lund_map, u)) == B0Lund) {
     mcB.flavor = static_cast<int>(BFlavor::B0);
@@ -100,7 +100,7 @@ void McGraphDfsVisitor::AnalyzeB(const Vertex &u, const Graph &g) {
 // 1. MC type. See GraphDef.h.
 void McGraphDfsVisitor::AnalyzeTau(const Vertex &u, const Graph &g) {
 
-  McTau mcTau;
+  Tau mcTau;
 
   AdjacencyIterator ai, ai_end;
   for (tie(ai, ai_end) = adjacent_vertices(u, g); ai != ai_end; ++ai) {

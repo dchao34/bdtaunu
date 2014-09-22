@@ -54,7 +54,7 @@ void RecoGraphDfsVisitor::finish_vertex(Vertex u, const Graph &g) {
 // 1. D reconstruction mode. See RecoDTypeCatalogue.h for the definitions.
 void RecoGraphDfsVisitor::AnalyzeD(const Vertex &u, const Graph &g) {
 
-  RecoD recoD;
+  D recoD;
 
   // Compute D reconstruction mode. Scan all of its daughters and 
   // look up the mode in recoD_catalogue. 
@@ -77,7 +77,7 @@ void RecoGraphDfsVisitor::AnalyzeD(const Vertex &u, const Graph &g) {
 // 2. Daughter D meson's reconstructed mode.
 void RecoGraphDfsVisitor::AnalyzeDstar(const Vertex &u, const Graph &g) {
 
-  RecoD recoD;
+  D recoD;
 
   // Scan all daughters and do the following:
   // 1. Look up Dstar mode in recoD_catalogue. 
@@ -120,7 +120,7 @@ void RecoGraphDfsVisitor::AnalyzeDstar(const Vertex &u, const Graph &g) {
 // used to access PID information later. 
 void RecoGraphDfsVisitor::AnalyzeLepton(const Vertex &u, const Graph &g) {
 
-  RecoLepton recoLepton;
+  Lepton recoLepton;
 
   // Scan all daughters
   AdjacencyIterator ai, ai_end;
@@ -171,7 +171,7 @@ void RecoGraphDfsVisitor::AnalyzeLepton(const Vertex &u, const Graph &g) {
 // the cache of the supervisor class (See BDtaunuReader.h). 
 void RecoGraphDfsVisitor::AnalyzeB(const Vertex &u, const Graph &g) {
 
-  RecoB recoB;
+  B recoB;
 
   if (abs(get(lund_map, u)) == bdtaunu::B0Lund) {
     recoB.flavor = static_cast<int>(bdtaunu::BFlavor::B0);
@@ -213,7 +213,7 @@ void RecoGraphDfsVisitor::AnalyzeB(const Vertex &u, const Graph &g) {
 // the cache of the supervisor class (See BDtaunuReader.h). 
 void RecoGraphDfsVisitor::AnalyzeY(const Vertex &u, const Graph &g) {
 
-  RecoY recoY;
+  Y recoY;
 
   AdjacencyIterator ai, ai_end;
   for (tie(ai, ai_end) = adjacent_vertices(u, g); ai != ai_end; ++ai) {

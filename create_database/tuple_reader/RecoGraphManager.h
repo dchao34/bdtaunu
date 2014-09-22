@@ -136,7 +136,7 @@ class RecoGraphManager : public GraphManager {
     int get_reco_index(int lund, int i) const { return reco_indexer(lund, i); }
 
     //! Access information about the `i`th Y candidate. See GraphDef.h.
-    const RecoGraph::RecoY* get_recoY(int i) const;
+    const RecoGraph::Y* get_recoY(int i) const;
 
   private:
 
@@ -156,10 +156,10 @@ class RecoGraphManager : public GraphManager {
         std::vector<int*> &CandDauLund);
 
     // Graph analysis
-    std::map<RecoGraph::Vertex, RecoGraph::RecoY> Y_map;
-    std::map<RecoGraph::Vertex, RecoGraph::RecoB> B_map;
-    std::map<RecoGraph::Vertex, RecoGraph::RecoD> D_map;
-    std::map<RecoGraph::Vertex, RecoGraph::RecoLepton> Lepton_map;
+    std::map<RecoGraph::Vertex, RecoGraph::Y> Y_map;
+    std::map<RecoGraph::Vertex, RecoGraph::B> B_map;
+    std::map<RecoGraph::Vertex, RecoGraph::D> D_map;
+    std::map<RecoGraph::Vertex, RecoGraph::Lepton> Lepton_map;
     void ClearAnalysis();
 };
 

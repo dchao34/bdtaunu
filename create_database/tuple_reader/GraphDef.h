@@ -6,6 +6,15 @@
 
 #include "BDtaunuDef.h"
 
+/** @file GraphDef.h
+ *  @brief Definition of graph quantities used in the tuple analysis. 
+ *
+ *  Several types of quantities are defined in this file:
+ *  * Boost graph typedefs.
+ *  * Graph satallite data. e.g. particle satellite data attached to vertices. 
+ *
+ */
+
 namespace boost {
   enum vertex_lund_id_t { vertex_lund_id };
   BOOST_INSTALL_PROPERTY(vertex, lund_id);
@@ -18,8 +27,15 @@ namespace boost {
   BOOST_INSTALL_PROPERTY(vertex, block_index);
 }
 
+namespace boost {
+  enum vertex_mc_index_t { vertex_mc_index };
+  BOOST_INSTALL_PROPERTY(vertex, mc_index);
+}
+
+//! Quantities for the reconstructed particle graph. 
 namespace RecoGraph {
 
+// Boost graph typedefs
 typedef boost::adjacency_list<
   boost::vecS, boost::vecS, boost::directedS,
   boost::property<boost::vertex_reco_index_t, int,
@@ -36,30 +52,42 @@ typedef typename boost::property_map<Graph, boost::vertex_lund_id_t>::type LundI
 typedef typename boost::property_map<Graph, boost::vertex_reco_index_t>::type RecoIndexPropertyMap;
 typedef typename boost::property_map<Graph, boost::vertex_block_index_t>::type BlockIndexPropertyMap;
 
-struct RecoLepton {
+//! Data attached to vertices of reconstructed leptons. 
+/** Leptons can be actual leptons or placeholder tau leptons 
+ * which are either \f$\pi\f$ or \f$\rho\f$ mesons. 
+ */
+struct Lepton {
   int l_block_idx = -1;
   int pi_block_idx = -1;
   int tau_mode = static_cast<int>(bdtaunu::TauType::null);
 };
 
-struct RecoD {
-  RecoD() = default;
+//! Data attached to vertices of reconstructed \f$D/D^*\f$ mesons. 
+/** This stores information for both \f$D\f$ and \f$D^*\f$ mesons. 
+ * For \f$D^*\f$'s all entries are filled. For \f$D\f$'s, the `Dstar_mode`
+ * entry will indicate `NoDstar` as in RecoDTypeCatalogue::DstarType.
+ */
+struct D {
+  D() = default;
   int D_mode = static_cast<int>(bdtaunu::RecoDTypeCatalogue::DType::null);
   int Dstar_mode = static_cast<int>(bdtaunu::RecoDTypeCatalogue::DstarType::NoDstar);
 };
 
-struct RecoB {
-  RecoB() = default;
+//! Data attached to vertices of reconstructed \f$B\f$ mesons. 
+struct B {
+  B() = default;
   int flavor = static_cast<int>(bdtaunu::BFlavor::null);
-  RecoD *D = nullptr;
-  RecoLepton *Lepton = nullptr;
+  D *D = nullptr;
+  Lepton *Lepton = nullptr;
 };
 
-struct RecoY {
-  RecoY() = default;
-  RecoB *tagB = nullptr;
-  RecoB *sigB = nullptr;
+//! Data attached to vertices of reconstructed \f$\Upsilon(4S)\f$ mesons. 
+struct Y {
+  Y() = default;
+  B *tagB = nullptr;
+  B *sigB = nullptr;
 };
+
 
 /** @brief This class assigns a unique index to each reconstructed particle.
  *
@@ -106,22 +134,10 @@ class RecoIndexer {
 }
 
 
-
-
-
-
-
-
-
-
-
-namespace boost {
-  enum vertex_mc_index_t { vertex_mc_index };
-  BOOST_INSTALL_PROPERTY(vertex, mc_index);
-}
-
+//! Quantities for the MC truth particle graph. 
 namespace McGraph {
 
+// Boost graph typedefs
 typedef boost::adjacency_list<
   boost::vecS, boost::vecS, boost::directedS,
   boost::property<boost::vertex_mc_index_t, int,
@@ -136,23 +152,26 @@ typedef typename boost::graph_traits<Graph>::adjacency_iterator AdjacencyIterato
 typedef typename boost::property_map<Graph, boost::vertex_lund_id_t>::type LundIdPropertyMap;
 typedef typename boost::property_map<Graph, boost::vertex_mc_index_t>::type McIndexPropertyMap;
 
-struct McTau {
-  McTau() = default;
+//! Data attached to vertices of \f$\tau\f$ leptons. 
+struct Tau {
+  Tau() = default;
   int mc_type = static_cast<int>(bdtaunu::TauMcType::null);
 };
 
-struct McB {
-  McB() = default;
+//! Data attached to vertices of \f$B\f$ mesons. 
+struct B {
+  B() = default;
   int flavor = static_cast<int>(bdtaunu::BFlavor::null);
   int mc_type = static_cast<int>(bdtaunu::McBTypeCatalogue::BMcType::null);
-  McTau *tau = nullptr;
+  Tau *tau = nullptr;
 };
 
-struct McY {
-  McY() = default;
+//! Data attached to vertices of \f$\Upsilon(4S)\f$ mesons. 
+struct Y {
+  Y() = default;
   bool isBBbar = true;
-  McB *B1 = nullptr;
-  McB *B2 = nullptr;
+  B *B1 = nullptr;
+  B *B2 = nullptr;
 };
 
 }
