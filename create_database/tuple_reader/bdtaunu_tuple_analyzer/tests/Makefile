@@ -16,8 +16,8 @@ BINARIES = mcreader_test1 mcreader_test2 mcreader_test3
 
 # tuple_reader 
 TUPLE_READER_LIBNAME = -lTupleReader
-TUPLE_READER_INC_PATH = ../
-TUPLE_READER_LIB_PATH = ../lib
+TUPLE_READER_INC_PATH = ../../
+TUPLE_READER_LIB_PATH = ../../lib
 INCFLAGS += -I $(TUPLE_READER_INC_PATH)
 LDFLAGS += -L $(TUPLE_READER_LIB_PATH) $(TUPLE_READER_LIBNAME)
 

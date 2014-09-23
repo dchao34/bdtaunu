@@ -6,9 +6,9 @@
 #include <utility> 
 #include <cassert> 
 
-#include "BDtaunuDef.h"
-#include "BDtaunuMcReader.h"
-#include "UpsilonCandidate.h"
+#include <bdtaunu_tuple_analyzer/BDtaunuDef.h>
+#include <bdtaunu_tuple_analyzer/BDtaunuMcReader.h>
+#include <bdtaunu_tuple_analyzer/UpsilonCandidate.h>
 
 using namespace std;
 
@@ -67,20 +67,20 @@ int main() {
   ofstream reco_output;
   ofstream mc_output;
 
-  // Generic tests
+  // SigMC tests
   // -----------
 
-  cout << "Generic MC tests: " << endl;
+  cout << "Signal MC tests: " << endl;
   cout << endl;
 
-  // sp1235r1
+  // sp11444r1
   // ---------
-  cout << "sp1235r1: " << endl;
+  cout << "sp11444r1: " << endl;
   cout << endl;
 
   // Event 0
   // -------
-  BDtaunuMcReader *reader = new BDtaunuMcReader("/Users/dchao/bdtaunu/v4/data/root/generic/aug_12_2014/sp1235r1.root");
+  BDtaunuMcReader *reader = new BDtaunuMcReader("/Users/dchao/bdtaunu/v4/data/root/signal/aug_12_2014/A/sp11444r1.root");
   reader->next_record();
   vector<UpsilonCandidate> upsilons = reader->get_upsilon_candidates();
 
@@ -101,12 +101,40 @@ int main() {
   cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[0].get_sig_dstar_mode())] << endl;
   cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[0].get_sig_tau_mode())] << endl;
   cout << endl;
+  cout << "\t\tCandidate 1: " << endl;
+  cout << "\t\t\ttag D mode: " << d_map[static_cast<int>(upsilons[1].get_tag_d_mode())] << endl;
+  cout << "\t\t\ttag Dstar mode: " << dstar_map[static_cast<int>(upsilons[1].get_tag_dstar_mode())] << endl;
+  cout << "\t\t\tsig D mode: " << d_map[static_cast<int>(upsilons[1].get_sig_d_mode())] << endl;
+  cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[1].get_sig_dstar_mode())] << endl;
+  cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[1].get_sig_tau_mode())] << endl;
+  cout << endl;
+  cout << "\t\tCandidate 2: " << endl;
+  cout << "\t\t\ttag D mode: " << d_map[static_cast<int>(upsilons[2].get_tag_d_mode())] << endl;
+  cout << "\t\t\ttag Dstar mode: " << dstar_map[static_cast<int>(upsilons[2].get_tag_dstar_mode())] << endl;
+  cout << "\t\t\tsig D mode: " << d_map[static_cast<int>(upsilons[2].get_sig_d_mode())] << endl;
+  cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[2].get_sig_dstar_mode())] << endl;
+  cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[2].get_sig_tau_mode())] << endl;
+  cout << endl;
+  cout << "\t\tCandidate 3: " << endl;
+  cout << "\t\t\ttag D mode: " << d_map[static_cast<int>(upsilons[3].get_tag_d_mode())] << endl;
+  cout << "\t\t\ttag Dstar mode: " << dstar_map[static_cast<int>(upsilons[3].get_tag_dstar_mode())] << endl;
+  cout << "\t\t\tsig D mode: " << d_map[static_cast<int>(upsilons[3].get_sig_d_mode())] << endl;
+  cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[3].get_sig_dstar_mode())] << endl;
+  cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[3].get_sig_tau_mode())] << endl;
+  cout << endl;
+  cout << "\t\tCandidate 4: " << endl;
+  cout << "\t\t\ttag D mode: " << d_map[static_cast<int>(upsilons[4].get_tag_d_mode())] << endl;
+  cout << "\t\t\ttag Dstar mode: " << dstar_map[static_cast<int>(upsilons[4].get_tag_dstar_mode())] << endl;
+  cout << "\t\t\tsig D mode: " << d_map[static_cast<int>(upsilons[4].get_sig_d_mode())] << endl;
+  cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[4].get_sig_dstar_mode())] << endl;
+  cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[4].get_sig_tau_mode())] << endl;
+  cout << endl;
 
-  reco_output.open("sp1235r1.0.reco.gv");
+  reco_output.open("sp11444r1.0.reco.gv");
   reader->print_reco_graph(reco_output);
   reco_output.close();
 
-  mc_output.open("sp1235r1.0.mc.gv");
+  mc_output.open("sp11444r1.0.mc.gv");
   reader->print_mc_graph(mc_output);
   mc_output.close();
 
@@ -133,24 +161,24 @@ int main() {
   cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[0].get_sig_tau_mode())] << endl;
   cout << endl;
 
-  reco_output.open("sp1235r1.1.reco.gv");
+  reco_output.open("sp11444r1.1.reco.gv");
   reader->print_reco_graph(reco_output);
   reco_output.close();
 
-  mc_output.open("sp1235r1.1.mc.gv");
+  mc_output.open("sp11444r1.1.mc.gv");
   reader->print_mc_graph(mc_output);
   mc_output.close();
 
   delete reader;
 
-  // sp1237r1
+  // sp11445r1
   // ---------
-  cout << "sp1237r1: " << endl;
+  cout << "sp11445r1: " << endl;
   cout << endl;
 
   // Event 0
   // -------
-  reader = new BDtaunuMcReader("/Users/dchao/bdtaunu/v4/data/root/generic/aug_12_2014/sp1237r1.root");
+  reader = new BDtaunuMcReader("/Users/dchao/bdtaunu/v4/data/root/signal/aug_12_2014/A/sp11445r1.root");
   reader->next_record();
   upsilons = reader->get_upsilon_candidates();
 
@@ -171,12 +199,26 @@ int main() {
   cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[0].get_sig_dstar_mode())] << endl;
   cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[0].get_sig_tau_mode())] << endl;
   cout << endl;
+  cout << "\t\tCandidate 1: " << endl;
+  cout << "\t\t\ttag D mode: " << d_map[static_cast<int>(upsilons[1].get_tag_d_mode())] << endl;
+  cout << "\t\t\ttag Dstar mode: " << dstar_map[static_cast<int>(upsilons[1].get_tag_dstar_mode())] << endl;
+  cout << "\t\t\tsig D mode: " << d_map[static_cast<int>(upsilons[1].get_sig_d_mode())] << endl;
+  cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[1].get_sig_dstar_mode())] << endl;
+  cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[1].get_sig_tau_mode())] << endl;
+  cout << endl;
+  cout << "\t\tCandidate 2: " << endl;
+  cout << "\t\t\ttag D mode: " << d_map[static_cast<int>(upsilons[2].get_tag_d_mode())] << endl;
+  cout << "\t\t\ttag Dstar mode: " << dstar_map[static_cast<int>(upsilons[2].get_tag_dstar_mode())] << endl;
+  cout << "\t\t\tsig D mode: " << d_map[static_cast<int>(upsilons[2].get_sig_d_mode())] << endl;
+  cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[2].get_sig_dstar_mode())] << endl;
+  cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[2].get_sig_tau_mode())] << endl;
+  cout << endl;
 
-  reco_output.open("sp1237r1.0.reco.gv");
+  reco_output.open("sp11445r1.0.reco.gv");
   reader->print_reco_graph(reco_output);
   reco_output.close();
 
-  mc_output.open("sp1237r1.0.mc.gv");
+  mc_output.open("sp11445r1.0.mc.gv");
   reader->print_mc_graph(mc_output);
   mc_output.close();
 
@@ -202,25 +244,32 @@ int main() {
   cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[0].get_sig_dstar_mode())] << endl;
   cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[0].get_sig_tau_mode())] << endl;
   cout << endl;
+  cout << "\t\tCandidate 1: " << endl;
+  cout << "\t\t\ttag D mode: " << d_map[static_cast<int>(upsilons[1].get_tag_d_mode())] << endl;
+  cout << "\t\t\ttag Dstar mode: " << dstar_map[static_cast<int>(upsilons[1].get_tag_dstar_mode())] << endl;
+  cout << "\t\t\tsig D mode: " << d_map[static_cast<int>(upsilons[1].get_sig_d_mode())] << endl;
+  cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[1].get_sig_dstar_mode())] << endl;
+  cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[1].get_sig_tau_mode())] << endl;
+  cout << endl;
 
-  reco_output.open("sp1237r1.1.reco.gv");
+  reco_output.open("sp11445r1.1.reco.gv");
   reader->print_reco_graph(reco_output);
   reco_output.close();
 
-  mc_output.open("sp1237r1.1.mc.gv");
+  mc_output.open("sp11445r1.1.mc.gv");
   reader->print_mc_graph(mc_output);
   mc_output.close();
 
   delete reader;
 
-  // sp1005r1
+  // sp11446r1
   // ---------
-  cout << "sp1005r1: " << endl;
+  cout << "sp11446r1: " << endl;
   cout << endl;
 
   // Event 0
   // -------
-  reader = new BDtaunuMcReader("/Users/dchao/bdtaunu/v4/data/root/generic/aug_12_2014/sp1005r1.root");
+  reader = new BDtaunuMcReader("/Users/dchao/bdtaunu/v4/data/root/signal/aug_12_2014/A/sp11446r1.root");
   reader->next_record();
   upsilons = reader->get_upsilon_candidates();
 
@@ -241,12 +290,33 @@ int main() {
   cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[0].get_sig_dstar_mode())] << endl;
   cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[0].get_sig_tau_mode())] << endl;
   cout << endl;
+  cout << "\t\tCandidate 1: " << endl;
+  cout << "\t\t\ttag D mode: " << d_map[static_cast<int>(upsilons[1].get_tag_d_mode())] << endl;
+  cout << "\t\t\ttag Dstar mode: " << dstar_map[static_cast<int>(upsilons[1].get_tag_dstar_mode())] << endl;
+  cout << "\t\t\tsig D mode: " << d_map[static_cast<int>(upsilons[1].get_sig_d_mode())] << endl;
+  cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[1].get_sig_dstar_mode())] << endl;
+  cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[1].get_sig_tau_mode())] << endl;
+  cout << endl;
+  cout << "\t\tCandidate 2: " << endl;
+  cout << "\t\t\ttag D mode: " << d_map[static_cast<int>(upsilons[2].get_tag_d_mode())] << endl;
+  cout << "\t\t\ttag Dstar mode: " << dstar_map[static_cast<int>(upsilons[2].get_tag_dstar_mode())] << endl;
+  cout << "\t\t\tsig D mode: " << d_map[static_cast<int>(upsilons[2].get_sig_d_mode())] << endl;
+  cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[2].get_sig_dstar_mode())] << endl;
+  cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[2].get_sig_tau_mode())] << endl;
+  cout << endl;
+  cout << "\t\tCandidate 3: " << endl;
+  cout << "\t\t\ttag D mode: " << d_map[static_cast<int>(upsilons[3].get_tag_d_mode())] << endl;
+  cout << "\t\t\ttag Dstar mode: " << dstar_map[static_cast<int>(upsilons[3].get_tag_dstar_mode())] << endl;
+  cout << "\t\t\tsig D mode: " << d_map[static_cast<int>(upsilons[3].get_sig_d_mode())] << endl;
+  cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[3].get_sig_dstar_mode())] << endl;
+  cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[3].get_sig_tau_mode())] << endl;
+  cout << endl;
 
-  reco_output.open("sp1005r1.0.reco.gv");
+  reco_output.open("sp11446r1.0.reco.gv");
   reader->print_reco_graph(reco_output);
   reco_output.close();
 
-  mc_output.open("sp1005r1.0.mc.gv");
+  mc_output.open("sp11446r1.0.mc.gv");
   reader->print_mc_graph(mc_output);
   mc_output.close();
 
@@ -272,25 +342,46 @@ int main() {
   cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[0].get_sig_dstar_mode())] << endl;
   cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[0].get_sig_tau_mode())] << endl;
   cout << endl;
+  cout << "\t\tCandidate 1: " << endl;
+  cout << "\t\t\ttag D mode: " << d_map[static_cast<int>(upsilons[1].get_tag_d_mode())] << endl;
+  cout << "\t\t\ttag Dstar mode: " << dstar_map[static_cast<int>(upsilons[1].get_tag_dstar_mode())] << endl;
+  cout << "\t\t\tsig D mode: " << d_map[static_cast<int>(upsilons[1].get_sig_d_mode())] << endl;
+  cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[1].get_sig_dstar_mode())] << endl;
+  cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[1].get_sig_tau_mode())] << endl;
+  cout << endl;
+  cout << "\t\tCandidate 2: " << endl;
+  cout << "\t\t\ttag D mode: " << d_map[static_cast<int>(upsilons[2].get_tag_d_mode())] << endl;
+  cout << "\t\t\ttag Dstar mode: " << dstar_map[static_cast<int>(upsilons[2].get_tag_dstar_mode())] << endl;
+  cout << "\t\t\tsig D mode: " << d_map[static_cast<int>(upsilons[2].get_sig_d_mode())] << endl;
+  cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[2].get_sig_dstar_mode())] << endl;
+  cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[2].get_sig_tau_mode())] << endl;
+  cout << endl;
+  cout << "\t\tCandidate 3: " << endl;
+  cout << "\t\t\ttag D mode: " << d_map[static_cast<int>(upsilons[3].get_tag_d_mode())] << endl;
+  cout << "\t\t\ttag Dstar mode: " << dstar_map[static_cast<int>(upsilons[3].get_tag_dstar_mode())] << endl;
+  cout << "\t\t\tsig D mode: " << d_map[static_cast<int>(upsilons[3].get_sig_d_mode())] << endl;
+  cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[3].get_sig_dstar_mode())] << endl;
+  cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[3].get_sig_tau_mode())] << endl;
+  cout << endl;
 
-  reco_output.open("sp1005r1.1.reco.gv");
+  reco_output.open("sp11446r1.1.reco.gv");
   reader->print_reco_graph(reco_output);
   reco_output.close();
 
-  mc_output.open("sp1005r1.1.mc.gv");
+  mc_output.open("sp11446r1.1.mc.gv");
   reader->print_mc_graph(mc_output);
   mc_output.close();
 
   delete reader;
 
-  // sp998r1
+  // sp11447r1
   // ---------
-  cout << "sp998r1: " << endl;
+  cout << "sp11447r1: " << endl;
   cout << endl;
 
   // Event 0
   // -------
-  reader = new BDtaunuMcReader("/Users/dchao/bdtaunu/v4/data/root/generic/aug_12_2014/sp998r1.root");
+  reader = new BDtaunuMcReader("/Users/dchao/bdtaunu/v4/data/root/signal/aug_12_2014/A/sp11447r1.root");
   reader->next_record();
   upsilons = reader->get_upsilon_candidates();
 
@@ -311,12 +402,26 @@ int main() {
   cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[0].get_sig_dstar_mode())] << endl;
   cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[0].get_sig_tau_mode())] << endl;
   cout << endl;
+  cout << "\t\tCandidate 1: " << endl;
+  cout << "\t\t\ttag D mode: " << d_map[static_cast<int>(upsilons[1].get_tag_d_mode())] << endl;
+  cout << "\t\t\ttag Dstar mode: " << dstar_map[static_cast<int>(upsilons[1].get_tag_dstar_mode())] << endl;
+  cout << "\t\t\tsig D mode: " << d_map[static_cast<int>(upsilons[1].get_sig_d_mode())] << endl;
+  cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[1].get_sig_dstar_mode())] << endl;
+  cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[1].get_sig_tau_mode())] << endl;
+  cout << endl;
+  cout << "\t\tCandidate 2: " << endl;
+  cout << "\t\t\ttag D mode: " << d_map[static_cast<int>(upsilons[2].get_tag_d_mode())] << endl;
+  cout << "\t\t\ttag Dstar mode: " << dstar_map[static_cast<int>(upsilons[2].get_tag_dstar_mode())] << endl;
+  cout << "\t\t\tsig D mode: " << d_map[static_cast<int>(upsilons[2].get_sig_d_mode())] << endl;
+  cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[2].get_sig_dstar_mode())] << endl;
+  cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[2].get_sig_tau_mode())] << endl;
+  cout << endl;
 
-  reco_output.open("sp998r1.0.reco.gv");
+  reco_output.open("sp11447r1.0.reco.gv");
   reader->print_reco_graph(reco_output);
   reco_output.close();
 
-  mc_output.open("sp998r1.0.mc.gv");
+  mc_output.open("sp11447r1.0.mc.gv");
   reader->print_mc_graph(mc_output);
   mc_output.close();
 
@@ -342,12 +447,33 @@ int main() {
   cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[0].get_sig_dstar_mode())] << endl;
   cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[0].get_sig_tau_mode())] << endl;
   cout << endl;
+  cout << "\t\tCandidate 1: " << endl;
+  cout << "\t\t\ttag D mode: " << d_map[static_cast<int>(upsilons[1].get_tag_d_mode())] << endl;
+  cout << "\t\t\ttag Dstar mode: " << dstar_map[static_cast<int>(upsilons[1].get_tag_dstar_mode())] << endl;
+  cout << "\t\t\tsig D mode: " << d_map[static_cast<int>(upsilons[1].get_sig_d_mode())] << endl;
+  cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[1].get_sig_dstar_mode())] << endl;
+  cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[1].get_sig_tau_mode())] << endl;
+  cout << endl;
+  cout << "\t\tCandidate 2: " << endl;
+  cout << "\t\t\ttag D mode: " << d_map[static_cast<int>(upsilons[2].get_tag_d_mode())] << endl;
+  cout << "\t\t\ttag Dstar mode: " << dstar_map[static_cast<int>(upsilons[2].get_tag_dstar_mode())] << endl;
+  cout << "\t\t\tsig D mode: " << d_map[static_cast<int>(upsilons[2].get_sig_d_mode())] << endl;
+  cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[2].get_sig_dstar_mode())] << endl;
+  cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[2].get_sig_tau_mode())] << endl;
+  cout << endl;
+  cout << "\t\tCandidate 3: " << endl;
+  cout << "\t\t\ttag D mode: " << d_map[static_cast<int>(upsilons[3].get_tag_d_mode())] << endl;
+  cout << "\t\t\ttag Dstar mode: " << dstar_map[static_cast<int>(upsilons[3].get_tag_dstar_mode())] << endl;
+  cout << "\t\t\tsig D mode: " << d_map[static_cast<int>(upsilons[3].get_sig_d_mode())] << endl;
+  cout << "\t\t\tsig Dstar mode: " << dstar_map[static_cast<int>(upsilons[3].get_sig_dstar_mode())] << endl;
+  cout << "\t\t\tsig tau mode: " << tau_map[static_cast<int>(upsilons[3].get_sig_tau_mode())] << endl;
+  cout << endl;
 
-  reco_output.open("sp998r1.1.reco.gv");
+  reco_output.open("sp11447r1.1.reco.gv");
   reader->print_reco_graph(reco_output);
   reco_output.close();
 
-  mc_output.open("sp998r1.1.mc.gv");
+  mc_output.open("sp11447r1.1.mc.gv");
   reader->print_mc_graph(mc_output);
   mc_output.close();
 
