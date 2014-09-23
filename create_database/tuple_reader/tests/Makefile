@@ -9,7 +9,7 @@ CXXFLAGS += -fPIC
 # Contents
 # --------
 
-BINARIES = mc_reader1 mc_reader2
+BINARIES = mc_reader1 mc_reader2 mc_reader3
 
 # Dependencies
 # ------------

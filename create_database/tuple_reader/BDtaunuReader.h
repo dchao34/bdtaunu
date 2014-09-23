@@ -139,9 +139,9 @@ class BDtaunuReader : public RootReader {
   private:
 
     // Constructor helpers
-    virtual void AllocateBuffer();
-    virtual void DeleteBuffer();
-    virtual void ClearBuffer();
+    void AllocateBuffer();
+    void DeleteBuffer();
+    void ClearBuffer();
 
     // Reader status helpers
     bool is_max_reco_exceeded() const;
