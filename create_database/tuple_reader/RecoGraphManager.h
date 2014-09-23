@@ -132,7 +132,7 @@ class RecoGraphManager : public GraphManager {
     //! Clear cache. 
     void clear();
 
-    //! Get the unique reco particle index. See RecoIndexer.h.
+    //! Get the unique reco particle index.
     int get_reco_index(int lund, int i) const { return reco_indexer(lund, i); }
 
     //! Access information about the `i`th Y candidate. See GraphDef.h.

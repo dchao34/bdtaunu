@@ -49,12 +49,19 @@ class BDtaunuMcReader : public BDtaunuReader {
     //! Flag whether the MC truth is Continuum. 
     bool is_continuum() const { return continuum; }
 
-    int get_b1_mctype() const { return b1_mctype; }
-    int get_b2_mctype() const { return b2_mctype; }
-    int get_b1_tau_mctype() const { return b1_tau_mctype; }
-    int get_b2_tau_mctype() const { return b2_tau_mctype; }
+    //! MC type of the one MC truth B. 
+    bdtaunu::McBTypeCatalogue::BMcType get_b1_mctype() const { return b1_mctype; }
 
-    // Printer
+    //! MC type of the other MC truth B. 
+    bdtaunu::McBTypeCatalogue::BMcType get_b2_mctype() const { return b2_mctype; }
+
+    //! MC type of the tau of one MC truth B. 
+    bdtaunu::TauMcType get_b1_tau_mctype() const { return b1_tau_mctype; }
+
+    //! MC type of the tau of the other MC truth B. 
+    bdtaunu::TauMcType get_b2_tau_mctype() const { return b2_tau_mctype; }
+
+    //! Printer
     void print_mc_graph(std::ostream &os) const { mc_graph_manager.print(os); }
 
   private:
@@ -69,8 +76,8 @@ class BDtaunuMcReader : public BDtaunuReader {
     float *mcenergy;
 
     bool continuum;
-    int b1_mctype, b2_mctype;
-    int b1_tau_mctype, b2_tau_mctype;
+    bdtaunu::McBTypeCatalogue::BMcType b1_mctype, b2_mctype;
+    bdtaunu::TauMcType b1_tau_mctype, b2_tau_mctype;
 
     // Constructor helpers
     void AllocateBuffer();

@@ -3,6 +3,8 @@
 
 #include <string> 
 
+#include "BDtaunuDef.h"
+
 //! Class representing an \f$\Upsilon(4S)\f$ candidate
 class UpsilonCandidate {
 
@@ -15,7 +17,7 @@ class UpsilonCandidate {
       std::string &eventId,
       int block_index,
       int reco_index,
-      int bflavor,
+      bdtaunu::BFlavor bflavor,
       float eextra50,
       float mmiss_prime2,
       float cosThetaT,
@@ -26,8 +28,8 @@ class UpsilonCandidate {
       float tag_deltaM,
       float tag_cosThetaDSoft,
       float tag_softP3MagCM,
-      int tag_d_mode,
-      int tag_dstar_mode,
+      bdtaunu::RecoDTypeCatalogue::DType tag_d_mode,
+      bdtaunu::RecoDTypeCatalogue::DstarType tag_dstar_mode,
       int l_ePidMap,
       int l_muPidMap,
       float sig_hp3,
@@ -40,9 +42,9 @@ class UpsilonCandidate {
       float sig_softP3MagCM,
       float sig_hmass,
       float sig_vtxh,
-      int sig_d_mode,
-      int sig_dstar_mode,
-      int sig_tau_mode,
+      bdtaunu::RecoDTypeCatalogue::DType sig_d_mode,
+      bdtaunu::RecoDTypeCatalogue::DstarType sig_dstar_mode,
+      bdtaunu::TauType sig_tau_mode,
       int h_ePidMap,
       int h_muPidMap);
     UpsilonCandidate(const UpsilonCandidate &cand);
@@ -171,38 +173,38 @@ class UpsilonCandidate {
     //! \f$B\f$ flavor. 
     /*! Returns an integer that corresponds to the #BFlavor enum in
      * bdtaunu_definitions.h */
-    int get_bflavor() const { return bflavor; }
-    void set_bflavor(int _bflavor) { bflavor = _bflavor; }
+    bdtaunu::BFlavor get_bflavor() const { return bflavor; }
+    void set_bflavor(bdtaunu::BFlavor _bflavor) { bflavor = _bflavor; }
  
     //! Reconstructed \f$D^*\f$ mode index of the \f$B_{tag}\f$. 
     /*! Returns an integer that corresponds to the #DstarMode enum in
      * bdtaunu_definitions.h */
-    int get_tag_dstar_mode() const { return tag_dstar_mode; }
-    void set_tag_dstar_mode(int _tag_dstar_mode) { tag_dstar_mode = _tag_dstar_mode; }
+    bdtaunu::RecoDTypeCatalogue::DstarType get_tag_dstar_mode() const { return tag_dstar_mode; }
+    void set_tag_dstar_mode(bdtaunu::RecoDTypeCatalogue::DstarType _tag_dstar_mode) { tag_dstar_mode = _tag_dstar_mode; }
 
     //! Reconstructed \f$D\f$ mode index of the \f$B_{tag}\f$. 
     /*! Returns an integer that corresponds to the #DMode enum in
      * bdtaunu_definitions.h */
-    int get_tag_d_mode() const { return tag_d_mode; }
-    void set_tag_d_mode(int _tag_d_mode) { tag_d_mode = _tag_d_mode; }
+    bdtaunu::RecoDTypeCatalogue::DType get_tag_d_mode() const { return tag_d_mode; }
+    void set_tag_d_mode(bdtaunu::RecoDTypeCatalogue::DType _tag_d_mode) { tag_d_mode = _tag_d_mode; }
 
     //! Reconstructed \f$D^*\f$ mode index of the \f$B_{sig}\f$. 
     /*! Returns an integer that corresponds to the #DstarMode enum in
      * bdtaunu_definitions.h */
-    int get_sig_dstar_mode() const { return sig_dstar_mode; }
-    void set_sig_dstar_mode(int _sig_dstar_mode) { sig_dstar_mode = _sig_dstar_mode; }
+    bdtaunu::RecoDTypeCatalogue::DstarType get_sig_dstar_mode() const { return sig_dstar_mode; }
+    void set_sig_dstar_mode(bdtaunu::RecoDTypeCatalogue::DstarType _sig_dstar_mode) { sig_dstar_mode = _sig_dstar_mode; }
 
     //! Reconstructed \f$D\f$ mode index of the \f$B_{sig}\f$. 
     /*! Returns an integer that corresponds to the #DMode enum in
      * bdtaunu_definitions.h */
-    int get_sig_d_mode() const { return sig_d_mode; }
-    void set_sig_d_mode(int _sig_d_mode) { sig_d_mode = _sig_d_mode; }
+    bdtaunu::RecoDTypeCatalogue::DType get_sig_d_mode() const { return sig_d_mode; }
+    void set_sig_d_mode(bdtaunu::RecoDTypeCatalogue::DType _sig_d_mode) { sig_d_mode = _sig_d_mode; }
 
     //! Reconstructed \f$\tau\f$ mode index of the \f$B_{sig}\f$. 
     /*! Returns an integer that corresponds to the #TauMode enum in
      * bdtaunu_definitions.h */
-    int get_sig_tau_mode() const { return sig_tau_mode; }
-    void set_sig_tau_mode(int _sig_tau_mode) { sig_tau_mode = _sig_tau_mode; }
+    bdtaunu::TauType get_sig_tau_mode() const { return sig_tau_mode; }
+    void set_sig_tau_mode(bdtaunu::TauType _sig_tau_mode) { sig_tau_mode = _sig_tau_mode; }
 
     //! Electron PID map of tag lepton.
     /*! Bit map is here:
@@ -234,19 +236,19 @@ class UpsilonCandidate {
 
     //! Candidate type. 
     /*! Returns an int that corresponds to the #CandType enum in
-     * bdtaunu_definitions.h */
-    int get_cand_type() const;
+     * BDtaunuDef.h */
+    bdtaunu::CandType get_cand_type() const;
 
     //! Sample type. 
     /*! Returns an int that corresponds to the #SampleType enum in
-     * bdtaunu_definitions.h */
-    int get_sample_type() const;
+     * BDtaunuDef.h */
+    bdtaunu::SampleType get_sample_type() const;
 
   private:
     std::string eventId;
     int block_index;
     int reco_index;
-    int bflavor;
+    bdtaunu::BFlavor bflavor;
     float eextra50;
     float mmiss_prime2;
     float cosThetaT;
@@ -257,8 +259,8 @@ class UpsilonCandidate {
     float tag_deltaM;
     float tag_cosThetaDSoft;
     float tag_softP3MagCM;
-    int tag_d_mode;
-    int tag_dstar_mode;
+    bdtaunu::RecoDTypeCatalogue::DType tag_d_mode;
+    bdtaunu::RecoDTypeCatalogue::DstarType tag_dstar_mode;
     int l_ePidMap;
     int l_muPidMap;
     float sig_hp3;
@@ -271,9 +273,9 @@ class UpsilonCandidate {
     float sig_softP3MagCM;
     float sig_hmass;
     float sig_vtxh;
-    int sig_d_mode;
-    int sig_dstar_mode;
-    int sig_tau_mode;
+    bdtaunu::RecoDTypeCatalogue::DType sig_d_mode;
+    bdtaunu::RecoDTypeCatalogue::DstarType sig_dstar_mode;
+    bdtaunu::TauType sig_tau_mode;
     int h_ePidMap;
     int h_muPidMap;
 

@@ -59,7 +59,7 @@ typedef typename boost::property_map<Graph, boost::vertex_block_index_t>::type B
 struct Lepton {
   int l_block_idx = -1;
   int pi_block_idx = -1;
-  int tau_mode = static_cast<int>(bdtaunu::TauType::null);
+  bdtaunu::TauType tau_mode = bdtaunu::TauType::null;
 };
 
 //! Data attached to vertices of reconstructed \f$D/D^*\f$ mesons. 
@@ -69,14 +69,16 @@ struct Lepton {
  */
 struct D {
   D() = default;
-  int D_mode = static_cast<int>(bdtaunu::RecoDTypeCatalogue::DType::null);
-  int Dstar_mode = static_cast<int>(bdtaunu::RecoDTypeCatalogue::DstarType::NoDstar);
+  bdtaunu::RecoDTypeCatalogue::DType D_mode 
+    = bdtaunu::RecoDTypeCatalogue::DType::null;
+  bdtaunu::RecoDTypeCatalogue::DstarType Dstar_mode 
+    = bdtaunu::RecoDTypeCatalogue::DstarType::NoDstar;
 };
 
 //! Data attached to vertices of reconstructed \f$B\f$ mesons. 
 struct B {
   B() = default;
-  int flavor = static_cast<int>(bdtaunu::BFlavor::null);
+  bdtaunu::BFlavor flavor = bdtaunu::BFlavor::null;
   D *D = nullptr;
   Lepton *Lepton = nullptr;
 };
@@ -155,14 +157,15 @@ typedef typename boost::property_map<Graph, boost::vertex_mc_index_t>::type McIn
 //! Data attached to vertices of \f$\tau\f$ leptons. 
 struct Tau {
   Tau() = default;
-  int mc_type = static_cast<int>(bdtaunu::TauMcType::null);
+  bdtaunu::TauMcType mc_type = bdtaunu::TauMcType::null;
 };
 
 //! Data attached to vertices of \f$B\f$ mesons. 
 struct B {
   B() = default;
-  int flavor = static_cast<int>(bdtaunu::BFlavor::null);
-  int mc_type = static_cast<int>(bdtaunu::McBTypeCatalogue::BMcType::null);
+  bdtaunu::BFlavor flavor = bdtaunu::BFlavor::null;
+  bdtaunu::McBTypeCatalogue::BMcType mc_type 
+    = bdtaunu::McBTypeCatalogue::BMcType::null;
   Tau *tau = nullptr;
 };
 

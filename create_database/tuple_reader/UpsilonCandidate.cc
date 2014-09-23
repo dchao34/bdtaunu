@@ -10,7 +10,7 @@ UpsilonCandidate::UpsilonCandidate() :
   eventId(""),
   block_index(-999),
   reco_index(-1),
-  bflavor(static_cast<int>(BFlavor::null)),
+  bflavor(BFlavor::null),
   eextra50(-999),
   mmiss_prime2(-999),
   cosThetaT(-999),
@@ -21,8 +21,8 @@ UpsilonCandidate::UpsilonCandidate() :
   tag_deltaM(-999),
   tag_cosThetaDSoft(-999),
   tag_softP3MagCM(-999),
-  tag_d_mode(static_cast<int>(RecoDTypeCatalogue::DType::null)),
-  tag_dstar_mode(static_cast<int>(RecoDTypeCatalogue::DstarType::null)),
+  tag_d_mode(RecoDTypeCatalogue::DType::null),
+  tag_dstar_mode(RecoDTypeCatalogue::DstarType::null),
   l_ePidMap(0),
   l_muPidMap(0),
   sig_hp3(-999),
@@ -35,9 +35,9 @@ UpsilonCandidate::UpsilonCandidate() :
   sig_softP3MagCM(-999),
   sig_hmass(-999),
   sig_vtxh(-999),
-  sig_d_mode(static_cast<int>(RecoDTypeCatalogue::DType::null)),
-  sig_dstar_mode(static_cast<int>(RecoDTypeCatalogue::DstarType::null)),
-  sig_tau_mode(static_cast<int>(TauType::null)),
+  sig_d_mode(RecoDTypeCatalogue::DType::null),
+  sig_dstar_mode(RecoDTypeCatalogue::DstarType::null),
+  sig_tau_mode(TauType::null),
   h_ePidMap(0),
   h_muPidMap(0) {}
 
@@ -45,7 +45,7 @@ UpsilonCandidate::UpsilonCandidate(
   std::string &_eventId,
   int _block_index,
   int _reco_index,
-  int _bflavor,
+  BFlavor _bflavor,
   float _eextra50,
   float _mmiss_prime2,
   float _cosThetaT,
@@ -56,8 +56,8 @@ UpsilonCandidate::UpsilonCandidate(
   float _tag_deltaM,
   float _tag_cosThetaDSoft,
   float _tag_softP3MagCM,
-  int _tag_d_mode,
-  int _tag_dstar_mode,
+  RecoDTypeCatalogue::DType _tag_d_mode,
+  RecoDTypeCatalogue::DstarType _tag_dstar_mode,
   int _l_ePidMap,
   int _l_muPidMap,
   float _sig_hp3,
@@ -70,9 +70,9 @@ UpsilonCandidate::UpsilonCandidate(
   float _sig_softP3MagCM,
   float _sig_hmass,
   float _sig_vtxh,
-  int _sig_d_mode,
-  int _sig_dstar_mode,
-  int _sig_tau_mode,
+  RecoDTypeCatalogue::DType _sig_d_mode,
+  RecoDTypeCatalogue::DstarType _sig_dstar_mode,
+  bdtaunu::TauType _sig_tau_mode,
   int _h_ePidMap,
   int _h_muPidMap) : 
   eventId(_eventId),
@@ -157,36 +157,36 @@ void UpsilonCandidate::copy_candidate(const UpsilonCandidate &cand) {
 }
 
 // Examine the D, D*, and tau modes to determine the candidate type. 
-int UpsilonCandidate::get_cand_type() const {
+CandType UpsilonCandidate::get_cand_type() const {
 
-  assert(sig_tau_mode != static_cast<int>(TauType::null));
-  assert(tag_dstar_mode != static_cast<int>(RecoDTypeCatalogue::DstarType::null));
-  assert(sig_dstar_mode != static_cast<int>(RecoDTypeCatalogue::DstarType::null));
+  assert(sig_tau_mode != TauType::null);
+  assert(tag_dstar_mode != RecoDTypeCatalogue::DstarType::null);
+  assert(sig_dstar_mode != RecoDTypeCatalogue::DstarType::null);
 
   int cand_type = 0;
-  if (sig_tau_mode == static_cast<int>(TauType::tau_rho))
+  if (sig_tau_mode == TauType::tau_rho)
     cand_type += (1 << 2);
-  if (tag_dstar_mode != static_cast<int>(RecoDTypeCatalogue::DstarType::NoDstar))
+  if (tag_dstar_mode != RecoDTypeCatalogue::DstarType::NoDstar)
     cand_type += (1 << 1);
-  if (sig_dstar_mode != static_cast<int>(RecoDTypeCatalogue::DstarType::NoDstar))
+  if (sig_dstar_mode != RecoDTypeCatalogue::DstarType::NoDstar)
     cand_type += 1;
 
-  return cand_type;
+  return static_cast<CandType>(cand_type);
 }
 
 
 // Examine the bflavor and D* decay mode on the signal to determine
 // sample type. 
-int UpsilonCandidate::get_sample_type() const {
+SampleType UpsilonCandidate::get_sample_type() const {
 
-  assert(bflavor != static_cast<int>(BFlavor::null));
-  assert(sig_dstar_mode != static_cast<int>(RecoDTypeCatalogue::DstarType::null));
+  assert(bflavor != BFlavor::null);
+  assert(sig_dstar_mode != RecoDTypeCatalogue::DstarType::null);
 
   int sample_type = 0;
-  if (bflavor == static_cast<int>(BFlavor::B0))
+  if (bflavor == BFlavor::B0)
     sample_type += (1 << 1);
-  if (sig_dstar_mode != static_cast<int>(RecoDTypeCatalogue::DstarType::NoDstar))
+  if (sig_dstar_mode != RecoDTypeCatalogue::DstarType::NoDstar)
     sample_type += 1;
 
-  return sample_type;
+  return static_cast<SampleType>(sample_type);
 }

@@ -75,9 +75,9 @@ void McGraphDfsVisitor::AnalyzeB(const Vertex &u, const Graph &g) {
   B mcB;
 
   if (abs(get(lund_map, u)) == B0Lund) {
-    mcB.flavor = static_cast<int>(BFlavor::B0);
+    mcB.flavor = BFlavor::B0;
   } else {
-    mcB.flavor = static_cast<int>(BFlavor::Bc);
+    mcB.flavor = BFlavor::Bc;
   }
 
   std::vector<int> daulund_list;
@@ -91,7 +91,7 @@ void McGraphDfsVisitor::AnalyzeB(const Vertex &u, const Graph &g) {
         daulund_list.push_back(lund);
     }
   }
-  mcB.mc_type = static_cast<int>(mcB_catalogue.search_catalogue(daulund_list));
+  mcB.mc_type = mcB_catalogue.search_catalogue(daulund_list);
 
   (manager->B_map).insert(std::make_pair(u, mcB));
 }
@@ -106,13 +106,13 @@ void McGraphDfsVisitor::AnalyzeTau(const Vertex &u, const Graph &g) {
   for (tie(ai, ai_end) = adjacent_vertices(u, g); ai != ai_end; ++ai) {
     int lund = abs(get(lund_map, *ai));
     if (lund == eLund) {
-      mcTau.mc_type = static_cast<int>(TauMcType::tau_e);
+      mcTau.mc_type = TauMcType::tau_e;
       break;
     } else if (lund == muLund) {
-      mcTau.mc_type = static_cast<int>(TauMcType::tau_mu);
+      mcTau.mc_type = TauMcType::tau_mu;
       break;
     } else {
-      mcTau.mc_type = static_cast<int>(TauMcType::tau_h);
+      mcTau.mc_type = TauMcType::tau_h;
     }
   }
 

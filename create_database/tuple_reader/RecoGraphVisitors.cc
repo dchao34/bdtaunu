@@ -65,7 +65,7 @@ void RecoGraphDfsVisitor::AnalyzeD(const Vertex &u, const Graph &g) {
   for (tie(ai, ai_end) = adjacent_vertices(u, g); ai != ai_end; ++ai) {
     lund_list.push_back(get(lund_map, *ai));
   }
-  recoD.D_mode = static_cast<int>(recoD_catalogue.search_d_catalogue(lund_list));
+  recoD.D_mode = recoD_catalogue.search_d_catalogue(lund_list);
 
   // Insert results into supervisor's cache. 
   (manager->D_map).insert(std::make_pair(u, recoD));
@@ -104,7 +104,7 @@ void RecoGraphDfsVisitor::AnalyzeDstar(const Vertex &u, const Graph &g) {
         return;
     }
   }
-  recoD.Dstar_mode = static_cast<int>(recoD_catalogue.search_dstar_catalogue(lund_list));
+  recoD.Dstar_mode = recoD_catalogue.search_dstar_catalogue(lund_list);
 
   // Insert results into supervisor's cache. 
   (manager->D_map).insert(std::make_pair(u, recoD));
@@ -130,18 +130,18 @@ void RecoGraphDfsVisitor::AnalyzeLepton(const Vertex &u, const Graph &g) {
     case bdtaunu::eLund:
       recoLepton.l_block_idx = block_idx_map[u];
       recoLepton.pi_block_idx = -1;
-      recoLepton.tau_mode = static_cast<int>(bdtaunu::TauType::tau_e);
+      recoLepton.tau_mode = bdtaunu::TauType::tau_e;
 
     case bdtaunu::muLund:
       recoLepton.l_block_idx = block_idx_map[u];
       recoLepton.pi_block_idx = -1;
-      recoLepton.tau_mode = static_cast<int>(bdtaunu::TauType::tau_mu);
+      recoLepton.tau_mode = bdtaunu::TauType::tau_mu;
       break;
 
     case bdtaunu::piLund:
       recoLepton.l_block_idx = -1;
       recoLepton.pi_block_idx = block_idx_map[u];
-      recoLepton.tau_mode = static_cast<int>(bdtaunu::TauType::tau_pi);
+      recoLepton.tau_mode = bdtaunu::TauType::tau_pi;
       break;
 
     // when a rho is encountered, scan its daughters to find the pion.
@@ -153,7 +153,7 @@ void RecoGraphDfsVisitor::AnalyzeLepton(const Vertex &u, const Graph &g) {
           break;
         }
       }
-      recoLepton.tau_mode = static_cast<int>(bdtaunu::TauType::tau_rho);
+      recoLepton.tau_mode = bdtaunu::TauType::tau_rho;
       break;
 
     default:
@@ -174,9 +174,9 @@ void RecoGraphDfsVisitor::AnalyzeB(const Vertex &u, const Graph &g) {
   B recoB;
 
   if (abs(get(lund_map, u)) == bdtaunu::B0Lund) {
-    recoB.flavor = static_cast<int>(bdtaunu::BFlavor::B0);
+    recoB.flavor = bdtaunu::BFlavor::B0;
   } else {
-    recoB.flavor = static_cast<int>(bdtaunu::BFlavor::Bc);
+    recoB.flavor = bdtaunu::BFlavor::Bc;
   }
 
   AdjacencyIterator ai, ai_end;

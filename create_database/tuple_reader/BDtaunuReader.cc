@@ -364,6 +364,10 @@ void BDtaunuReader::FillRecoInfo() {
 
   // Derived information about Upsilon candidates. 
   for (int i = 0; i < nY; i++) {
+    std::cout << nY << " ";
+    std::cout << nY << " ";
+    std::cout << nY << " ";
+    std::cout << nY << " " << std::endl;
 
     UpsilonCandidate ups;
 

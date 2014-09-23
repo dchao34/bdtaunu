@@ -56,10 +56,10 @@ void BDtaunuMcReader::AllocateBuffer() {
 void BDtaunuMcReader::ClearBuffer() {
   mcLen = -999;
   continuum = true;
-  b1_mctype = static_cast<int>(McBTypeCatalogue::BMcType::NoB);
-  b2_mctype = static_cast<int>(McBTypeCatalogue::BMcType::NoB);
-  b1_tau_mctype = static_cast<int>(TauMcType::null);
-  b2_tau_mctype = static_cast<int>(TauMcType::null);
+  b1_mctype = McBTypeCatalogue::BMcType::NoB;
+  b2_mctype = McBTypeCatalogue::BMcType::NoB;
+  b1_tau_mctype = TauMcType::NoTau;
+  b2_tau_mctype = TauMcType::NoTau;
 }
 
 // Free the buffer. Used for destructor. 

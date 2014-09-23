@@ -79,10 +79,10 @@ class RecoDTypeCatalogue {
     };
 
 
-    //! Given a vector of \f$D\f$ daughters, return its decay mode or null.
+    //! Given a vector of lund Id's of a \f$D\f$ and its daughters, return its decay mode or null.
     DType search_d_catalogue(std::vector<int>) const;
 
-    //! Given a vector of \f$D^*\f$ daughters, return its decay mode or null.
+    //! Given a vector of lund Id's of a \f$D^*\f$ and its daughters, return its decay mode or null.
     DstarType search_dstar_catalogue(std::vector<int>) const;
 
     RecoDTypeCatalogue() { RegisterDecays(); }
@@ -121,13 +121,13 @@ class McBTypeCatalogue {
     enum class BMcType { 
       NoB = 0,
       Dtau = 1,
-      Dstartau,
-      Dl,
-      Dstarl, 
-      Dstarstar_res,
-      Dstarstar_nonres,
-      SL,
-      Had,
+      Dstartau = 2,
+      Dl = 3,
+      Dstarl = 4, 
+      Dstarstar_res = 5,
+      Dstarstar_nonres = 6,
+      SL = 7,
+      Had = 8,
       null = -1,
     };
 
@@ -187,7 +187,7 @@ enum class TauMcType {
  * A notable use of this distinction is in best candidate selection.
  * Each candidate type has a unique trained learner to assign a score 
  * for any candidates assigned to that category. */
-enum CandType {
+enum class CandType {
   kDDpi = 0,                  /*!< \f$ B_{tag}\rightarrow D,\,B_{sig}\rightarrow D,\,\tau\rightarrow\pi \f$ */
   kDDstarpi = 1,              /*!< \f$ B_{tag}\rightarrow D,\,B_{sig}\rightarrow D^*,\,\tau\rightarrow\pi \f$ */
   kDstarDpi = 2,              /*!< \f$ B_{tag}\rightarrow D^*,\,B_{sig}\rightarrow D,\,\tau\rightarrow\pi \f$ */
@@ -196,19 +196,19 @@ enum CandType {
   kDDstarrho = 5,             /*!< \f$ B_{tag}\rightarrow D,\,B_{sig}\rightarrow D^*,\,\tau\rightarrow\rho \f$ */
   kDstarDrho = 6,             /*!< \f$ B_{tag}\rightarrow D^*,\,B_{sig}\rightarrow D,\,\tau\rightarrow\rho \f$ */
   kDstarDstarrho = 7,         /*!< \f$ B_{tag}\rightarrow D^*,\,B_{sig}\rightarrow D^*,\,\tau\rightarrow\rho \f$ */
-  kUndefinedCandType = -1,    /*!< Undefined */
+  null = -1,                  /*!< Undefined */
 };
 
 //! Sample types. 
 /*! This is an attribute attached to \f$\Upsilon(4S)\f$ candidates. It
  * is the sample type that the event would be assigned to if this
  * candidate were to be chosen as the best candidate to represent it. */
-enum SampleType {
+enum class SampleType {
   kBcD = 0,                     /*!< \f$ B^u \rightarrow D \f$ */
   kBcDstar = 1,                 /*!< \f$ B^u \rightarrow D^* \f$ */
   kB0D = 2,                     /*!< \f$ B^d \rightarrow D \f$ */
   kB0Dstar = 3,                 /*!< \f$ B^d \rightarrow D^* \f$ */
-  kUndefinedSampleType = -1,    /*!< Undefined */
+  null = -1,                    /*!< Undefined */
 };
 
 
