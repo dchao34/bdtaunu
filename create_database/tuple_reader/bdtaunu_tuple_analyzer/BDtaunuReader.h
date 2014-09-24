@@ -37,15 +37,12 @@
  */
 class BDtaunuReader : public RootReader {
 
-  // Manages reco particle graph and all information computed from it. 
   friend class RecoGraphManager;
-
-  friend class TruthMatcher;
-  friend class TruthMatchDfsVisitor;
 
   public: 
 
-    // Constructors
+    // API
+    // ---
 
     //! No default constructor.
     BDtaunuReader() = delete;
@@ -66,9 +63,6 @@ class BDtaunuReader : public RootReader {
      * with the event that the analysis is interested in. */
     virtual RootReader::Status next_record();
 
-
-    // Accessors
-
     //! Babar event Id. 
     std::string get_eventId() const;
 
@@ -88,22 +82,34 @@ class BDtaunuReader : public RootReader {
     void print_reco_graph(std::ostream &os) const { reco_graph_manager.print(os); }
 
   protected:
+
+    // Static members
+    // --------------
     static const std::map<int, std::string> lund_to_name;
+    static const int maximum_h_candidates;
+    static const int maximum_l_candidates;
+    static const int maximum_gamma_candidates;
+
+    // Class members
+    // -------------
+
+    // Reco graph manager
+    RecoGraphManager reco_graph_manager;
+
+    // Upsilon candidates derived from the buffer candidates
+    std::vector<UpsilonCandidate> upsilon_candidates;
 
   private: 
+
+    // Static members
+    // --------------
     static const int maximum_Y_candidates;
     static const int maximum_B_candidates;
     static const int maximum_D_candidates;
     static const int maximum_C_candidates;
 
-  protected:
-    static const int maximum_h_candidates;
-    static const int maximum_l_candidates;
-    static const int maximum_gamma_candidates;
-
-  private: 
-
     // Buffer elements 
+    // ---------------
     int platform, partition, upperID, lowerID;
     int nTrk;
     float R2All;
@@ -138,27 +144,15 @@ class BDtaunuReader : public RootReader {
     int *hd1Lund, *hd2Lund;
     int *ld1Lund, *ld2Lund, *ld3Lund;
 
-  protected:
-    // Data derived from information present in the buffer elements
-    std::vector<UpsilonCandidate> upsilon_candidates;
-
-  private:
-
-    // Constructor helpers
+    // Helper functions
+    // ----------------
+  
     void AllocateBuffer();
     void DeleteBuffer();
     void ClearBuffer();
 
-    // Reader status helpers
     bool is_max_reco_exceeded() const;
-
-    // Mutator helpers
     void FillRecoInfo();
-
-  protected:
-    // Reco graph manager. 
-    // Responsible for all reco graph related computations.
-    RecoGraphManager reco_graph_manager;
 
 };
 

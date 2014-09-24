@@ -10,7 +10,7 @@
 #include "BDtaunuReader.h"
 #include "McGraphManager.h"
 
-#include "TruthMatcher.h"
+#include "TruthMatchManager.h"
 
 /** 
  * @brief 
@@ -33,11 +33,12 @@
 class BDtaunuMcReader : public BDtaunuReader {
 
   friend class McGraphManager;
-
-  friend class TruthMatcher;
-  friend class TruthMatchDfsVisitor;
+  friend class TruthMatchManager;
 
   public: 
+
+    // API
+    // ---
 
     // Constructors
     BDtaunuMcReader() = delete;
@@ -48,8 +49,6 @@ class BDtaunuMcReader : public BDtaunuReader {
 
     //! Read in the next event. 
     virtual RootReader::Status next_record();
-
-    // Data Accessors
 
     //! Flag whether the MC truth is Continuum. 
     bool is_continuum() const { return continuum; }
@@ -70,9 +69,13 @@ class BDtaunuMcReader : public BDtaunuReader {
     void print_mc_graph(std::ostream &os) const { mc_graph_manager.print(os); }
 
   private:
+
+    // Static members
+    // --------------
     const static int max_mc_length;
 
-	private:
+    // Buffer elements
+    // ---------------
     int mcLen;
     int *mcLund; 
     int *mothIdx;
@@ -83,25 +86,24 @@ class BDtaunuMcReader : public BDtaunuReader {
     int *lMCIdx; 
     int *gammaMCIdx; 
 
+    // Class members
+    // -------------
     bool continuum;
     bdtaunu::McBTypeCatalogue::BMcType b1_mctype, b2_mctype;
     bdtaunu::TauMcType b1_tau_mctype, b2_tau_mctype;
 
-    // Constructor helpers
+    McGraphManager mc_graph_manager;
+    TruthMatchManager truth_match_manager;
+
+    // Helper functions
+    // ----------------
     void AllocateBuffer();
     void DeleteBuffer();
     void ClearBuffer();
 
-    // Reader status helpers
     bool is_max_mc_exceeded() { return (mcLen > max_mc_length) ? true : false; }
-
-    // Mutator helpers
     void FillMcInfo();
 
-    // MC graph helpers
-    McGraphManager mc_graph_manager;
-
-    TruthMatcher truth_matcher;
 
 };
 

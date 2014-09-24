@@ -9,8 +9,6 @@
 #include "GraphManager.h"
 #include "RecoGraphVisitors.h"
 
-#include "TruthMatcher.h"
-
 class BDtaunuReader;
 
 /** @brief This class builds and analyzes the reconstructed particle 
@@ -108,8 +106,6 @@ class BDtaunuReader;
 class RecoGraphManager : public GraphManager {
 
   friend class RecoGraphDfsVisitor;
-  friend class TruthMatcher;
-  friend class TruthMatchDfsVisitor;
 
   public:
 
@@ -137,7 +133,10 @@ class RecoGraphManager : public GraphManager {
     void clear();
 
     //! Get the unique reco particle index.
-    int get_reco_index(int lund, int i) const { return reco_indexer(lund, i); }
+    const RecoGraph::RecoIndexer& get_reco_indexer() const { return reco_indexer; }
+
+    //! Get the reco graph
+    const RecoGraph::Graph& get_reco_graph() const { return g; }
 
     //! Access information about the `i`th Y candidate. See GraphDef.h.
     const RecoGraph::Y* get_recoY(int i) const;

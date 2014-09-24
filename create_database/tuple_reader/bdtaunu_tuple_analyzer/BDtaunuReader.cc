@@ -369,7 +369,7 @@ void BDtaunuReader::FillRecoInfo() {
 
     ups.set_eventId(get_eventId());
     ups.set_block_index(i);
-    ups.set_reco_index(reco_graph_manager.get_reco_index(bdtaunu::UpsilonLund, i));
+    ups.set_reco_index(reco_graph_manager.get_reco_indexer().get_reco_idx(bdtaunu::UpsilonLund, i));
     ups.set_bflavor(reco_graph_manager.get_recoY(i)->tagB->flavor);
     ups.set_eextra50(YBPairEextra50[i]);
     ups.set_mmiss_prime2(YBPairMmissPrime2[i]);

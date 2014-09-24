@@ -95,7 +95,7 @@ void RecoGraphManager::analyze_graph() {
 const Y* RecoGraphManager::get_recoY(int i) const { 
 
   std::map<int, RecoGraph::Vertex>::const_iterator reco_vertex_it;
-  reco_vertex_it = reco_vertex_map.find(reco_indexer(bdtaunu::UpsilonLund, i));
+  reco_vertex_it = reco_vertex_map.find(reco_indexer.get_reco_idx(bdtaunu::UpsilonLund, i));
   assert(reco_vertex_it != reco_vertex_map.end());
 
   std::map<Vertex, Y>::const_iterator y_it;
@@ -150,7 +150,7 @@ void RecoGraphManager::AddCandidates(
     //
     // reco_vertex_map keeps track of which particle has been inserted. 
     // The key is the unique reco index from reco_indexer.
-    int u_idx = reco_indexer(CandLund[i], i);
+    int u_idx = reco_indexer.get_reco_idx(CandLund[i], i);
     tie(pos, inserted) = reco_vertex_map.insert(std::make_pair(u_idx, Vertex()));
     if (inserted) {
       u = add_vertex(g);
@@ -170,7 +170,7 @@ void RecoGraphManager::AddCandidates(
         break;
       } else {
 
-        int v_idx = reco_indexer(CandDauLund[j][i], CandDauIdx[j][i]);
+        int v_idx = reco_indexer.get_reco_idx(CandDauLund[j][i], CandDauIdx[j][i]);
         tie(pos, inserted) = reco_vertex_map.insert(std::make_pair(v_idx, Vertex()));
         if (inserted) {
           v = add_vertex(g);

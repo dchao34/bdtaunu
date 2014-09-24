@@ -17,7 +17,7 @@ SOURCES = BDtaunuDef.cc GraphDef.cc \
           BDtaunuUtils.cc UpsilonCandidate.cc \
 					RootReader.cc BDtaunuReader.cc BDtaunuMcReader.cc \
 					RecoGraphVisitors.cc RecoGraphManager.cc \
-					McGraphManager.cc McGraphVisitors.cc TruthMatcher.cc
+					McGraphManager.cc McGraphVisitors.cc TruthMatchManager.cc
 
 # Dependencies
 # ------------

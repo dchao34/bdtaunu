@@ -26,7 +26,7 @@ RecoGraph::RecoIndexer::RecoIndexer(
 // C candidates: ... continue pattern.
 // h candidates: ... continue pattern.
 // gamma candidates: ... continue pattern.
-int RecoGraph::RecoIndexer::operator()(int lund, int idx) const {
+int RecoGraph::RecoIndexer::get_reco_idx(int lund, int idx) const {
 
   int abslund = std::abs(lund);
   switch (abslund) {

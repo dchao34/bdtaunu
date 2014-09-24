@@ -8,7 +8,7 @@
 #include "BDtaunuReader.h"
 #include "BDtaunuMcReader.h"
 #include "McGraphManager.h"
-#include "TruthMatcher.h"
+#include "TruthMatchManager.h"
 
 using namespace boost;
 using namespace bdtaunu;
@@ -25,7 +25,7 @@ BDtaunuMcReader::BDtaunuMcReader(
   AllocateBuffer();
   ClearBuffer();
   mc_graph_manager = McGraphManager(this);
-  truth_matcher = TruthMatcher(this);
+  truth_match_manager = TruthMatchManager(this);
 
 }
 
@@ -106,8 +106,9 @@ RootReader::Status BDtaunuMcReader::next_record() {
       mc_graph_manager.construct_graph();
       mc_graph_manager.analyze_graph();
 
-      // Truth Match
-      truth_matcher.analyze();
+      // Outsource truth match operations to truth matcher
+      truth_match_manager.update_graph(reco_graph_manager);
+      truth_match_manager.analyze_graph();
 
       // Make derived information ready for access
       FillMcInfo();
