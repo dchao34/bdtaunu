@@ -40,6 +40,9 @@ class BDtaunuReader : public RootReader {
   // Manages reco particle graph and all information computed from it. 
   friend class RecoGraphManager;
 
+  friend class TruthMatcher;
+  friend class TruthMatchDfsVisitor;
+
   public: 
 
     // Constructors
@@ -92,6 +95,8 @@ class BDtaunuReader : public RootReader {
     static const int maximum_B_candidates;
     static const int maximum_D_candidates;
     static const int maximum_C_candidates;
+
+  protected:
     static const int maximum_h_candidates;
     static const int maximum_l_candidates;
     static const int maximum_gamma_candidates;
@@ -133,6 +138,7 @@ class BDtaunuReader : public RootReader {
     int *hd1Lund, *hd2Lund;
     int *ld1Lund, *ld2Lund, *ld3Lund;
 
+  protected:
     // Data derived from information present in the buffer elements
     std::vector<UpsilonCandidate> upsilon_candidates;
 
@@ -149,6 +155,7 @@ class BDtaunuReader : public RootReader {
     // Mutator helpers
     void FillRecoInfo();
 
+  protected:
     // Reco graph manager. 
     // Responsible for all reco graph related computations.
     RecoGraphManager reco_graph_manager;

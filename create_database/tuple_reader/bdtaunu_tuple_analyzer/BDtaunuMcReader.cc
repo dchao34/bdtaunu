@@ -8,6 +8,7 @@
 #include "BDtaunuReader.h"
 #include "BDtaunuMcReader.h"
 #include "McGraphManager.h"
+#include "TruthMatcher.h"
 
 using namespace boost;
 using namespace bdtaunu;
@@ -24,6 +25,7 @@ BDtaunuMcReader::BDtaunuMcReader(
   AllocateBuffer();
   ClearBuffer();
   mc_graph_manager = McGraphManager(this);
+  truth_matcher = TruthMatcher(this);
 
 }
 
@@ -41,6 +43,9 @@ void BDtaunuMcReader::AllocateBuffer() {
   dauIdx = new int[max_mc_length];
   dauLen = new int[max_mc_length];
   mcenergy = new float[max_mc_length];
+  hMCIdx = new int[maximum_h_candidates];
+  lMCIdx = new int[maximum_l_candidates];
+  gammaMCIdx = new int[maximum_gamma_candidates];
 
   // Specify the variables where each ntuple branch should be read into. 
   tr->SetBranchAddress("mcLen", &mcLen);
@@ -49,6 +54,9 @@ void BDtaunuMcReader::AllocateBuffer() {
   tr->SetBranchAddress("dauIdx", dauIdx);
   tr->SetBranchAddress("dauLen", dauLen);
   tr->SetBranchAddress("mcenergy", mcenergy);
+  tr->SetBranchAddress("hMCIdx", hMCIdx);
+  tr->SetBranchAddress("lMCIdx", lMCIdx);
+  tr->SetBranchAddress("gammaMCIdx", gammaMCIdx);
 
 }
 
@@ -69,6 +77,9 @@ void BDtaunuMcReader::DeleteBuffer() {
   delete[] dauIdx;
   delete[] dauLen;
   delete[] mcenergy;
+  delete[] hMCIdx;
+  delete[] lMCIdx;
+  delete[] gammaMCIdx;
 }
 
 // Read in the next event in the ntuple and update the buffer
@@ -94,6 +105,9 @@ RootReader::Status BDtaunuMcReader::next_record() {
       // Outsource graph operations to graph manager
       mc_graph_manager.construct_graph();
       mc_graph_manager.analyze_graph();
+
+      // Truth Match
+      truth_matcher.analyze();
 
       // Make derived information ready for access
       FillMcInfo();

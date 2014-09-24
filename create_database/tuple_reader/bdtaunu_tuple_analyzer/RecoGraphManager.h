@@ -9,6 +9,8 @@
 #include "GraphManager.h"
 #include "RecoGraphVisitors.h"
 
+#include "TruthMatcher.h"
+
 class BDtaunuReader;
 
 /** @brief This class builds and analyzes the reconstructed particle 
@@ -106,6 +108,8 @@ class BDtaunuReader;
 class RecoGraphManager : public GraphManager {
 
   friend class RecoGraphDfsVisitor;
+  friend class TruthMatcher;
+  friend class TruthMatchDfsVisitor;
 
   public:
 

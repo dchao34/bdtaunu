@@ -10,6 +10,8 @@
 #include "BDtaunuReader.h"
 #include "McGraphManager.h"
 
+#include "TruthMatcher.h"
+
 /** 
  * @brief 
  * Much like its parent class BDtaunuReader, this class reads 
@@ -31,6 +33,9 @@
 class BDtaunuMcReader : public BDtaunuReader {
 
   friend class McGraphManager;
+
+  friend class TruthMatcher;
+  friend class TruthMatchDfsVisitor;
 
   public: 
 
@@ -74,6 +79,9 @@ class BDtaunuMcReader : public BDtaunuReader {
     int *dauIdx;
     int *dauLen;
     float *mcenergy;
+    int *hMCIdx; 
+    int *lMCIdx; 
+    int *gammaMCIdx; 
 
     bool continuum;
     bdtaunu::McBTypeCatalogue::BMcType b1_mctype, b2_mctype;
@@ -92,6 +100,8 @@ class BDtaunuMcReader : public BDtaunuReader {
 
     // MC graph helpers
     McGraphManager mc_graph_manager;
+
+    TruthMatcher truth_matcher;
 
 };
 

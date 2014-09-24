@@ -57,6 +57,24 @@ int RecoGraph::RecoIndexer::operator()(int lund, int idx) const {
   return -1;
 }
 
+bool RecoGraph::RecoIndexer::is_h_candidate(int reco_index) const {
+  int h_offset = nY + nB + nD + nC;
+  return ((reco_index >= h_offset) && 
+          (reco_index < h_offset + nh)) ? true : false;
+}
+
+bool RecoGraph::RecoIndexer::is_l_candidate(int reco_index) const {
+  int l_offset = nY + nB + nD + nC + nh;
+  return ((reco_index >= l_offset) && 
+          (reco_index < l_offset + nl)) ? true : false;
+}
+
+bool RecoGraph::RecoIndexer::is_gamma_candidate(int reco_index) const {
+  int gamma_offset = nY + nB + nD + nC + nh + nl;
+  return ((reco_index >= gamma_offset) && 
+          (reco_index < gamma_offset + ngamma)) ? true : false;
+}
+
 void RecoGraph::RecoIndexer::clear() {
   nY = 0;
   nB = 0;

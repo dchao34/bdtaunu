@@ -120,7 +120,16 @@ class RecoIndexer {
     ~RecoIndexer() {};
 
     //! Given the lundId and block index, return the unique reco index.
-    int operator()(int lund, int idx) const;
+    int operator()(int lund, int block_idx) const;
+
+    //! Given the reco index, decide if it is a h candidate.
+    bool is_h_candidate(int reco_index) const;
+
+    //! Given the reco index, decide if it is a l candidate.
+    bool is_l_candidate(int reco_index) const;
+
+    //! Given the reco index, decide if it is a gamm candidate.
+    bool is_gamma_candidate(int reco_index) const;
 
     //! Return total number of reco particles in this event. 
     int total() const { return nY + nB + nD + nC + nh + nl + ngamma; }
