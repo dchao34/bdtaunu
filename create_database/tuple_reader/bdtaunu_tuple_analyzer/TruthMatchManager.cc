@@ -34,23 +34,34 @@ int TruthMatchManager::get_truth_match_status(int reco_idx) const {
   return it->second;
 }
 
+// Update cached graph. This classes analyzes whatever graphs that are stored there. 
 void TruthMatchManager::update_graph(
     const RecoGraphManager &reco_graph_manager, 
     const McGraphManager &mc_graph_manager) {
+
+  // Detector hits from BtaTupleMaker. 
   hMCIdx = reader->hMCIdx;
   lMCIdx = reader->lMCIdx;
   gammaMCIdx = reader->gammaMCIdx;
+
+  // Get copies of the MC and reconstructed graphs. Copies because 
+  // we will need to modify them for the algorithm.  
   reco_graph = reco_graph_manager.get_reco_graph();
   reco_indexer = reco_graph_manager.get_reco_indexer();
   mc_graph = mc_graph_manager.get_mc_graph();
+
+  // Edge contract the MC graph.
   contract_mc_graph();
 }
 
+// Analyze cached graph. Entry point to the algorithm. 
 void TruthMatchManager::analyze_graph() {
   truth_match.clear();
   depth_first_search(reco_graph, visitor(TruthMatchDfsVisitor(this)));
 }
 
+// Given a vertex on the original MC graph, decide whether it needs to 
+// be ``cleaved''. These are vertices we do not wish to truth match. 
 bool TruthMatchManager::is_cleave_vertex(
     const McGraph::Vertex &v, 
     const McGraph::Graph &g, 
@@ -96,24 +107,31 @@ bool TruthMatchManager::is_cleave_vertex(
 
 }
 
+// Edge contract the MC graph to get rid of the vertices we wanted to cleave. 
+// http://en.wikipedia.org/wiki/Edge_contraction
 void TruthMatchManager::contract_mc_graph() {
 
   McGraph::Graph &g = mc_graph;
   McGraph::McIndexPropertyMap mc_idx_pm = get(vertex_mc_index, g);
   McGraph::LundIdPropertyMap lund_id_pm = get(vertex_lund_id, g);
 
+  // Scan through all MC graph vertices and decide which ones need to be cleaved.
+  // Save the mc index in a vector.
   std::vector<int> to_cleave;
   graph_traits<McGraph::Graph>::vertex_iterator vi, vi_end;
   for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     if (is_cleave_vertex(*vi, g, lund_id_pm, mc_idx_pm)) to_cleave.push_back(mc_idx_pm[*vi]);
 
+  // Cleave away a vertex by contracting the edge between its mother and itself.
   for (auto i : to_cleave) {
 
+    // Get access to the actual vertex object.
     graph_traits<McGraph::Graph>::vertex_iterator vi_begin, vi_end;
     tie(vi_begin, vi_end) = vertices(g);
     McGraph::Vertex v = *std::find_if(vi_begin, vi_end, 
         [i, mc_idx_pm] (const McGraph::Vertex &v) { return (i == mc_idx_pm[v]); });
 
+    // Build edges from its mother to its daughters.
     McGraph::Vertex m;
     graph_traits<McGraph::Graph>::in_edge_iterator ie, ie_end;
     tie(ie, ie_end) = in_edges(v, g);
@@ -128,6 +146,7 @@ void TruthMatchManager::contract_mc_graph() {
       }
     }
 
+    // Get rid of this vertex and edges attached to it. 
     clear_vertex(v, g);
     remove_vertex(v, g);
     
@@ -135,6 +154,7 @@ void TruthMatchManager::contract_mc_graph() {
 
 }
 
+// Print cached MC graph (edge contracted). 
 void TruthMatchManager::print_mc(std::ostream &os) const {
   boost::write_graphviz(
       os, mc_graph,
@@ -145,6 +165,7 @@ void TruthMatchManager::print_mc(std::ostream &os) const {
       MyGraphWriter("MC Graph with Edge Contraction"));
 }
 
+// Print the reco graph with truth matched candidates highlighted. 
 void TruthMatchManager::print_reco(std::ostream &os) const {
   boost::write_graphviz(
       os, reco_graph,
@@ -178,6 +199,7 @@ TruthMatchDfsVisitor::TruthMatchDfsVisitor(TruthMatchManager *_manager) : manage
   mc_idx_pm = get(vertex_mc_index, manager->mc_graph);
 }
 
+// Determine whether the vertex just blackened is a final state or composite.
 void TruthMatchDfsVisitor::finish_vertex(RecoGraph::Vertex u, const RecoGraph::Graph &g) {
   int lund = std::abs(reco_lund_pm[u]);
   switch (lund) {
@@ -206,6 +228,7 @@ void TruthMatchDfsVisitor::finish_vertex(RecoGraph::Vertex u, const RecoGraph::G
   }
 }
 
+// For final states, follow Case 1 described in `TruthMatchMananger.h`.
 void TruthMatchDfsVisitor::MatchFinalState(const RecoGraph::Vertex &u) {
   const int *hitMap = nullptr;
   switch (abs(reco_lund_pm[u])) {
@@ -229,10 +252,12 @@ void TruthMatchDfsVisitor::MatchFinalState(const RecoGraph::Vertex &u) {
 
 }
 
+// For composite states, follow Case 2 described in `TruthMatchMananger.h`.
 void TruthMatchDfsVisitor::MatchCompositeState(const RecoGraph::Vertex &u, const RecoGraph::Graph &g) {
 
   int tm_mc_idx = -1;
 
+  // For each daughter, get the mc index of the MC particle it truth matches to. 
   std::vector<int> dau_tm_mc_idx;
   RecoGraph::AdjacencyIterator ai, ai_end;
   for (tie(ai, ai_end) = adjacent_vertices(u, g); ai != ai_end; ++ai) {
@@ -240,25 +265,30 @@ void TruthMatchDfsVisitor::MatchCompositeState(const RecoGraph::Vertex &u, const
   }
   std::sort(dau_tm_mc_idx.begin(), dau_tm_mc_idx.end());
 
+  // If some daughter doesn't truth match, then this particle also doesn't. 
   if (dau_tm_mc_idx[0] < 0) {
     manager->truth_match.insert(
         std::make_pair(reco_idx_pm[u], tm_mc_idx));
     return; 
   }
 
+  // Scan the MC graph for particles to try to truth match to. 
   graph_traits<McGraph::Graph>::vertex_iterator vi, vi_end;
   for (tie(vi, vi_end) = vertices(manager->mc_graph); vi != vi_end; ++vi) {
 
+    // Consider only MC particles with the correct identity. 
     if (reco_lund_pm[u] == mc_lund_pm[*vi]) {
 
+      // Get a list of the MC particle's daughter and store their mc_idx. 
       std::vector<int> dau_mc_idx;
-
       McGraph::AdjacencyIterator bi, bi_end;
       for (tie(bi, bi_end) = adjacent_vertices(*vi, manager->mc_graph); bi != bi_end; ++bi) {
         dau_mc_idx.push_back(mc_idx_pm[*bi]);
       }
       std::sort(dau_mc_idx.begin(), dau_mc_idx.end());
 
+      // This checks whether that the reco daughters and mc daughters truth
+      // match to each other. This was the reason for the std::sort earlier. 
       if (dau_tm_mc_idx == dau_mc_idx) {
         tm_mc_idx = mc_idx_pm[*vi];
         break;
