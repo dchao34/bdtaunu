@@ -37,7 +37,7 @@ namespace RecoGraph {
 
 // Boost graph typedefs
 typedef boost::adjacency_list<
-  boost::vecS, boost::vecS, boost::directedS,
+  boost::vecS, boost::vecS, boost::bidirectionalS,
   boost::property<boost::vertex_reco_index_t, int,
   boost::property<boost::vertex_block_index_t, int,
   boost::property<boost::vertex_lund_id_t, int>>>,
@@ -150,7 +150,7 @@ namespace McGraph {
 
 // Boost graph typedefs
 typedef boost::adjacency_list<
-  boost::vecS, boost::vecS, boost::directedS,
+  boost::vecS, boost::vecS, boost::bidirectionalS,
   boost::property<boost::vertex_mc_index_t, int,
   boost::property<boost::vertex_lund_id_t, int>>,
   boost::property<boost::edge_index_t, int>

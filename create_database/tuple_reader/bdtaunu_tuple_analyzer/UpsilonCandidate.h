@@ -17,6 +17,7 @@ class UpsilonCandidate {
       std::string &eventId,
       int block_index,
       int reco_index,
+      int truth_match,
       bdtaunu::BFlavor bflavor,
       float eextra50,
       float mmiss_prime2,
@@ -63,6 +64,10 @@ class UpsilonCandidate {
     //! The index that uniquely identifies the reconstructed candidate within the event.
     int get_reco_index() const { return reco_index; }
     void set_reco_index(int _reco_index) { reco_index = _reco_index; }
+
+    //! The index that uniquely identifies the reconstructed candidate within the event.
+    int get_truth_match() const { return truth_match; }
+    void set_truth_match(int _truth_match) { truth_match = _truth_match; }
 
     //! \f$ E_{extra} \f$ 
     /*! The energy sum of photons above 50 MeV that are not used in the
@@ -248,6 +253,7 @@ class UpsilonCandidate {
     std::string eventId;
     int block_index;
     int reco_index;
+    int truth_match;
     bdtaunu::BFlavor bflavor;
     float eextra50;
     float mmiss_prime2;

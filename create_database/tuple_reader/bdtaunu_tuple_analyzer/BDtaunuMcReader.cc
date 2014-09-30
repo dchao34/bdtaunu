@@ -107,7 +107,7 @@ RootReader::Status BDtaunuMcReader::next_record() {
       mc_graph_manager.analyze_graph();
 
       // Outsource truth match operations to truth matcher
-      truth_match_manager.update_graph(reco_graph_manager);
+      truth_match_manager.update_graph(reco_graph_manager, mc_graph_manager);
       truth_match_manager.analyze_graph();
 
       // Make derived information ready for access
@@ -131,5 +131,13 @@ void BDtaunuMcReader::FillMcInfo() {
     if (mc_graph_manager.get_mcB2()->tau) 
       b2_tau_mctype = mc_graph_manager.get_mcB2()->tau->mc_type;
   }
+
+  auto it = upsilon_candidates.begin();
+  while (it != upsilon_candidates.end()) {
+    it->set_truth_match(
+        truth_match_manager.get_truth_match_status(it->get_reco_index()));
+    ++it;
+  }
+
   return;
 }

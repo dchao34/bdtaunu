@@ -110,6 +110,9 @@ class McGraphManager : public GraphManager {
     //! Clear cache. 
     void clear();
 
+    //! Get the mc graph
+    const McGraph::Graph& get_mc_graph() const { return g; }
+
     //! Returns pointer to the MC truth \f$\Upsilon(4S)\f$ if it exists, nullptr otherwise.
     const McGraph::Y* get_mcY() const;
 

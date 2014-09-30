@@ -153,5 +153,7 @@ void McGraphManager::print(std::ostream &os) const {
       os, g, 
       make_graph_writer(g, BDtaunuMcReader::lund_to_name, 
                         get(vertex_lund_id, g),
-                        get(vertex_mc_index, g)));
+                        get(vertex_mc_index, g)), 
+      boost::default_writer(), 
+      MyGraphWriter("MC Graph"));
 }

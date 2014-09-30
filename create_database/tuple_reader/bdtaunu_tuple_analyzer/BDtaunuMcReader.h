@@ -67,6 +67,10 @@ class BDtaunuMcReader : public BDtaunuReader {
 
     //! Printer
     void print_mc_graph(std::ostream &os) const { mc_graph_manager.print(os); }
+    void print_contracted_mc_graph(std::ostream &os) const { truth_match_manager.print_mc(os); }
+    void print_truthmatch_reco_graph(std::ostream &os) const { truth_match_manager.print_reco(os); }
+
+    std::map<int, int> get_truth_map() const { return truth_match_manager.get_truth_map(); }
 
   private:
 

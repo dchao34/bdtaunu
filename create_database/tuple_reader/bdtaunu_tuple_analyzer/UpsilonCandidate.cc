@@ -10,6 +10,7 @@ UpsilonCandidate::UpsilonCandidate() :
   eventId(""),
   block_index(-999),
   reco_index(-1),
+  truth_match(-1),
   bflavor(BFlavor::null),
   eextra50(-999),
   mmiss_prime2(-999),
@@ -45,6 +46,7 @@ UpsilonCandidate::UpsilonCandidate(
   std::string &_eventId,
   int _block_index,
   int _reco_index,
+  int _truth_match,
   BFlavor _bflavor,
   float _eextra50,
   float _mmiss_prime2,
@@ -78,6 +80,7 @@ UpsilonCandidate::UpsilonCandidate(
   eventId(_eventId),
   block_index(_block_index),
   reco_index(_reco_index),
+  truth_match(_truth_match),
   bflavor(_bflavor),
   eextra50(_eextra50),
   mmiss_prime2(_mmiss_prime2),
@@ -124,6 +127,7 @@ void UpsilonCandidate::copy_candidate(const UpsilonCandidate &cand) {
   eventId = cand.eventId;
   block_index = cand.block_index;
   reco_index = cand.reco_index;
+  truth_match = cand.truth_match;
   bflavor = cand.bflavor;
   eextra50 = cand.eextra50;
   mmiss_prime2 = cand.mmiss_prime2;

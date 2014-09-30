@@ -9,7 +9,7 @@ CXXFLAGS += -fPIC
 # Contents
 # --------
 
-BINARIES = mcreader_test1 mcreader_test2 mcreader_test3
+BINARIES = mcreader_test1 mcreader_test2 mcreader_test3 truthmatch_test1 truthmatch_test2 truthmatch_test3
 
 # Dependencies
 # ------------
@@ -32,6 +32,8 @@ LDFLAGS += $(shell root-config --libs)
 # Build Rules
 # -----------
 
+.PHONY: all debug pdf pdf_clean clean 
+
 $@ : $@.cc
 	$(CXX) $(CXXFLAGS) $< -o $%
 
@@ -43,6 +45,13 @@ debug : $(BINARIES)
 
 $(BINARIES) : % : %.cc
 	$(CXX) $(CXXFLAGS) $(INCFLAGS) $(LDFLAGS) -Wl,-rpath,$(TUPLE_READER_LIB_PATH) -o $@ $<
+
+pdf:
+	printf "%s\n" *.gv | sed s'/^\(.*\).gv/ -Tpdf \1.gv -o \1.pdf/' | xargs -L 1 dot
+	pdftk *.pdf cat output merged.pdf
+
+pdf_clean:
+	rm -f *.gv *.pdf
 
 clean:
 	rm -f *~ *.o *.gv *.pdf `find . -perm +100 -type f`
