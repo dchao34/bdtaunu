@@ -149,11 +149,20 @@ const B* McGraphManager::get_mcB2() const {
 
 // Print graphviz file. See BDtaunuGraphWriter.h.
 void McGraphManager::print(std::ostream &os) const {
+
+  auto lund_pm = get(vertex_lund_id, g);
+  auto mc_idx_pm = get(vertex_mc_index, g);
+  BDtaunuGraphvizManager<Graph, decltype(lund_pm), decltype(mc_idx_pm)> gv_manager(
+      g, lund_pm, mc_idx_pm, BDtaunuMcReader::lund_to_name);
+
+  gv_manager.set_title("MC Graph");
+  gv_manager.set_vertex_property({"color", "blue"});
+  gv_manager.set_vertex_property({"style", "filled"});
+  gv_manager.set_vertex_property({"fillcolor", "white"});
+
   boost::write_graphviz(
       os, g, 
-      make_graph_writer(g, BDtaunuMcReader::lund_to_name, 
-                        get(vertex_lund_id, g),
-                        get(vertex_mc_index, g)), 
-      boost::default_writer(), 
-      MyGraphWriter("MC Graph"));
+      gv_manager.construct_vertex_writer(),
+      gv_manager.construct_edge_writer(),
+      gv_manager.construct_graph_writer());
 }

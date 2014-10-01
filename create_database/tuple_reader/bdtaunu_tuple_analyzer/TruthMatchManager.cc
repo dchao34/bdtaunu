@@ -156,28 +156,53 @@ void TruthMatchManager::contract_mc_graph() {
 
 // Print cached MC graph (edge contracted). 
 void TruthMatchManager::print_mc(std::ostream &os) const {
+
+  auto lund_pm = get(vertex_lund_id, mc_graph);
+  auto mc_idx_pm = get(vertex_mc_index, mc_graph);
+  BDtaunuGraphvizManager<decltype(mc_graph), decltype(lund_pm), decltype(mc_idx_pm)> gv_manager(
+      mc_graph, lund_pm, mc_idx_pm, BDtaunuMcReader::lund_to_name);
+
+  gv_manager.set_title("MC Graph with Edge Contraction");
+  gv_manager.set_vertex_property({"color", "blue"});
+  gv_manager.set_vertex_property({"style", "filled"});
+  gv_manager.set_vertex_property({"fillcolor", "white"});
+
   boost::write_graphviz(
-      os, mc_graph,
-      make_graph_writer(mc_graph, BDtaunuMcReader::lund_to_name,
-                        get(vertex_lund_id, mc_graph),
-                        get(vertex_mc_index, mc_graph)),
-      boost::default_writer(), 
-      MyGraphWriter("MC Graph with Edge Contraction"));
+      os, mc_graph, 
+      gv_manager.construct_vertex_writer(),
+      gv_manager.construct_edge_writer(),
+      gv_manager.construct_graph_writer());
 }
 
 // Print the reco graph with truth matched candidates highlighted. 
 void TruthMatchManager::print_reco(std::ostream &os) const {
+
+  auto lund_pm = get(vertex_lund_id, reco_graph);
+  auto reco_idx_pm = get(vertex_reco_index, reco_graph);
+  BDtaunuGraphvizManager<decltype(reco_graph), decltype(lund_pm), decltype(reco_idx_pm)> gv_manager(
+      reco_graph, lund_pm, reco_idx_pm, BDtaunuMcReader::lund_to_name, truth_match);
+
+  gv_manager.set_title("Reco Graph with Truth Match");
+  gv_manager.set_vertex_property({"color", "red"});
+  gv_manager.set_vertex_property({"style", "filled"});
+  gv_manager.set_vertex_property({"fillcolor", "white"});
+
+  gv_manager.set_tm_vertex_property({"color", "red"});
+  gv_manager.set_tm_vertex_property({"penwidth", "3"});
+  gv_manager.set_tm_vertex_property({"style", "filled"});
+  gv_manager.set_tm_vertex_property({"fillcolor", "lightskyblue"});
+
+  gv_manager.set_edge_property({"color", "grey"});
+
+  gv_manager.set_tm_edge_property({"color", "black"});
+  gv_manager.set_tm_edge_property({"weight", "1"});
+  gv_manager.set_tm_edge_property({"penwidth", "3"});
+
   boost::write_graphviz(
-      os, reco_graph,
-      make_myvertex_writer(reco_graph, BDtaunuMcReader::lund_to_name,
-                           truth_match,
-                           get(vertex_lund_id, reco_graph),
-                           get(vertex_reco_index, reco_graph)),
-      make_myedge_writer(reco_graph, BDtaunuMcReader::lund_to_name,
-                         truth_match,
-                         get(vertex_lund_id, reco_graph),
-                         get(vertex_reco_index, reco_graph)),
-      MyGraphWriter("Reco Graph with Truth Match"));
+      os, reco_graph, 
+      gv_manager.construct_vertex_writer(),
+      gv_manager.construct_edge_writer(),
+      gv_manager.construct_graph_writer());
 }
 
 

@@ -105,13 +105,24 @@ const Y* RecoGraphManager::get_recoY(int i) const {
   return &y_it->second;
 }
 
+
 // Print graphviz file. See BDtaunuGraphWriter.h.
 void RecoGraphManager::print(std::ostream &os) const {
+  auto lund_pm = get(vertex_lund_id, g);
+  auto reco_pm = get(vertex_reco_index, g);
+  BDtaunuGraphvizManager<Graph, decltype(lund_pm), decltype(reco_pm)> gv_manager(
+      g, lund_pm, reco_pm, BDtaunuReader::lund_to_name);
+
+  gv_manager.set_title("Reco Graph");
+  gv_manager.set_vertex_property({"color", "red"});
+  gv_manager.set_vertex_property({"style", "filled"});
+  gv_manager.set_vertex_property({"fillcolor", "white"});
+
   boost::write_graphviz(
       os, g, 
-      make_graph_writer(g, BDtaunuReader::lund_to_name, 
-                        get(vertex_lund_id, g),
-                        get(vertex_reco_index, g)));
+      gv_manager.construct_vertex_writer(),
+      gv_manager.construct_edge_writer(),
+      gv_manager.construct_graph_writer());
 }
 
 
