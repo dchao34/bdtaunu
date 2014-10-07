@@ -1,0 +1,114 @@
+digraph G {
+  label="Analysis Code Organization";
+  labelloc="t"
+  fontsize="44";
+
+  rankdir="LR";
+  node[shape="rect", style="filled", fillcolor="white"];
+
+  subgraph cluster_00 {
+    label="BToDTauNuSemiLepHadUser";
+    labelloc="b"
+    fontsize="20";
+    style="dotted";
+
+    Data[label="SLAC", shape="none"];
+    Analyst00[label="Analyst", shape="none"];
+    Modules[label="Framework Modules"];
+
+    Data->Modules[color="red:blue:forestgreen",penwidth="2"];
+    Analyst00->Modules;
+    BtaTupleMaker[label="BtaTupleMaker"];
+    Modules->BtaTupleMaker[color="red:blue:forestgreen",penwidth="2"];
+  }
+
+  subgraph cluster_0 {
+    label="Feature Analyzer";
+    labelloc="b"
+    fontsize="20";
+    style="dotted";
+
+    Analyst0[label="Analyst", shape="none"];
+    EventExtractor[label="Event Extractor"];
+    Analyst0->EventExtractor;
+  }
+
+
+  subgraph cluster_1 {
+    label="Candidate Analyzer";
+    labelloc="b"
+    fontsize="20";
+    style="dotted";
+
+    subgraph cluster_Candidate {
+      color="white"
+      label=""
+      CandidateFilter[label="Candidate Filter"];
+      CandidateSelector[label="Candidate Selector"];
+
+      CandidateFilter->CandidateSelector[color="red:blue",penwidth="2"];
+    }
+
+    ML1[label="ML"];
+    CandidateFilter->ML1[color="forestgreen",penwidth="2"];
+    ML1->CandidateSelector;
+
+    Analyst1[label="Analyst", shape="none"];
+    Analyst1->CandidateFilter;
+
+    Analyst1_0[label="Analyst", shape="none"];
+    Analyst1_0->ML1;
+
+  }
+
+  subgraph cluster_2 {
+    label="Event Analyzer"
+    labelloc="b"
+    fontsize="20";
+    style="dotted"
+
+    subgraph cluster_Event {
+      color="white"
+      label=""
+      EventFilter[label="Event Filter"];
+      FitFeatureEval[label="Fit Feature Evaluator"];
+
+      EventFilter->FitFeatureEval[color="red:blue",penwidth="2"];
+    }
+
+    ML2[label="ML"];
+    EventFilter->ML2[color="deepskyblue",penwidth="2"];
+    ML2->FitFeatureEval;
+
+    Analyst2[label="Analyst", shape="none"];
+    Analyst2->EventFilter;
+
+    Analyst2_0[label="Analyst", shape="none"];
+    Analyst2_0->ML2;
+  }
+
+  subgraph cluster_3 {
+    label="Yield Extractor"
+    labelloc="t"
+    fontsize="20";
+    style="dotted"
+    
+    DensityEstimator[label="Density Estimator"];
+    Solver[label="LP Solver"];
+    DensityEstimator->Solver;
+
+    Analyst3[label="Analyst", shape="none"];
+    Analyst3->DensityEstimator;
+  }
+
+
+  BtaTupleMaker->EventExtractor[color="red:blue:forestgreen",penwidth="2"];
+  EventExtractor->CandidateFilter[color="red:blue:forestgreen",penwidth="2"];
+  CandidateSelector->EventFilter[color="red:blue",penwidth="2"];
+  FitFeatureEval->DensityEstimator[color="blue",penwidth="2"];
+  FitFeatureEval->Solver[color="red",penwidth="2"];
+
+  Output[label="Output", shape="none"];
+  Solver->Output;
+  
+}
